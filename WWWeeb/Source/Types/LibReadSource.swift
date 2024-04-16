@@ -2,11 +2,11 @@ import Foundation
 import SwiftSoup
 
 extension Source {
-    static let libRead = LibReadSource()
+    static let LibRead = LibReadSource()
 
     class LibReadSource: Source {
         fileprivate init() {
-            super.init(id: "libread", name: "LibRead", site: "https://libread.org", version: "1.0.0", type: .libRead)
+            super.init(id: "lib_read", name: "Lib Read", site: "https://libread.org", version: "1.0", type: .lib_read)
         }
 
         override func parseNovel(novelPath: String) async throws -> Novel {

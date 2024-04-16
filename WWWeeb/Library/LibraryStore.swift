@@ -14,31 +14,32 @@ class LibraryStore: ObservableObject {
                 return
             }
 
-            do {
-                let decoder = JSONDecoder()
-                let decodedData = try decoder.decode(Library.self, from: data)
-
-                DispatchQueue.main.async {
-                    self.library = decodedData
-                }
-            } catch {
-                DispatchQueue.main.async {
-                    fatalError(error.localizedDescription)
-                }
+            let decoder = JSONDecoder()
+            guard let decodedData = try? decoder.decode(Library.self, from: data) else {
+                // In case of corrupted/outdated file, fall back to clean library.
+                // TODO: Log this nicely and implement migration system for outdated libraries.
+                return
             }
+
+            DispatchQueue.main.async {
+                self.library = decodedData
+            }
+
         }
     }
 
     func saveLibrary() {
         Task.init {
+            let encoder = JSONEncoder()
+            guard let encodedData = try? encoder.encode(library) else {
+                // I don't really know why this would fail.
+                // TODO: Log this nicely.
+                return
+            }
             do {
-                let encoder = JSONEncoder()
-                let encodedData = try encoder.encode(library)
                 try encodedData.write(to: Self.fileURL())
             } catch {
-                DispatchQueue.main.async {
-                    fatalError(error.localizedDescription)
-                }
+                // TODO: Log this nicely.
             }
         }
     }

@@ -1,12 +1,12 @@
 import Foundation
 
 enum SourceType: Codable, CaseIterable {
-    case libRead
+    case lib_read
 
     var source: Source {
         switch self {
-            case .libRead:
-                return Source.libRead
+            case .lib_read:
+                return Source.LibRead
         }
     }
 }
