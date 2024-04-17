@@ -21,7 +21,7 @@ WWWeeb works by scraping only the most necessary data from the sources, making t
 ## Novel sources
 
 Currently, WWWeeb supports the following novel sources:
-* Lib Read (https://libread.org/) - since 1.0
+* Lib Read (https://libread.org/) - since 0.9.50.1
 
 ## Comic sources
 
