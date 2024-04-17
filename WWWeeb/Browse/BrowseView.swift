@@ -4,8 +4,8 @@ import SwiftUI
 import OSLog
 
 struct BrowseView: View {
-    @EnvironmentObject
-    var libraryStore: LibraryStore
+    @Environment(\.library)
+    var library
 
     @State
     var novelsSearchText = ""
@@ -34,8 +34,7 @@ struct BrowseView: View {
 
                 LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 2) {
                     ForEach(novelPreviews, id: \.path) { novelPreview in
-                        NovelPreviewCell(novelPreview: novelPreview, novel: libraryStore.library.getNovel(novelPath: novelPreview.path))
-                            .environmentObject(libraryStore)
+                        NovelPreviewCell(novelPreview: novelPreview, novel: library.getNovel(novelPath: novelPreview.path))
                     }
                 }
             }
@@ -78,8 +77,8 @@ struct BrowseView: View {
 }
 
 private struct NovelPreviewCell: View {
-    @EnvironmentObject
-    var libraryStore: LibraryStore
+    @Environment(\.library)
+    var library
 
     let novelPreview: NovelPreview
     let novel: Novel?
@@ -88,10 +87,8 @@ private struct NovelPreviewCell: View {
         NavigationLink {
             if let novel = novel {
                 NovelView(novel: novel)
-                    .environmentObject(libraryStore)
             } else {
                 NovelView(novelPreview: novelPreview)
-                    .environmentObject(libraryStore)
             }
         } label: {
             VStack(spacing: 4) {

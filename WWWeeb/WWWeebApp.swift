@@ -5,8 +5,12 @@ import SwiftUI
 // TODO: Can clear the cache for that chapter after a while or when or upon novel update.
 @main
 struct WWWeebApp: App {
-    @StateObject
-    var libraryStore = LibraryStore()
+    let library: Library
+
+    init() {
+        library = Library()
+        library.load()
+    }
 
     var body: some Scene {
         WindowGroup {
@@ -15,18 +19,16 @@ struct WWWeebApp: App {
                     .tabItem {
                         Label("Library", systemImage: "book.pages")
                     }
-                    .environmentObject(libraryStore)
                 BrowseView()
                     .tabItem {
                         Label("Browse", systemImage: "safari")
                     }
-                    .environmentObject(libraryStore)
                 SettingsView()
                     .tabItem {
                         Label("Settings", systemImage: "gear")
                     }
-                    .environmentObject(libraryStore)
             }
+            .modifier(LibraryEnvironmentModifier(library: library))
         }
     }
 }

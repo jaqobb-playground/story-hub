@@ -9,7 +9,7 @@ struct URLUtils {
         if let urlQueryItems = query?.map({ URLQueryItem(name: $0, value: $1) }) {
             urlComponents.queryItems = urlQueryItems
         }
-        
+
         var request = URLRequest(url: urlComponents.url!)
         request.httpMethod = method
 

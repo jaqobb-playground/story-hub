@@ -1,13 +1,13 @@
 import Kingfisher
+import OSLog
 import SwiftData
 import SwiftUI
-import OSLog
 
 struct NovelView: View {
     @Environment(\.presentationMode)
     var presentationMode
-    @EnvironmentObject
-    var libraryStore: LibraryStore
+    @Environment(\.library)
+    var library
 
     var novel: Novel?
     var novelPreview: NovelPreview?
@@ -27,7 +27,6 @@ struct NovelView: View {
         Form {
             if let novel = novelUsed {
                 NovelInformation(novel)
-                    .environmentObject(libraryStore)
             } else {
                 HStack {
                     Spacer()
@@ -46,12 +45,12 @@ struct NovelView: View {
                 if let novelPreview = novelPreview {
                     Task.init {
                         Logger.library.info("Fetching novel '\(novelPreview.title)'...")
-                        
+
                         do {
                             novelUsed = try await novelPreview.sourceType.source.parseNovel(novelPath: novelPreview.path)
                         } catch {
                             Logger.library.warning("Failed to fetch novel '\(novelPreview.title)': \(error.localizedDescription)")
-                            
+
                             AlertUtils.showAlert(title: "Failed to fetch novel '\(novelPreview.title)'", message: error.localizedDescription) { _ in
                                 presentationMode.wrappedValue.dismiss()
                             }
@@ -64,8 +63,8 @@ struct NovelView: View {
 }
 
 private struct NovelInformation: View {
-    @EnvironmentObject
-    var libraryStore: LibraryStore
+    @Environment(\.library)
+    var library
 
     let novel: Novel
 
@@ -133,25 +132,24 @@ private struct NovelInformation: View {
 
             List(novelChapterChunked.reversed(), id: \.self) { novelChaptersChunk in
                 NovelChaptersChunk(novel: novel, novelChaptersChunk: novelChaptersChunk)
-                    .environmentObject(libraryStore)
             }
         }
 
         Section {
-            if libraryStore.library.getNovel(novelPath: novel.path) == nil {
+            if library.getNovel(novelPath: novel.path) == nil {
                 Button("Add to library") {
                     Logger.library.info("Adding novel '\(novel.title)' to the library...")
-                    
-                    libraryStore.library.novels.insert(novel)
-                    libraryStore.saveLibrary()
+
+                    library.novels.insert(novel)
+                    library.save()
                 }
                 .frame(maxWidth: .infinity, alignment: .center)
             } else {
                 Button("Remove from library") {
                     Logger.library.info("Removing novel '\(novel.title)' from the library...")
-                    
-                    libraryStore.library.novels.remove(novel)
-                    libraryStore.saveLibrary()
+
+                    library.novels.remove(novel)
+                    library.save()
                 }
                 .foregroundColor(.red)
                 .frame(maxWidth: .infinity, alignment: .center)
@@ -161,8 +159,8 @@ private struct NovelInformation: View {
 }
 
 private struct NovelChaptersChunk: View {
-    @EnvironmentObject
-    var libraryStore: LibraryStore
+    @Environment(\.library)
+    var library
 
     let novel: Novel
     let novelChaptersChunk: [NovelChapter]
@@ -177,7 +175,7 @@ private struct NovelChaptersChunk: View {
 
     private var allChaptersRead: Bool {
         for novelChapter in novelChaptersChunk {
-            if !libraryStore.library.isNovelChapterMarkedAsRead(novel: novel, novelChapter: novelChapter) {
+            if !library.isNovelChapterMarkedAsRead(novel: novel, novelChapter: novelChapter) {
                 return false
             }
         }
@@ -192,40 +190,39 @@ private struct NovelChaptersChunk: View {
                 novel: novel,
                 novelChapters: novelChaptersChunk.reversed()
             )
-            .environmentObject(libraryStore)
         } label: {
             Text("\(firstChapterNumber) - \(lastChapterNumber)")
                 .foregroundColor(allChaptersRead ? .gray : .primary)
                 .contextMenu {
                     Section {
                         Button {
-                            if libraryStore.library.getNovelChaptersMarkedAsRead(novel: novel) >= novel.chapters.count {
+                            if library.getNovelChaptersMarkedAsRead(novel: novel) >= novel.chapters.count {
                                 return
                             }
 
                             for novelChapter in novelChaptersChunk {
                                 Logger.library.info("Marking novel's '\(novel.title)' chapter '\(novelChapter.title)' as read...")
-                                
-                                libraryStore.library.markNovelChapterAsRead(novel: novel, novelChapter: novelChapter)
+
+                                library.markNovelChapterAsRead(novel: novel, novelChapter: novelChapter)
                             }
 
-                            libraryStore.saveLibrary()
+                            library.save()
                         } label: {
                             Label("Mark as read", systemImage: "checkmark")
                         }
 
                         Button(role: .destructive) {
-                            if libraryStore.library.getNovelChaptersMarkedAsRead(novel: novel) <= 0 {
+                            if library.getNovelChaptersMarkedAsRead(novel: novel) <= 0 {
                                 return
                             }
 
                             for novelChapter in novelChaptersChunk {
                                 Logger.library.info("Unmarking novel's '\(novel.title)' chapter '\(novelChapter.title)' as read...")
-                                
-                                libraryStore.library.unmarkNovelChapterAsRead(novel: novel, novelChapter: novelChapter)
+
+                                library.unmarkNovelChapterAsRead(novel: novel, novelChapter: novelChapter)
                             }
 
-                            libraryStore.saveLibrary()
+                            library.save()
                         } label: {
                             Label("Mark as not read", systemImage: "xmark")
                         }
@@ -236,9 +233,6 @@ private struct NovelChaptersChunk: View {
 }
 
 private struct NovelChaptersChunkDetails: View {
-    @EnvironmentObject
-    var libraryStore: LibraryStore
-
     let firstChapterNumber: String
     let lastChapterNumber: String
     let novel: Novel
@@ -248,7 +242,6 @@ private struct NovelChaptersChunkDetails: View {
         Form {
             List(novelChapters, id: \.self) { novelChapter in
                 NovelChapters(novel: novel, novelChapter: novelChapter)
-                    .environmentObject(libraryStore)
             }
         }
         .navigationTitle("Chapters \(firstChapterNumber) - \(lastChapterNumber)")
@@ -256,8 +249,8 @@ private struct NovelChaptersChunkDetails: View {
 }
 
 private struct NovelChapters: View {
-    @EnvironmentObject
-    var libraryStore: LibraryStore
+    @Environment(\.library)
+    var library
 
     let novel: Novel
     let novelChapter: NovelChapter
@@ -265,26 +258,25 @@ private struct NovelChapters: View {
     var body: some View {
         NavigationLink {
             NovelChapterView(novel: novel, novelChapter: novelChapter)
-                .environmentObject(libraryStore)
         } label: {
             Text(novelChapter.title)
-                .foregroundColor(libraryStore.library.isNovelChapterMarkedAsRead(novel: novel, novelChapter: novelChapter) ? .gray : .primary)
+                .foregroundColor(library.isNovelChapterMarkedAsRead(novel: novel, novelChapter: novelChapter) ? .gray : .primary)
                 .contextMenu {
                     Section {
                         Button {
                             Logger.library.info("Marking novel's '\(novel.title)' chapter '\(novelChapter.title)' as read...")
-                            
-                            libraryStore.library.markNovelChapterAsRead(novel: novel, novelChapter: novelChapter)
-                            libraryStore.saveLibrary()
+
+                            library.markNovelChapterAsRead(novel: novel, novelChapter: novelChapter)
+                            library.save()
                         } label: {
                             Label("Mark as read", systemImage: "checkmark")
                         }
 
                         Button(role: .destructive) {
                             Logger.library.info("Unmarking novel's '\(novel.title)' chapter '\(novelChapter.title)' as read...")
-                            
-                            libraryStore.library.unmarkNovelChapterAsRead(novel: novel, novelChapter: novelChapter)
-                            libraryStore.saveLibrary()
+
+                            library.unmarkNovelChapterAsRead(novel: novel, novelChapter: novelChapter)
+                            library.save()
                         } label: {
                             Label("Mark as not read", systemImage: "xmark")
                         }

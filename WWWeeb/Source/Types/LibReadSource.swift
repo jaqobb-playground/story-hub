@@ -46,7 +46,7 @@ extension Source {
                     sourceType: type
                 )
             } catch {
-                throw NovelError.parsingError(description: "Error parsing novel '\(novelPath)': \(error.localizedDescription)")
+                throw NovelError.parse(description: "Error parsing novel '\(novelPath)': \(error.localizedDescription)")
             }
         }
 
@@ -64,7 +64,7 @@ extension Source {
                     contents: contents
                 )
             } catch {
-                throw NovelError.parsingError(description: "Error parsing novel chapter '\(novelChapterPath)': \(error.localizedDescription)")
+                throw NovelError.parse(description: "Error parsing novel chapter '\(novelChapterPath)': \(error.localizedDescription)")
             }
         }
 
@@ -99,7 +99,7 @@ extension Source {
 
                 return novels.filter { !$0.title.isEmpty && !$0.path.isEmpty }
             } catch {
-                throw NovelError.fetchingError(description: "Error fetching novels: \(error.localizedDescription)")
+                throw NovelError.fetch(description: "Error fetching novels: \(error.localizedDescription)")
             }
         }
     }

@@ -4,8 +4,8 @@ import SwiftData
 import SwiftUI
 
 struct LibraryView: View {
-    @EnvironmentObject
-    var libraryStore: LibraryStore
+    @Environment(\.library)
+    var library
 
     @State
     var novelsSearchText: String = ""
@@ -29,34 +29,30 @@ struct LibraryView: View {
                 Spacer()
 
                 LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 2) {
-                    ForEach(Array(libraryStore.library.novels), id: \.path) { novel in
+                    ForEach(Array(library.novels), id: \.path) { novel in
                         NovelCell(novel: novel)
-                            .environmentObject(libraryStore)
                     }
                 }
             }
             .navigationTitle("Library")
             .refreshable {
                 Task.init {
-                    // TODO: Improve this disaster of a code.
                     Logger.library.info("Updating library novels...")
 
-                    for novel in libraryStore.library.novels {
+                    for novel in library.novels {
+                        let novelChaptersCount = novel.chapters.count
                         do {
-                            let novelUpdated = try await novel.sourceType.source.parseNovel(novelPath: novel.path)
+                            try await novel.update()
 
-                            libraryStore.library.novels.remove(novel)
-                            libraryStore.library.novels.insert(novelUpdated)
-                            
-                            Logger.library.info("Novel '\(novel.title)' updated; \(novelUpdated.chapters.count - novel.chapters.count) new chapters found.")
+                            Logger.library.info("Novel '\(novel.title)' updated; \(novel.chapters.count - novelChaptersCount) new chapters found.")
                         } catch {
                             Logger.library.warning("Failed to update novel '\(novel.title)': \(error.localizedDescription)")
-                            
+
                             AlertUtils.showAlert(title: "Failed to update novel '\(novel.title)'", message: error.localizedDescription)
                         }
                     }
 
-                    libraryStore.saveLibrary()
+                    library.save()
                 }
             }
         }
@@ -71,13 +67,13 @@ struct LibraryView: View {
 }
 
 private struct NovelCell: View {
-    @EnvironmentObject
-    var libraryStore: LibraryStore
+    @Environment(\.library)
+    var library
 
     let novel: Novel
 
     var novelChaptersRead: Int {
-        libraryStore.library.getNovelChaptersMarkedAsRead(novel: novel)
+        library.getNovelChaptersMarkedAsRead(novel: novel)
     }
 
     var novelChaptersReadString: String {
@@ -91,7 +87,6 @@ private struct NovelCell: View {
     var body: some View {
         NavigationLink {
             NovelView(novel: novel)
-                .environmentObject(libraryStore)
         } label: {
             VStack(spacing: 4) {
                 ZStack(alignment: .topTrailing) {
@@ -133,11 +128,11 @@ private struct NovelCell: View {
 
                         for novelChapter in novel.chapters {
                             Logger.library.info("Marking novel's '\(novel.title)' chapter '\(novelChapter.title)' as read...")
-                            
-                            libraryStore.library.markNovelChapterAsRead(novel: novel, novelChapter: novelChapter)
+
+                            library.markNovelChapterAsRead(novel: novel, novelChapter: novelChapter)
                         }
 
-                        libraryStore.saveLibrary()
+                        library.save()
                     } label: {
                         Label("Mark as read", systemImage: "checkmark")
                     }
@@ -149,11 +144,11 @@ private struct NovelCell: View {
 
                         for novelChapter in novel.chapters {
                             Logger.library.info("Unmarking novel's '\(novel.title)' chapter '\(novelChapter.title)' as read...")
-                            
-                            libraryStore.library.unmarkNovelChapterAsRead(novel: novel, novelChapter: novelChapter)
+
+                            library.unmarkNovelChapterAsRead(novel: novel, novelChapter: novelChapter)
                         }
 
-                        libraryStore.saveLibrary()
+                        library.save()
                     } label: {
                         Label("Mark as not read", systemImage: "xmark")
                     }
@@ -172,9 +167,9 @@ private struct NovelCell: View {
                 Section {
                     Button(role: .destructive) {
                         Logger.library.info("Removing novel '\(novel.title)' from the library...")
-                        
-                        libraryStore.library.novels.remove(novel)
-                        libraryStore.saveLibrary()
+
+                        library.novels.remove(novel)
+                        library.save()
                     } label: {
                         Label("Remove from library", systemImage: "trash")
                     }
