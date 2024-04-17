@@ -3,7 +3,7 @@ import Foundation
 struct Library: Codable {
     var novels: Set<Novel>
     var novelChaptersRead: [String: Set<String>]
-    
+
     func getNovel(novelPath: String) -> Novel? {
         return novels.first { $0.path == novelPath }
     }

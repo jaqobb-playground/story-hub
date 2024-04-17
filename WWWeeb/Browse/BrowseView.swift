@@ -1,6 +1,7 @@
 import Kingfisher
 import SwiftData
 import SwiftUI
+import OSLog
 
 struct BrowseView: View {
     @EnvironmentObject
@@ -34,6 +35,7 @@ struct BrowseView: View {
                 LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 2) {
                     ForEach(novelPreviews, id: \.path) { novelPreview in
                         NovelPreviewCell(novelPreview: novelPreview, novel: libraryStore.library.getNovel(novelPath: novelPreview.path))
+                            .environmentObject(libraryStore)
                     }
                 }
             }
@@ -46,31 +48,26 @@ struct BrowseView: View {
             return
         }
         
-        novelPreviews = []
         if !novelsSearchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            Logger.library.info("Performing novel search...")
+            
             midNovelSearch = true
+            
+            novelPreviews = []
             
             Task.init {
                 for sourceType in SourceType.allCases {
                     do {
                         let novelPreviews = try await sourceType.source.fetchNovels(searchTerm: novelsSearchText)
                         for novelPreview in novelPreviews {
+                            Logger.library.info("Novel '\(novelPreview.title)' from '\(novelPreview.sourceType.source.name)' found to be matching the search criteria.")
+                            
                             self.novelPreviews.append(novelPreview)
                         }
                     } catch {
-                        DispatchQueue.main.async {
-                            let alert = UIAlertController(title: "Could not fetch novel previews from \(sourceType.source.name)", message: error.localizedDescription, preferredStyle: .alert)
-                            let alertAction = UIAlertAction(title: "OK", style: .default, handler: nil)
-                            alert.addAction(alertAction)
-
-                            if let window = UIApplication.shared.connectedScenes
-                                .filter({ $0.activationState == .foregroundActive })
-                                .compactMap({ $0 as? UIWindowScene })
-                                .first?.windows
-                                .first {
-                                window.rootViewController?.present(alert, animated: true, completion: nil)
-                            }
-                        }
+                        Logger.library.warning("Failed to fetch novel previews from '\(sourceType.source.name)': \(error.localizedDescription)")
+                        
+                        AlertUtils.showAlert(title: "Failed to fetch novel previews from '\(sourceType.source.name)'", message: error.localizedDescription)
                     }
                 }
                 

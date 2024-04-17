@@ -1,4 +1,5 @@
 import Kingfisher
+import OSLog
 import SwiftData
 import SwiftUI
 
@@ -37,26 +38,21 @@ struct LibraryView: View {
             .navigationTitle("Library")
             .refreshable {
                 Task.init {
+                    // TODO: Improve this disaster of a code.
+                    Logger.library.info("Updating library novels...")
+
                     for novel in libraryStore.library.novels {
                         do {
                             let novelUpdated = try await novel.sourceType.source.parseNovel(novelPath: novel.path)
 
                             libraryStore.library.novels.remove(novel)
                             libraryStore.library.novels.insert(novelUpdated)
+                            
+                            Logger.library.info("Novel '\(novel.title)' updated; \(novelUpdated.chapters.count - novel.chapters.count) new chapters found.")
                         } catch {
-                            DispatchQueue.main.async {
-                                let alert = UIAlertController(title: "Could not update novel \(novel.title)", message: error.localizedDescription, preferredStyle: .alert)
-                                let alertAction = UIAlertAction(title: "OK", style: .default, handler: nil)
-                                alert.addAction(alertAction)
-
-                                if let window = UIApplication.shared.connectedScenes
-                                    .filter({ $0.activationState == .foregroundActive })
-                                    .compactMap({ $0 as? UIWindowScene })
-                                    .first?.windows
-                                    .first {
-                                    window.rootViewController?.present(alert, animated: true, completion: nil)
-                                }
-                            }
+                            Logger.library.warning("Failed to update novel '\(novel.title)': \(error.localizedDescription)")
+                            
+                            AlertUtils.showAlert(title: "Failed to update novel '\(novel.title)'", message: error.localizedDescription)
                         }
                     }
 
@@ -68,7 +64,8 @@ struct LibraryView: View {
 
     private func performNovelSearch() {
         if !novelsSearchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-            print("Performing search...")
+            // TODO: Actually do it.
+            Logger.library.info("Performing novel search...")
         }
     }
 }
@@ -135,6 +132,8 @@ private struct NovelCell: View {
                         }
 
                         for novelChapter in novel.chapters {
+                            Logger.library.info("Marking novel's '\(novel.title)' chapter '\(novelChapter.title)' as read...")
+                            
                             libraryStore.library.markNovelChapterAsRead(novel: novel, novelChapter: novelChapter)
                         }
 
@@ -149,6 +148,8 @@ private struct NovelCell: View {
                         }
 
                         for novelChapter in novel.chapters {
+                            Logger.library.info("Unmarking novel's '\(novel.title)' chapter '\(novelChapter.title)' as read...")
+                            
                             libraryStore.library.unmarkNovelChapterAsRead(novel: novel, novelChapter: novelChapter)
                         }
 
@@ -170,6 +171,8 @@ private struct NovelCell: View {
 
                 Section {
                     Button(role: .destructive) {
+                        Logger.library.info("Removing novel '\(novel.title)' from the library...")
+                        
                         libraryStore.library.novels.remove(novel)
                         libraryStore.saveLibrary()
                     } label: {

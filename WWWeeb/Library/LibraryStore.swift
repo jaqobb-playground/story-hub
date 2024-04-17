@@ -1,4 +1,5 @@
 import Foundation
+import OSLog
 
 class LibraryStore: ObservableObject {
     @Published
@@ -10,36 +11,36 @@ class LibraryStore: ObservableObject {
 
     func loadLibrary() {
         Task.init {
-            guard let data = try? Data(contentsOf: Self.fileURL()) else {
-                return
-            }
+            do {
+                Logger.library.info("Loading library...")
 
-            let decoder = JSONDecoder()
-            guard let decodedData = try? decoder.decode(Library.self, from: data) else {
-                // In case of corrupted/outdated file, fall back to clean library.
-                // TODO: Log this nicely and implement migration system for outdated libraries.
-                return
-            }
+                guard let data = try? Data(contentsOf: Self.fileURL()) else {
+                    return
+                }
 
-            DispatchQueue.main.async {
-                self.library = decodedData
-            }
+                let decoder = JSONDecoder()
+                let decodedData = try decoder.decode(Library.self, from: data)
 
+                DispatchQueue.main.async {
+                    self.library = decodedData
+                }
+            } catch {
+                // TODO: Implement migration system for outdated libraries.
+                Logger.library.warning("Failed to load library: \(error.localizedDescription)")
+            }
         }
     }
 
     func saveLibrary() {
         Task.init {
-            let encoder = JSONEncoder()
-            guard let encodedData = try? encoder.encode(library) else {
-                // I don't really know why this would fail.
-                // TODO: Log this nicely.
-                return
-            }
             do {
+                Logger.library.info("Saving library...")
+
+                let encoder = JSONEncoder()
+                let encodedData = try encoder.encode(library)
                 try encodedData.write(to: Self.fileURL())
             } catch {
-                // TODO: Log this nicely.
+                Logger.library.warning("Failed to save library: \(error.localizedDescription)")
             }
         }
     }

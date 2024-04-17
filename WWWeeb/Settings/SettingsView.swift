@@ -13,7 +13,7 @@ struct SettingsView: View {
                     } label: {
                         Text("Version")
                     }
-                    
+
                     LabeledContent {
                         Text(getAppBuild())
                     } label: {
@@ -31,7 +31,7 @@ struct SettingsView: View {
         }
         return "Unknown"
     }
-    
+
     private func getAppBuild() -> String {
         if let build = Bundle.main.infoDictionary?["CFBundleVersion"] as? String {
             return build

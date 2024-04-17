@@ -1,6 +1,7 @@
 import Kingfisher
 import SwiftData
 import SwiftUI
+import OSLog
 
 struct NovelView: View {
     @Environment(\.presentationMode)
@@ -44,23 +45,15 @@ struct NovelView: View {
             } else {
                 if let novelPreview = novelPreview {
                     Task.init {
+                        Logger.library.info("Fetching novel '\(novelPreview.title)'...")
+                        
                         do {
                             novelUsed = try await novelPreview.sourceType.source.parseNovel(novelPath: novelPreview.path)
                         } catch {
-                            DispatchQueue.main.async {
-                                let alert = UIAlertController(title: "Could not fetch novel", message: error.localizedDescription, preferredStyle: .alert)
-                                let alertAction = UIAlertAction(title: "OK", style: .default) { _ in
-                                    presentationMode.wrappedValue.dismiss()
-                                }
-                                alert.addAction(alertAction)
-
-                                if let window = UIApplication.shared.connectedScenes
-                                    .filter({ $0.activationState == .foregroundActive })
-                                    .compactMap({ $0 as? UIWindowScene })
-                                    .first?.windows
-                                    .first {
-                                    window.rootViewController?.present(alert, animated: true, completion: nil)
-                                }
+                            Logger.library.warning("Failed to fetch novel '\(novelPreview.title)': \(error.localizedDescription)")
+                            
+                            AlertUtils.showAlert(title: "Failed to fetch novel '\(novelPreview.title)'", message: error.localizedDescription) { _ in
+                                presentationMode.wrappedValue.dismiss()
                             }
                         }
                     }
@@ -147,12 +140,16 @@ private struct NovelInformation: View {
         Section {
             if libraryStore.library.getNovel(novelPath: novel.path) == nil {
                 Button("Add to library") {
+                    Logger.library.info("Adding novel '\(novel.title)' to the library...")
+                    
                     libraryStore.library.novels.insert(novel)
                     libraryStore.saveLibrary()
                 }
                 .frame(maxWidth: .infinity, alignment: .center)
             } else {
                 Button("Remove from library") {
+                    Logger.library.info("Removing novel '\(novel.title)' from the library...")
+                    
                     libraryStore.library.novels.remove(novel)
                     libraryStore.saveLibrary()
                 }
@@ -207,6 +204,8 @@ private struct NovelChaptersChunk: View {
                             }
 
                             for novelChapter in novelChaptersChunk {
+                                Logger.library.info("Marking novel's '\(novel.title)' chapter '\(novelChapter.title)' as read...")
+                                
                                 libraryStore.library.markNovelChapterAsRead(novel: novel, novelChapter: novelChapter)
                             }
 
@@ -221,6 +220,8 @@ private struct NovelChaptersChunk: View {
                             }
 
                             for novelChapter in novelChaptersChunk {
+                                Logger.library.info("Unmarking novel's '\(novel.title)' chapter '\(novelChapter.title)' as read...")
+                                
                                 libraryStore.library.unmarkNovelChapterAsRead(novel: novel, novelChapter: novelChapter)
                             }
 
@@ -271,6 +272,8 @@ private struct NovelChapters: View {
                 .contextMenu {
                     Section {
                         Button {
+                            Logger.library.info("Marking novel's '\(novel.title)' chapter '\(novelChapter.title)' as read...")
+                            
                             libraryStore.library.markNovelChapterAsRead(novel: novel, novelChapter: novelChapter)
                             libraryStore.saveLibrary()
                         } label: {
@@ -278,6 +281,8 @@ private struct NovelChapters: View {
                         }
 
                         Button(role: .destructive) {
+                            Logger.library.info("Unmarking novel's '\(novel.title)' chapter '\(novelChapter.title)' as read...")
+                            
                             libraryStore.library.unmarkNovelChapterAsRead(novel: novel, novelChapter: novelChapter)
                             libraryStore.saveLibrary()
                         } label: {

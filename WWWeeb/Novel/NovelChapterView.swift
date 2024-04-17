@@ -1,4 +1,5 @@
 import SwiftUI
+import OSLog
 
 struct NovelChapterView: View {
     @Environment(\.presentationMode)
@@ -28,23 +29,15 @@ struct NovelChapterView: View {
         .navigationBarTitleDisplayMode(.inline)
         .onAppear {
             Task.init {
+                Logger.library.info("Fetching novel's '\(novel.title)' chapter '\(novelChapter.title)' content...")
+                
                 do {
                     novelChapterContent = try await novel.sourceType.source.parseNovelChapter(novelChapterPath: novelChapter.path)
                 } catch {
-                    DispatchQueue.main.async {
-                        let alert = UIAlertController(title: "Could not fetch chapter content", message: error.localizedDescription, preferredStyle: .alert)
-                        let alertAction = UIAlertAction(title: "OK", style: .default) { _ in
-                            presentationMode.wrappedValue.dismiss()
-                        }
-                        alert.addAction(alertAction)
-
-                        if let window = UIApplication.shared.connectedScenes
-                            .filter({ $0.activationState == .foregroundActive })
-                            .compactMap({ $0 as? UIWindowScene })
-                            .first?.windows
-                            .first {
-                            window.rootViewController?.present(alert, animated: true, completion: nil)
-                        }
+                    Logger.library.warning("Failed to fetch novel's '\(novel.title)' chapter '\(novelChapter.title)' content: \(error.localizedDescription)")
+                    
+                    AlertUtils.showAlert(title: "Failed to fetch novel's '\(novel.title)' chapter '\(novelChapter.title)' content", message: error.localizedDescription) { _ in
+                        presentationMode.wrappedValue.dismiss()
                     }
                 }
             }
