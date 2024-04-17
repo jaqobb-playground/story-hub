@@ -72,12 +72,8 @@ private struct NovelCell: View {
 
     let novel: Novel
 
-    var novelChaptersRead: Int {
-        library.getNovelChaptersMarkedAsRead(novel: novel)
-    }
-
     var novelChaptersReadString: String {
-        String(novelChaptersRead).trimmingCharacters(in: .whitespaces)
+        String(novel.chaptersRead.count).trimmingCharacters(in: .whitespaces)
     }
 
     var novelChaptersTotalString: String {
@@ -96,7 +92,7 @@ private struct NovelCell: View {
                         .cornerRadius(10)
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
 
-                    if novelChaptersRead < novel.chapters.count {
+                    if novel.chaptersRead.count < novel.chapters.count {
                         Image(systemName: "exclamationmark.circle.fill")
                             .font(.system(size: 24))
                             .foregroundColor(.blue)
@@ -122,14 +118,14 @@ private struct NovelCell: View {
             .contextMenu {
                 Section {
                     Button {
-                        if novelChaptersRead >= novel.chapters.count {
+                        if novel.chaptersRead.count >= novel.chapters.count {
                             return
                         }
 
                         for novelChapter in novel.chapters {
                             Logger.library.info("Marking novel's '\(novel.title)' chapter '\(novelChapter.title)' as read...")
 
-                            library.markNovelChapterAsRead(novel: novel, novelChapter: novelChapter)
+                            novel.chaptersRead.insert(novelChapter.path)
                         }
 
                         library.save()
@@ -138,14 +134,14 @@ private struct NovelCell: View {
                     }
 
                     Button(role: .destructive) {
-                        if novelChaptersRead <= 0 {
+                        if novel.chaptersRead.count <= 0 {
                             return
                         }
 
                         for novelChapter in novel.chapters {
                             Logger.library.info("Unmarking novel's '\(novel.title)' chapter '\(novelChapter.title)' as read...")
 
-                            library.unmarkNovelChapterAsRead(novel: novel, novelChapter: novelChapter)
+                            novel.chaptersRead.remove(novelChapter.path)
                         }
 
                         library.save()

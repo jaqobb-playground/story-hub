@@ -11,6 +11,7 @@ class Novel: Codable, Hashable {
         case _authors = "authors"
         case _status = "status"
         case _chapters = "chapters"
+        case _chaptersRead = "chaptersRead"
         case _sourceType = "sourceType"
     }
 
@@ -22,9 +23,10 @@ class Novel: Codable, Hashable {
     var authors: [String]
     var status: String
     var chapters: [NovelChapter]
+    var chaptersRead: Set<String>
     var sourceType: SourceType
 
-    init(path: String, title: String, coverURL: String, summary: [String], genres: [String], authors: [String], status: String, chapters: [NovelChapter], sourceType: SourceType) {
+    init(path: String, title: String, coverURL: String, summary: [String], genres: [String], authors: [String], status: String, chapters: [NovelChapter], chaptersRead: Set<String>, sourceType: SourceType) {
         self.path = path
         self.title = title
         self.coverURL = coverURL
@@ -33,9 +35,10 @@ class Novel: Codable, Hashable {
         self.authors = authors
         self.status = status
         self.chapters = chapters
+        self.chaptersRead = chaptersRead
         self.sourceType = sourceType
     }
-
+    
     func splitChaptersIntoChunks(chunkSize: Int) -> [[NovelChapter]] {
         return stride(from: 0, to: chapters.count, by: chunkSize).map { startIndex in
             let endIndex = min(startIndex + chunkSize, chapters.count)

@@ -43,6 +43,7 @@ extension Source {
                     authors: authors,
                     status: status,
                     chapters: chapters,
+                    chaptersRead: Set(),
                     sourceType: type
                 )
             } catch {

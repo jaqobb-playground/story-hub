@@ -174,12 +174,7 @@ private struct NovelChaptersChunk: View {
     }
 
     private var allChaptersRead: Bool {
-        for novelChapter in novelChaptersChunk {
-            if !library.isNovelChapterMarkedAsRead(novel: novel, novelChapter: novelChapter) {
-                return false
-            }
-        }
-        return true
+        return novelChaptersChunk.allSatisfy { novel.chaptersRead.contains($0.path) }
     }
 
     var body: some View {
@@ -196,14 +191,14 @@ private struct NovelChaptersChunk: View {
                 .contextMenu {
                     Section {
                         Button {
-                            if library.getNovelChaptersMarkedAsRead(novel: novel) >= novel.chapters.count {
+                            if novel.chaptersRead.count >= novel.chapters.count {
                                 return
                             }
 
                             for novelChapter in novelChaptersChunk {
                                 Logger.library.info("Marking novel's '\(novel.title)' chapter '\(novelChapter.title)' as read...")
 
-                                library.markNovelChapterAsRead(novel: novel, novelChapter: novelChapter)
+                                novel.chaptersRead.insert(novelChapter.path)
                             }
 
                             library.save()
@@ -212,14 +207,14 @@ private struct NovelChaptersChunk: View {
                         }
 
                         Button(role: .destructive) {
-                            if library.getNovelChaptersMarkedAsRead(novel: novel) <= 0 {
+                            if novel.chaptersRead.count <= 0 {
                                 return
                             }
 
                             for novelChapter in novelChaptersChunk {
                                 Logger.library.info("Unmarking novel's '\(novel.title)' chapter '\(novelChapter.title)' as read...")
 
-                                library.unmarkNovelChapterAsRead(novel: novel, novelChapter: novelChapter)
+                                novel.chaptersRead.remove(novelChapter.path)
                             }
 
                             library.save()
@@ -260,13 +255,13 @@ private struct NovelChapters: View {
             NovelChapterView(novel: novel, novelChapter: novelChapter)
         } label: {
             Text(novelChapter.title)
-                .foregroundColor(library.isNovelChapterMarkedAsRead(novel: novel, novelChapter: novelChapter) ? .gray : .primary)
+                .foregroundColor(novel.chaptersRead.contains(novelChapter.path) ? .gray : .primary)
                 .contextMenu {
                     Section {
                         Button {
                             Logger.library.info("Marking novel's '\(novel.title)' chapter '\(novelChapter.title)' as read...")
 
-                            library.markNovelChapterAsRead(novel: novel, novelChapter: novelChapter)
+                            novel.chaptersRead.insert(novelChapter.path)
                             library.save()
                         } label: {
                             Label("Mark as read", systemImage: "checkmark")
@@ -275,7 +270,7 @@ private struct NovelChapters: View {
                         Button(role: .destructive) {
                             Logger.library.info("Unmarking novel's '\(novel.title)' chapter '\(novelChapter.title)' as read...")
 
-                            library.unmarkNovelChapterAsRead(novel: novel, novelChapter: novelChapter)
+                            novel.chaptersRead.remove(novelChapter.path)
                             library.save()
                         } label: {
                             Label("Mark as not read", systemImage: "xmark")

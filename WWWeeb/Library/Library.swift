@@ -6,39 +6,16 @@ import SwiftUI
 class Library: Codable {
     enum CodingKeys: String, CodingKey {
         case _novels = "novels"
-        case _novelChaptersRead = "novelChaptersRead"
     }
 
     var novels: Set<Novel>
-    var novelChaptersRead: [String: Set<String>]
 
     init() {
         novels = Set()
-        novelChaptersRead = [:]
     }
 
     func getNovel(novelPath: String) -> Novel? {
         return novels.first { $0.path == novelPath }
-    }
-
-    func getNovelChaptersRead(novel: Novel) -> Set<String> {
-        return novelChaptersRead[novel.path, default: Set<String>()]
-    }
-
-    func getNovelChaptersMarkedAsRead(novel: Novel) -> Int {
-        return getNovelChaptersRead(novel: novel).count
-    }
-
-    func isNovelChapterMarkedAsRead(novel: Novel, novelChapter: NovelChapter) -> Bool {
-        return getNovelChaptersRead(novel: novel).contains(novelChapter.path)
-    }
-
-    func markNovelChapterAsRead(novel: Novel, novelChapter: NovelChapter) {
-        novelChaptersRead[novel.path, default: Set<String>()].insert(novelChapter.path)
-    }
-
-    func unmarkNovelChapterAsRead(novel: Novel, novelChapter: NovelChapter) {
-        novelChaptersRead[novel.path, default: Set<String>()].remove(novelChapter.path)
     }
 
     func load() {
@@ -55,7 +32,6 @@ class Library: Codable {
 
                 DispatchQueue.main.async {
                     self.novels = decodedData.novels
-                    self.novelChaptersRead = decodedData.novelChaptersRead
                 }
             } catch {
                 // TODO: Implement migration system for outdated libraries.
