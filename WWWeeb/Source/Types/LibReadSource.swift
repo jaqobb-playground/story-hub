@@ -46,7 +46,7 @@ extension Source {
                     sourceType: type
                 )
             } catch {
-                throw NovelError.parsingError(description: "Error parsing novel \(novelPath)): \(error.localizedDescription)")
+                throw NovelError.parsingError(description: "Error parsing novel '\(novelPath)': \(error.localizedDescription)")
             }
         }
 
@@ -64,7 +64,7 @@ extension Source {
                     contents: contents
                 )
             } catch {
-                throw NovelError.parsingError(description: "Error parsing novel chapter (\(novelChapterPath)): \(error.localizedDescription)")
+                throw NovelError.parsingError(description: "Error parsing novel chapter '\(novelChapterPath)': \(error.localizedDescription)")
             }
         }
 
