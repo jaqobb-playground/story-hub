@@ -61,11 +61,9 @@ struct NovelView: View {
         }
         .refreshable {
             if let novel = novelUsed {
-                Task.init {
-                    try await novel.update()
+                await novel.update()
 
-                    library.save()
-                }
+                library.save()
             }
         }
     }

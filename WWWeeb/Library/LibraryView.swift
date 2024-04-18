@@ -36,15 +36,13 @@ struct LibraryView: View {
             }
             .navigationTitle("Library")
             .refreshable {
-                Task.init {
-                    Logger.library.info("Updating novels...")
+                Logger.library.info("Updating novels...")
 
-                    for novel in library.novels {
-                        try await novel.update()
-                    }
-
-                    library.save()
+                for novel in library.novels {
+                    await novel.update()
                 }
+
+                library.save()
             }
         }
     }
@@ -152,7 +150,7 @@ private struct NovelCell: View {
                     
                     Button {
                         Task.init {
-                            try await novel.update()
+                            await novel.update()
 
                             library.save()
                         }

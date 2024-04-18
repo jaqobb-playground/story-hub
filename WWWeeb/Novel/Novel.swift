@@ -47,7 +47,7 @@ class Novel: Codable, Hashable {
         }
     }
 
-    func update() async throws {
+    func update() async {
         Logger.library.info("Updating novel '\(self.title)'...")
 
         let chaptersCount = self.chapters.count
