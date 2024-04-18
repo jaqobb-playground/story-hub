@@ -59,6 +59,15 @@ struct NovelView: View {
                 }
             }
         }
+        .refreshable {
+            if let novel = novelUsed {
+                Task.init {
+                    try await novel.update()
+
+                    library.save()
+                }
+            }
+        }
     }
 }
 
@@ -136,7 +145,7 @@ private struct NovelInformation: View {
         }
 
         Section {
-            if library.getNovel(novelPath: novel.path) == nil {
+            if !library.novels.contains(novel) {
                 Button("Add to library") {
                     Logger.library.info("Adding novel '\(novel.title)' to the library...")
 
@@ -191,33 +200,33 @@ private struct NovelChaptersChunk: View {
                 .contextMenu {
                     Section {
                         Button {
-                            if novel.chaptersRead.count >= novel.chapters.count {
-                                return
-                            }
-
+                            var novelChaptersReadChanged = false
                             for novelChapter in novelChaptersChunk {
-                                Logger.library.info("Marking novel's '\(novel.title)' chapter '\(novelChapter.title)' as read...")
-
-                                novel.chaptersRead.insert(novelChapter.path)
+                                let (inserted, _) = novel.chaptersRead.insert(novelChapter.path)
+                                if inserted {
+                                    novelChaptersReadChanged = true
+                                }
                             }
 
-                            library.save()
+                            if novelChaptersReadChanged {
+                                library.save()
+                            }
                         } label: {
                             Label("Mark as read", systemImage: "checkmark")
                         }
 
                         Button(role: .destructive) {
-                            if novel.chaptersRead.count <= 0 {
-                                return
-                            }
-
+                            var novelChaptersReadChanged = false
                             for novelChapter in novelChaptersChunk {
-                                Logger.library.info("Unmarking novel's '\(novel.title)' chapter '\(novelChapter.title)' as read...")
-
-                                novel.chaptersRead.remove(novelChapter.path)
+                                let removed = novel.chaptersRead.remove(novelChapter.path) != nil
+                                if removed {
+                                    novelChaptersReadChanged = true
+                                }
                             }
 
-                            library.save()
+                            if novelChaptersReadChanged {
+                                library.save()
+                            }
                         } label: {
                             Label("Mark as not read", systemImage: "xmark")
                         }
@@ -259,19 +268,19 @@ private struct NovelChapters: View {
                 .contextMenu {
                     Section {
                         Button {
-                            Logger.library.info("Marking novel's '\(novel.title)' chapter '\(novelChapter.title)' as read...")
-
-                            novel.chaptersRead.insert(novelChapter.path)
-                            library.save()
+                            let (inserted, _) = novel.chaptersRead.insert(novelChapter.path)
+                            if inserted {
+                                library.save()
+                            }
                         } label: {
                             Label("Mark as read", systemImage: "checkmark")
                         }
 
                         Button(role: .destructive) {
-                            Logger.library.info("Unmarking novel's '\(novel.title)' chapter '\(novelChapter.title)' as read...")
-
-                            novel.chaptersRead.remove(novelChapter.path)
-                            library.save()
+                            let removed = novel.chaptersRead.remove(novelChapter.path) != nil
+                            if removed {
+                                library.save()
+                            }
                         } label: {
                             Label("Mark as not read", systemImage: "xmark")
                         }

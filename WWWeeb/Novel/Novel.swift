@@ -1,4 +1,5 @@
 import Observation
+import OSLog
 
 @Observable
 class Novel: Codable, Hashable {
@@ -47,14 +48,26 @@ class Novel: Codable, Hashable {
     }
 
     func update() async throws {
-        let novelUpdated = try await sourceType.source.parseNovel(novelPath: path)
-        title = novelUpdated.title
-        coverURL = novelUpdated.coverURL
-        summary = novelUpdated.summary
-        genres = novelUpdated.genres
-        authors = novelUpdated.authors
-        status = novelUpdated.status
-        chapters = novelUpdated.chapters
+        Logger.library.info("Updating novel '\(self.title)'...")
+
+        let chaptersCount = self.chapters.count
+        do {
+            let novelUpdated = try await sourceType.source.parseNovel(novelPath: path)
+            
+            title = novelUpdated.title
+            coverURL = novelUpdated.coverURL
+            summary = novelUpdated.summary
+            genres = novelUpdated.genres
+            authors = novelUpdated.authors
+            status = novelUpdated.status
+            chapters = novelUpdated.chapters
+
+            Logger.library.info("Novel '\(self.title)' updated; \(self.chapters.count - chaptersCount) new chapters found.")
+        } catch {
+            Logger.library.warning("Failed to update novel '\(self.title)': \(error.localizedDescription)")
+
+            AlertUtils.showAlert(title: "Failed to update novel '\(self.title)'", message: error.localizedDescription)
+        }
     }
 
     func hash(into hasher: inout Hasher) {

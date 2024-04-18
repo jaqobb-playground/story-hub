@@ -6,15 +6,9 @@ struct SettingsView: View {
             Form {
                 Section(header: Text("About")) {
                     LabeledContent {
-                        Text(getAppVersion())
+                        Text("\(getAppVersion()).\(getAppBuild())")
                     } label: {
                         Text("Version")
-                    }
-
-                    LabeledContent {
-                        Text(getAppBuild())
-                    } label: {
-                        Text("Build")
                     }
                 }
             }

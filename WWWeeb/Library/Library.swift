@@ -14,10 +14,6 @@ class Library: Codable {
         novels = Set()
     }
 
-    func getNovel(novelPath: String) -> Novel? {
-        return novels.first { $0.path == novelPath }
-    }
-
     func load() {
         Task.init {
             do {
@@ -63,6 +59,12 @@ class Library: Codable {
                 create: true
             )
             .appendingPathComponent("library.data")
+    }
+}
+
+extension Set where Element == Novel {
+    subscript(_ path: String) -> Novel? {
+        return first { $0.path == path }
     }
 }
 

@@ -37,19 +37,10 @@ struct LibraryView: View {
             .navigationTitle("Library")
             .refreshable {
                 Task.init {
-                    Logger.library.info("Updating library novels...")
+                    Logger.library.info("Updating novels...")
 
                     for novel in library.novels {
-                        let novelChaptersCount = novel.chapters.count
-                        do {
-                            try await novel.update()
-
-                            Logger.library.info("Novel '\(novel.title)' updated; \(novel.chapters.count - novelChaptersCount) new chapters found.")
-                        } catch {
-                            Logger.library.warning("Failed to update novel '\(novel.title)': \(error.localizedDescription)")
-
-                            AlertUtils.showAlert(title: "Failed to update novel '\(novel.title)'", message: error.localizedDescription)
-                        }
+                        try await novel.update()
                     }
 
                     library.save()
@@ -118,45 +109,55 @@ private struct NovelCell: View {
             .contextMenu {
                 Section {
                     Button {
-                        if novel.chaptersRead.count >= novel.chapters.count {
-                            return
-                        }
-
+                        var novelChaptersReadChanged = false
                         for novelChapter in novel.chapters {
-                            Logger.library.info("Marking novel's '\(novel.title)' chapter '\(novelChapter.title)' as read...")
-
-                            novel.chaptersRead.insert(novelChapter.path)
+                            let (inserted, _) = novel.chaptersRead.insert(novelChapter.path)
+                            if inserted {
+                                novelChaptersReadChanged = true
+                            }
                         }
 
-                        library.save()
+                        if novelChaptersReadChanged {
+                            library.save()
+                        }
                     } label: {
                         Label("Mark as read", systemImage: "checkmark")
                     }
 
                     Button(role: .destructive) {
-                        if novel.chaptersRead.count <= 0 {
-                            return
-                        }
-
+                        var novelChaptersReadChanged = false
                         for novelChapter in novel.chapters {
-                            Logger.library.info("Unmarking novel's '\(novel.title)' chapter '\(novelChapter.title)' as read...")
-
-                            novel.chaptersRead.remove(novelChapter.path)
+                            let removed = novel.chaptersRead.remove(novelChapter.path) != nil
+                            if removed {
+                                novelChaptersReadChanged = true
+                            }
                         }
 
-                        library.save()
+                        if novelChaptersReadChanged {
+                            library.save()
+                        }
                     } label: {
                         Label("Mark as not read", systemImage: "xmark")
                     }
                 }
 
-                // TODO: Implement
                 Section {
+                    // TODO: Implement
                     Menu {
                         Text("Reading")
                         Text("Completed")
                     } label: {
                         Label("Change category to", systemImage: "arrow.up.arrow.down")
+                    }
+                    
+                    Button {
+                        Task.init {
+                            try await novel.update()
+
+                            library.save()
+                        }
+                    } label: {
+                        Label("Update", systemImage: "arrow.clockwise")
                     }
                 }
 

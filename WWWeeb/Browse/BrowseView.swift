@@ -34,7 +34,7 @@ struct BrowseView: View {
 
                 LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 2) {
                     ForEach(novelPreviews, id: \.path) { novelPreview in
-                        NovelPreviewCell(novelPreview: novelPreview, novel: library.getNovel(novelPath: novelPreview.path))
+                        NovelPreviewCell(novelPreview: novelPreview, novel: library.novels[novelPreview.path])
                     }
                 }
             }
