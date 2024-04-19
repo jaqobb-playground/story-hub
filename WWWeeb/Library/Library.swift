@@ -38,7 +38,7 @@ class Library: Codable {
                         }
                         
                         if $0.chaptersRead.count != 0 && $1.chaptersRead.count == 0 {
-                            return true
+                            return false
                         }
                         
                         return $0.title < $1.title
