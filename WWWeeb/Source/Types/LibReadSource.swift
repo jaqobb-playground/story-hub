@@ -44,6 +44,9 @@ extension Source {
                     status: status,
                     chapters: chapters,
                     chaptersRead: Set(),
+                    dateAdded: Date.now,
+                    dateUpdated: Date.now,
+                    category: .reading,
                     sourceType: type
                 )
             } catch {

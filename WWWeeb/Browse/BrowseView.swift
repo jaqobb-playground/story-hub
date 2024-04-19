@@ -8,23 +8,23 @@ struct BrowseView: View {
     var library
 
     @State
+    var novelsSearchInProgress = false
+    @State
     var novelsSearchText = ""
     @State
     var novelPreviews: [NovelPreview] = []
-    @State
-    var midNovelSearch = false
 
     var body: some View {
         NavigationView {
             ScrollView(.vertical) {
                 HStack {
-                    TextField("Enter novel title...", text: $novelsSearchText, onCommit: { performNovelSearch() })
+                    TextField("Enter novel title...", text: $novelsSearchText, onCommit: { performNovelsSearch() })
                         .textFieldStyle(RoundedBorderTextFieldStyle())
                         .padding(.leading)
                         .autocorrectionDisabled()
                         .textInputAutocapitalization(.never)
 
-                    Button(action: { performNovelSearch() }) {
+                    Button(action: { performNovelsSearch() }) {
                         Image(systemName: "magnifyingglass")
                     }
                     .padding(.trailing)
@@ -42,16 +42,15 @@ struct BrowseView: View {
         }
     }
 
-    private func performNovelSearch() {
-        if midNovelSearch {
+    private func performNovelsSearch() {
+        if novelsSearchInProgress {
             return
         }
         
         if !novelsSearchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-            Logger.library.info("Performing novel search...")
+            Logger.library.info("Performing novels search...")
             
-            midNovelSearch = true
-            
+            novelsSearchInProgress = true
             novelPreviews = []
             
             Task.init {
@@ -70,7 +69,7 @@ struct BrowseView: View {
                     }
                 }
                 
-                midNovelSearch = false
+                novelsSearchInProgress = false
             }
         }
     }

@@ -70,6 +70,8 @@ struct NovelView: View {
 }
 
 private struct NovelInformation: View {
+    @Environment(\.presentationMode)
+    var presentationMode
     @Environment(\.library)
     var library
 
@@ -124,7 +126,7 @@ private struct NovelInformation: View {
                     Text(summaryContent)
                 }
             } label: {
-                Label("Summary", systemImage: "book")
+                Label("Summary", systemImage: "text.book.closed")
             }
 
             LabeledContent {
@@ -145,6 +147,8 @@ private struct NovelInformation: View {
         Section {
             if !library.novels.contains(novel) {
                 Button("Add to library") {
+                    presentationMode.wrappedValue.dismiss()
+                    
                     Logger.library.info("Adding novel '\(novel.title)' to the library...")
 
                     library.novels.insert(novel)
@@ -153,6 +157,8 @@ private struct NovelInformation: View {
                 .frame(maxWidth: .infinity, alignment: .center)
             } else {
                 Button("Remove from library") {
+                    presentationMode.wrappedValue.dismiss()
+                    
                     Logger.library.info("Removing novel '\(novel.title)' from the library...")
 
                     library.novels.remove(novel)

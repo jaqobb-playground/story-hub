@@ -4,14 +4,52 @@ import SwiftUI
 
 @Observable
 class Library: Codable {
+    enum NovelsSortingMode: String, Identifiable, Codable, CaseIterable {
+        case title
+        case date_added
+        case date_updated
+
+        var id: String {
+            rawValue
+        }
+
+        var name: String {
+            switch self {
+                case .title:
+                    return "Title"
+                case .date_added:
+                    return "Date added"
+                case .date_updated:
+                    return "Date updated"
+            }
+        }
+
+        func comparator() -> (Novel, Novel) -> Bool {
+            switch self {
+                case .title:
+                    return { $0.title < $1.title }
+                case .date_added:
+                    return { $0.dateAdded > $1.dateAdded }
+                case .date_updated:
+                    return { $0.dateUpdated > $1.dateUpdated }
+            }
+        }
+    }
+
     enum CodingKeys: String, CodingKey {
         case _novels = "novels"
+        case _novelsCategoryIncludes = "novelsCategoryIncludes"
+        case _novelsSortingMode = "novelsSortingMode"
     }
 
     var novels: Set<Novel>
+    var novelsCategoryIncludes: Set<Novel.Category>
+    var novelsSortingMode: NovelsSortingMode
 
     init() {
-        novels = Set()
+        novels = []
+        novelsCategoryIncludes = [.reading]
+        novelsSortingMode = .title
     }
 
     func load() {
@@ -59,12 +97,6 @@ class Library: Codable {
                 create: true
             )
             .appendingPathComponent("library.data")
-    }
-}
-
-extension Set where Element == Novel {
-    subscript(_ path: String) -> Novel? {
-        return first { $0.path == path }
     }
 }
 

@@ -3,6 +3,24 @@ import OSLog
 
 @Observable
 class Novel: Codable, Hashable {
+    enum Category: String, Identifiable, Codable, CaseIterable {
+        case reading
+        case completed
+
+        var id: String {
+            rawValue
+        }
+
+        var name: String {
+            switch self {
+                case .reading:
+                    return "Reading"
+                case .completed:
+                    return "Completed"
+            }
+        }
+    }
+
     enum CodingKeys: String, CodingKey {
         case _path = "path"
         case _title = "title"
@@ -13,6 +31,9 @@ class Novel: Codable, Hashable {
         case _status = "status"
         case _chapters = "chapters"
         case _chaptersRead = "chaptersRead"
+        case _dateAdded = "dateAdded"
+        case _dateUpdated = "dateUpdated"
+        case _category = "category"
         case _sourceType = "sourceType"
     }
 
@@ -25,9 +46,26 @@ class Novel: Codable, Hashable {
     var status: String
     var chapters: [NovelChapter]
     var chaptersRead: Set<String>
+    var dateAdded: Date
+    var dateUpdated: Date
+    var category: Category
     var sourceType: SourceType
 
-    init(path: String, title: String, coverURL: String, summary: [String], genres: [String], authors: [String], status: String, chapters: [NovelChapter], chaptersRead: Set<String>, sourceType: SourceType) {
+    init(
+        path: String,
+        title: String,
+        coverURL: String,
+        summary: [String],
+        genres: [String],
+        authors: [String],
+        status: String,
+        chapters: [NovelChapter],
+        chaptersRead: Set<String>,
+        dateAdded: Date,
+        dateUpdated: Date,
+        category: Category,
+        sourceType: SourceType
+    ) {
         self.path = path
         self.title = title
         self.coverURL = coverURL
@@ -37,9 +75,12 @@ class Novel: Codable, Hashable {
         self.status = status
         self.chapters = chapters
         self.chaptersRead = chaptersRead
+        self.dateAdded = dateAdded
+        self.dateUpdated = dateUpdated
+        self.category = category
         self.sourceType = sourceType
     }
-    
+
     func splitChaptersIntoChunks(chunkSize: Int) -> [[NovelChapter]] {
         return stride(from: 0, to: chapters.count, by: chunkSize).map { startIndex in
             let endIndex = min(startIndex + chunkSize, chapters.count)
@@ -48,25 +89,32 @@ class Novel: Codable, Hashable {
     }
 
     func update() async {
-        Logger.library.info("Updating novel '\(self.title)'...")
+        let novelTitle = title
+        let novelChaptersCount = chapters.count
+        
+        Logger.library.info("Updating novel '\(novelTitle)'...")
 
-        let chaptersCount = self.chapters.count
         do {
-            let novelUpdated = try await sourceType.source.parseNovel(novelPath: path)
+            let newNovel = try await sourceType.source.parseNovel(novelPath: path)
+
+            title = newNovel.title
+            coverURL = newNovel.coverURL
+            summary = newNovel.summary
+            genres = newNovel.genres
+            authors = newNovel.authors
+            status = newNovel.status
+            chapters = newNovel.chapters
             
-            title = novelUpdated.title
-            coverURL = novelUpdated.coverURL
-            summary = novelUpdated.summary
-            genres = novelUpdated.genres
-            authors = novelUpdated.authors
-            status = novelUpdated.status
-            chapters = novelUpdated.chapters
+            let newNovelChaptersCount = chapters.count
+            if newNovelChaptersCount != novelChaptersCount {
+                dateUpdated = Date.now
+            }
 
-            Logger.library.info("Novel '\(self.title)' updated; \(self.chapters.count - chaptersCount) new chapters found.")
+            Logger.library.info("Novel '\(novelTitle)' updated; \(newNovelChaptersCount - novelChaptersCount) new chapters found.")
         } catch {
-            Logger.library.warning("Failed to update novel '\(self.title)': \(error.localizedDescription)")
+            Logger.library.warning("Failed to update novel '\(novelTitle)': \(error.localizedDescription)")
 
-            AlertUtils.showAlert(title: "Failed to update novel '\(self.title)'", message: error.localizedDescription)
+            AlertUtils.showAlert(title: "Failed to update novel '\(novelTitle)'", message: error.localizedDescription)
         }
     }
 
@@ -76,6 +124,12 @@ class Novel: Codable, Hashable {
 
     static func == (lhs: Novel, rhs: Novel) -> Bool {
         return lhs.path == rhs.path
+    }
+}
+
+extension Set where Element == Novel {
+    subscript(_ path: String) -> Novel? {
+        return first { $0.path == path }
     }
 }
 
