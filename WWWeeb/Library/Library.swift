@@ -6,6 +6,7 @@ import SwiftUI
 class Library: Codable {
     enum NovelsSortingMode: String, Identifiable, Codable, CaseIterable {
         case title
+        case unread
         case date_added
         case date_updated
 
@@ -17,6 +18,8 @@ class Library: Codable {
             switch self {
                 case .title:
                     return "Title"
+                case .unread:
+                    return "Unread"
                 case .date_added:
                     return "Date added"
                 case .date_updated:
@@ -28,6 +31,18 @@ class Library: Codable {
             switch self {
                 case .title:
                     return { $0.title < $1.title }
+                case .unread:
+                    return {
+                        if $0.chaptersRead.count == 0 && $1.chaptersRead.count != 0 {
+                            return true
+                        }
+                        
+                        if $0.chaptersRead.count != 0 && $1.chaptersRead.count == 0 {
+                            return true
+                        }
+                        
+                        return $0.title < $1.title
+                    }
                 case .date_added:
                     return { $0.dateAdded > $1.dateAdded }
                 case .date_updated:
@@ -60,12 +75,14 @@ class Library: Codable {
                 guard let data = try? Data(contentsOf: Self.fileURL()) else {
                     return
                 }
-
+                
                 let decoder = JSONDecoder()
                 let decodedData = try decoder.decode(Library.self, from: data)
 
                 DispatchQueue.main.async {
                     self.novels = decodedData.novels
+                    self.novelsCategoryIncludes = decodedData.novelsCategoryIncludes
+                    self.novelsSortingMode = decodedData.novelsSortingMode
                 }
             } catch {
                 // TODO: Implement migration system for outdated libraries.

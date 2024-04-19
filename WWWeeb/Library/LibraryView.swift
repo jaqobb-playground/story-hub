@@ -207,6 +207,8 @@ private struct NovelCell: View {
 
                         if novelChaptersReadChanged {
                             library.save()
+                            
+                            performNovelsSearch()
                         }
                     } label: {
                         Label("Mark as read", systemImage: "checkmark")
@@ -223,6 +225,8 @@ private struct NovelCell: View {
 
                         if novelChaptersReadChanged {
                             library.save()
+                            
+                            performNovelsSearch()
                         }
                     } label: {
                         Label("Mark as not read", systemImage: "xmark")
@@ -257,6 +261,8 @@ private struct NovelCell: View {
                             await novel.update()
 
                             library.save()
+                            
+                            performNovelsSearch()
                         }
                     } label: {
                         Label("Update", systemImage: "arrow.clockwise")
@@ -269,6 +275,8 @@ private struct NovelCell: View {
 
                         library.novels.remove(novel)
                         library.save()
+                        
+                        performNovelsSearch()
                     } label: {
                         Label("Remove from library", systemImage: "trash")
                     }
