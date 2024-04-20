@@ -104,13 +104,11 @@ class Novel: Codable, Hashable {
             authors = newNovel.authors
             status = newNovel.status
             chapters = newNovel.chapters
+            dateUpdated = Date.now
             
             let newNovelChaptersCount = chapters.count
-            if newNovelChaptersCount != novelChaptersCount {
-                dateUpdated = Date.now
-            }
 
-            Logger.library.info("Novel '\(novelTitle)' updated; \(newNovelChaptersCount - novelChaptersCount) new chapters found.")
+            Logger.library.info("Novel '\(novelTitle)' updated; \(newNovelChaptersCount - novelChaptersCount) new chapter(s) found.")
         } catch {
             Logger.library.warning("Failed to update novel '\(novelTitle)': \(error.localizedDescription)")
 

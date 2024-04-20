@@ -76,9 +76,12 @@ private struct NovelInformation: View {
     var library
 
     let novel: Novel
+    @State
+    var novelCategory: Novel.Category
 
     init(_ novel: Novel) {
         self.novel = novel
+        novelCategory = novel.category
     }
 
     var body: some View {
@@ -134,6 +137,35 @@ private struct NovelInformation: View {
             } label: {
                 Label("Status", systemImage: "clock")
             }
+
+            if library.novels.contains(novel) {
+                LabeledContent {
+                    Text(novel.dateAdded.formatted())
+                } label: {
+                    Label("Date added", systemImage: "calendar.badge.plus")
+                }
+
+                LabeledContent {
+                    Text(novel.dateUpdated.formatted())
+                } label: {
+                    Label("Date updated", systemImage: "calendar.badge.clock")
+                }
+
+                Picker(selection: $novelCategory) {
+                    ForEach(Novel.Category.allCases, id: \.self) { category in
+                        Text(category.name).tag(category)
+                    }
+                } label: {
+                    Label("Category", systemImage: "book")
+                }
+                .onChange(of: novelCategory) {
+                    Logger.library.info("Changing novel's '\(novel.title)' category to '\(novelCategory.name)'...")
+
+                    novel.category = novelCategory
+
+                    library.save()
+                }
+            }
         }
 
         Section(header: Text("Chapters")) {
@@ -148,7 +180,7 @@ private struct NovelInformation: View {
             if !library.novels.contains(novel) {
                 Button("Add to library") {
                     presentationMode.wrappedValue.dismiss()
-                    
+
                     Logger.library.info("Adding novel '\(novel.title)' to the library...")
 
                     library.novels.insert(novel)
@@ -158,7 +190,7 @@ private struct NovelInformation: View {
             } else {
                 Button("Remove from library") {
                     presentationMode.wrappedValue.dismiss()
-                    
+
                     Logger.library.info("Removing novel '\(novel.title)' from the library...")
 
                     library.novels.remove(novel)
