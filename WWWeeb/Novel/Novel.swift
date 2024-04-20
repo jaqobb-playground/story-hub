@@ -1,5 +1,6 @@
 import Observation
 import OSLog
+import SwiftUI
 
 @Observable
 class Novel: Codable, Hashable {
@@ -49,6 +50,13 @@ class Novel: Codable, Hashable {
     var dateAdded: Date
     var dateUpdated: Date
     var category: Category
+    var categoryBinding: Binding<Category> {
+        Binding(
+            get: { self.category },
+            set: { self.category = $0 }
+        )
+    }
+
     var sourceType: SourceType
 
     init(
@@ -89,11 +97,6 @@ class Novel: Codable, Hashable {
     }
 
     func update() async {
-        let novelTitle = title
-        let novelChaptersCount = chapters.count
-        
-        Logger.library.info("Updating novel '\(novelTitle)'...")
-
         do {
             let newNovel = try await sourceType.source.parseNovel(novelPath: path)
 
@@ -105,14 +108,8 @@ class Novel: Codable, Hashable {
             status = newNovel.status
             chapters = newNovel.chapters
             dateUpdated = Date.now
-            
-            let newNovelChaptersCount = chapters.count
-
-            Logger.library.info("Novel '\(novelTitle)' updated; \(newNovelChaptersCount - novelChaptersCount) new chapter(s) found.")
         } catch {
-            Logger.library.warning("Failed to update novel '\(novelTitle)': \(error.localizedDescription)")
-
-            AlertUtils.showAlert(title: "Failed to update novel '\(novelTitle)'", message: error.localizedDescription)
+            AlertUtils.showAlert(title: "Failed to update novel '\(title)'", message: error.localizedDescription)
         }
     }
 

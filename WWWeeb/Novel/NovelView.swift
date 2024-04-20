@@ -5,9 +5,9 @@ import SwiftUI
 
 struct NovelView: View {
     @Environment(\.presentationMode)
-    var presentationMode
+    private var presentationMode
     @Environment(\.library)
-    var library
+    private var library
 
     var novel: Novel?
     var novelPreview: NovelPreview?
@@ -44,13 +44,9 @@ struct NovelView: View {
             } else {
                 if let novelPreview = novelPreview {
                     Task.init {
-                        Logger.library.info("Fetching novel '\(novelPreview.title)'...")
-
                         do {
                             novelUsed = try await novelPreview.sourceType.source.parseNovel(novelPath: novelPreview.path)
                         } catch {
-                            Logger.library.warning("Failed to fetch novel '\(novelPreview.title)': \(error.localizedDescription)")
-
                             AlertUtils.showAlert(title: "Failed to fetch novel '\(novelPreview.title)'", message: error.localizedDescription) { _ in
                                 presentationMode.wrappedValue.dismiss()
                             }
@@ -62,8 +58,6 @@ struct NovelView: View {
         .refreshable {
             if let novel = novelUsed {
                 await novel.update()
-
-                library.save()
             }
         }
     }
@@ -71,17 +65,14 @@ struct NovelView: View {
 
 private struct NovelInformation: View {
     @Environment(\.presentationMode)
-    var presentationMode
+    private var presentationMode
     @Environment(\.library)
-    var library
+    private var library
 
     let novel: Novel
-    @State
-    var novelCategory: Novel.Category
 
     init(_ novel: Novel) {
         self.novel = novel
-        novelCategory = novel.category
     }
 
     var body: some View {
@@ -151,28 +142,14 @@ private struct NovelInformation: View {
                     Label("Date updated", systemImage: "calendar.badge.clock")
                 }
 
-                Picker(selection: $novelCategory) {
+                Picker(selection: novel.categoryBinding) {
                     ForEach(Novel.Category.allCases, id: \.self) { category in
                         Text(category.name).tag(category)
                     }
                 } label: {
                     Label("Category", systemImage: "book")
                 }
-                .onChange(of: novelCategory) {
-                    if novelCategory.id == novel.category.id {
-                        return
-                    }
-                    
-                    Logger.library.info("Changing novel's '\(novel.title)' category to '\(novelCategory.name)'...")
-
-                    novel.category = novelCategory
-
-                    library.save()
-                }
             }
-        }
-        .onAppear {
-            novelCategory = novel.category
         }
 
         Section(header: Text("Chapters")) {
@@ -187,21 +164,15 @@ private struct NovelInformation: View {
             if !library.novels.contains(novel) {
                 Button("Add to library") {
                     presentationMode.wrappedValue.dismiss()
-
-                    Logger.library.info("Adding novel '\(novel.title)' to the library...")
-
+                    
                     library.novels.insert(novel)
-                    library.save()
                 }
                 .frame(maxWidth: .infinity, alignment: .center)
             } else {
                 Button("Remove from library") {
                     presentationMode.wrappedValue.dismiss()
 
-                    Logger.library.info("Removing novel '\(novel.title)' from the library...")
-
                     library.novels.remove(novel)
-                    library.save()
                 }
                 .foregroundColor(.red)
                 .frame(maxWidth: .infinity, alignment: .center)
@@ -212,7 +183,7 @@ private struct NovelInformation: View {
 
 private struct NovelChaptersChunk: View {
     @Environment(\.library)
-    var library
+    private var library
 
     let novel: Novel
     let novelChaptersChunk: [NovelChapter]
@@ -243,32 +214,16 @@ private struct NovelChaptersChunk: View {
                 .contextMenu {
                     Section {
                         Button {
-                            var novelChaptersReadChanged = false
                             for novelChapter in novelChaptersChunk {
-                                let (inserted, _) = novel.chaptersRead.insert(novelChapter.path)
-                                if inserted {
-                                    novelChaptersReadChanged = true
-                                }
-                            }
-
-                            if novelChaptersReadChanged {
-                                library.save()
+                                novel.chaptersRead.insert(novelChapter.path)
                             }
                         } label: {
                             Label("Mark as read", systemImage: "checkmark")
                         }
 
                         Button(role: .destructive) {
-                            var novelChaptersReadChanged = false
                             for novelChapter in novelChaptersChunk {
-                                let removed = novel.chaptersRead.remove(novelChapter.path) != nil
-                                if removed {
-                                    novelChaptersReadChanged = true
-                                }
-                            }
-
-                            if novelChaptersReadChanged {
-                                library.save()
+                                novel.chaptersRead.remove(novelChapter.path)
                             }
                         } label: {
                             Label("Mark as not read", systemImage: "xmark")
@@ -297,7 +252,7 @@ private struct NovelChaptersChunkDetails: View {
 
 private struct NovelChapters: View {
     @Environment(\.library)
-    var library
+    private var library
 
     let novel: Novel
     let novelChapter: NovelChapter
@@ -311,19 +266,13 @@ private struct NovelChapters: View {
                 .contextMenu {
                     Section {
                         Button {
-                            let (inserted, _) = novel.chaptersRead.insert(novelChapter.path)
-                            if inserted {
-                                library.save()
-                            }
+                            novel.chaptersRead.insert(novelChapter.path)
                         } label: {
                             Label("Mark as read", systemImage: "checkmark")
                         }
 
                         Button(role: .destructive) {
-                            let removed = novel.chaptersRead.remove(novelChapter.path) != nil
-                            if removed {
-                                library.save()
-                            }
+                            novel.chaptersRead.remove(novelChapter.path)
                         } label: {
                             Label("Mark as not read", systemImage: "xmark")
                         }

@@ -5,7 +5,7 @@ import SwiftUI
 
 struct LibraryView: View {
     @Environment(\.library)
-    var library
+    private var library
 
     @State
     var novelsSearchInProgress = false
@@ -33,16 +33,10 @@ struct LibraryView: View {
                                 ForEach(Novel.Category.allCases, id: \.id) { novelCategory in
                                     Button {
                                         if !library.novelsCategoryIncludes.contains(novelCategory) {
-                                            Logger.library.info("Adding '\(novelCategory.name)' to library's novels category includes...")
-
                                             library.novelsCategoryIncludes.insert(novelCategory)
                                         } else {
-                                            Logger.library.info("Removing '\(novelCategory.name)' from library's novels category includes...")
-
                                             library.novelsCategoryIncludes.remove(novelCategory)
                                         }
-
-                                        library.save()
 
                                         performNovelsSearch()
                                     } label: {
@@ -65,10 +59,7 @@ struct LibraryView: View {
                                         Label(novelsSortingMode.name, systemImage: "checkmark")
                                     } else {
                                         Button {
-                                            Logger.library.info("Changing sorting mode to '\(novelsSortingMode.name)'...")
-
                                             library.novelsSortingMode = novelsSortingMode
-                                            library.save()
 
                                             performNovelsSearch()
                                         } label: {
@@ -95,14 +86,8 @@ struct LibraryView: View {
             }
             .navigationTitle("Library")
             .refreshable {
-                Logger.library.info("Updating novels...")
-
                 for novel in novels {
                     await novel.update()
-                }
-
-                if !novels.isEmpty {
-                    library.save()
                 }
             }
             .onAppear {
@@ -118,8 +103,6 @@ struct LibraryView: View {
         if novelsSearchInProgress {
             return
         }
-
-        Logger.library.info("Performing novels search...")
 
         novelsSearchInProgress = true
         novels = []
@@ -145,7 +128,7 @@ struct LibraryView: View {
 
 private struct NovelCell: View {
     @Environment(\.library)
-    var library
+    private var library
 
     let novel: Novel
 
@@ -206,8 +189,6 @@ private struct NovelCell: View {
                         }
 
                         if novelChaptersReadChanged {
-                            library.save()
-                            
                             performNovelsSearch()
                         }
                     } label: {
@@ -224,8 +205,6 @@ private struct NovelCell: View {
                         }
 
                         if novelChaptersReadChanged {
-                            library.save()
-                            
                             performNovelsSearch()
                         }
                     } label: {
@@ -240,11 +219,7 @@ private struct NovelCell: View {
                                 Label(novelCategory.name, systemImage: "checkmark")
                             } else {
                                 Button {
-                                    Logger.library.info("Changing novel's '\(novel.title)' category to '\(novelCategory.name)'...")
-
                                     novel.category = novelCategory
-
-                                    library.save()
 
                                     performNovelsSearch()
                                 } label: {
@@ -259,8 +234,6 @@ private struct NovelCell: View {
                     Button {
                         Task.init {
                             await novel.update()
-
-                            library.save()
                             
                             performNovelsSearch()
                         }
@@ -271,10 +244,7 @@ private struct NovelCell: View {
 
                 Section {
                     Button(role: .destructive) {
-                        Logger.library.info("Removing novel '\(novel.title)' from the library...")
-
                         library.novels.remove(novel)
-                        library.save()
                         
                         performNovelsSearch()
                     } label: {

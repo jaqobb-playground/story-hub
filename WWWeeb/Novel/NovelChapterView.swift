@@ -3,7 +3,7 @@ import SwiftUI
 
 struct NovelChapterView: View {
     @Environment(\.presentationMode)
-    var presentationMode
+    private var presentationMode
 
     let novel: Novel
     let novelChapter: NovelChapter
@@ -27,13 +27,9 @@ struct NovelChapterView: View {
         .navigationBarTitleDisplayMode(.inline)
         .onAppear {
             Task.init {
-                Logger.library.info("Fetching novel's '\(novel.title)' chapter '\(novelChapter.title)' content...")
-
                 do {
                     novelChapterContent = try await novel.sourceType.source.parseNovelChapter(novelChapterPath: novelChapter.path)
                 } catch {
-                    Logger.library.warning("Failed to fetch novel's '\(novel.title)' chapter '\(novelChapter.title)' content: \(error.localizedDescription)")
-
                     AlertUtils.showAlert(title: "Failed to fetch novel's '\(novel.title)' chapter '\(novelChapter.title)' content", message: error.localizedDescription) { _ in
                         presentationMode.wrappedValue.dismiss()
                     }

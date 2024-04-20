@@ -5,7 +5,7 @@ import OSLog
 
 struct BrowseView: View {
     @Environment(\.library)
-    var library
+    private var library
 
     @State
     var novelsSearchInProgress = false
@@ -48,8 +48,6 @@ struct BrowseView: View {
         }
         
         if !novelsSearchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-            Logger.library.info("Performing novels search...")
-            
             novelsSearchInProgress = true
             novelPreviews = []
             
@@ -58,13 +56,9 @@ struct BrowseView: View {
                     do {
                         let novelPreviews = try await sourceType.source.fetchNovels(searchTerm: novelsSearchText)
                         for novelPreview in novelPreviews {
-                            Logger.library.info("Novel '\(novelPreview.title)' from '\(novelPreview.sourceType.source.name)' found to be matching the search criteria.")
-                            
                             self.novelPreviews.append(novelPreview)
                         }
                     } catch {
-                        Logger.library.warning("Failed to fetch novel previews from '\(sourceType.source.name)': \(error.localizedDescription)")
-                        
                         AlertUtils.showAlert(title: "Failed to fetch novel previews from '\(sourceType.source.name)'", message: error.localizedDescription)
                     }
                 }
@@ -77,7 +71,7 @@ struct BrowseView: View {
 
 private struct NovelPreviewCell: View {
     @Environment(\.library)
-    var library
+    private var library
 
     let novelPreview: NovelPreview
     let novel: Novel?
