@@ -159,6 +159,10 @@ private struct NovelInformation: View {
                     Label("Category", systemImage: "book")
                 }
                 .onChange(of: novelCategory) {
+                    if novelCategory.id == novel.category.id {
+                        return
+                    }
+                    
                     Logger.library.info("Changing novel's '\(novel.title)' category to '\(novelCategory.name)'...")
 
                     novel.category = novelCategory
@@ -166,6 +170,9 @@ private struct NovelInformation: View {
                     library.save()
                 }
             }
+        }
+        .onAppear {
+            novelCategory = novel.category
         }
 
         Section(header: Text("Chapters")) {
