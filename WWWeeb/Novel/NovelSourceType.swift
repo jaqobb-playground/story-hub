@@ -1,16 +1,16 @@
 import Foundation
 
-enum SourceType: String, Identifiable, Codable, CaseIterable {
+enum NovelSourceType: String, Identifiable, Codable, CaseIterable {
     case lib_read
     
     var id: String {
         rawValue
     }
 
-    var source: Source {
+    var source: NovelSource {
         switch self {
             case .lib_read:
-                return Source.LibRead
+                return NovelSource.LibRead
         }
     }
 }

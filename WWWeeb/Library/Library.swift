@@ -4,6 +4,8 @@ import SwiftUI
 
 @Observable
 class Library: Codable {
+    static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "library")
+
     enum NovelsSortingMode: String, Identifiable, Codable, CaseIterable {
         case title
         case unread
@@ -36,11 +38,11 @@ class Library: Codable {
                         if $0.chaptersRead.count == 0 && $1.chaptersRead.count != 0 {
                             return true
                         }
-                        
+
                         if $0.chaptersRead.count != 0 && $1.chaptersRead.count == 0 {
                             return false
                         }
-                        
+
                         return $0.title < $1.title
                     }
                 case .date_added:
@@ -67,41 +69,35 @@ class Library: Codable {
         novelsSortingMode = .title
     }
 
-    func load() {
-        Task.init {
-            do {
-                Logger.library.info("Loading library...")
+    static func load() -> Library {
+        do {
+            Library.logger.info("Loading library...")
 
-                guard let data = try? Data(contentsOf: Self.fileURL()) else {
-                    return
-                }
-                
-                let decoder = JSONDecoder()
-                let decodedData = try decoder.decode(Library.self, from: data)
-
-                DispatchQueue.main.async {
-                    self.novels = decodedData.novels
-                    self.novelsCategoryIncludes = decodedData.novelsCategoryIncludes
-                    self.novelsSortingMode = decodedData.novelsSortingMode
-                }
-            } catch {
-                // TODO: Implement migration system for outdated libraries.
-                Logger.library.warning("Failed to load library: \(error.localizedDescription)")
+            guard let data = try? Data(contentsOf: Self.fileURL()) else {
+                return Library()
             }
+
+            let decoder = JSONDecoder()
+            let decodedLibrary = try decoder.decode(Library.self, from: data)
+
+            return decodedLibrary
+        } catch {
+            // TODO: Implement migration system for outdated libraries.
+            Library.logger.warning("Failed to load library: \(error.localizedDescription)")
+            return Library()
         }
     }
 
-    func save() {
-        Task.init {
-            do {
-                Logger.library.info("Saving library...")
+    static func save(_ library: Library) {
+        do {
+            Library.logger.info("Saving library...")
 
-                let encoder = JSONEncoder()
-                let encodedData = try encoder.encode(self)
-                try encodedData.write(to: Self.fileURL())
-            } catch {
-                Logger.library.warning("Failed to save library: \(error.localizedDescription)")
-            }
+            let encoder = JSONEncoder()
+            let encodedLibrary = try encoder.encode(library)
+
+            try encodedLibrary.write(to: Self.fileURL())
+        } catch {
+            Library.logger.warning("Failed to save library: \(error.localizedDescription)")
         }
     }
 

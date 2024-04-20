@@ -18,7 +18,7 @@ struct BrowseView: View {
         NavigationView {
             ScrollView(.vertical) {
                 HStack {
-                    TextField("Enter novel title...", text: $novelsSearchText, onCommit: { performNovelsSearch() })
+                    TextField("Enter title...", text: $novelsSearchText, onCommit: { performNovelsSearch() })
                         .textFieldStyle(RoundedBorderTextFieldStyle())
                         .padding(.leading)
                         .autocorrectionDisabled()
@@ -52,14 +52,11 @@ struct BrowseView: View {
             novelPreviews = []
             
             Task.init {
-                for sourceType in SourceType.allCases {
+                for novelSourceType in NovelSourceType.allCases {
                     do {
-                        let novelPreviews = try await sourceType.source.fetchNovels(searchTerm: novelsSearchText)
-                        for novelPreview in novelPreviews {
-                            self.novelPreviews.append(novelPreview)
-                        }
+                        self.novelPreviews.append(contentsOf: try await novelSourceType.source.fetchNovels(searchTerm: novelsSearchText))
                     } catch {
-                        AlertUtils.showAlert(title: "Failed to fetch novel previews from '\(sourceType.source.name)'", message: error.localizedDescription)
+                        AlertUtils.showAlert(title: "Failed to fetch novel previews from '\(novelSourceType.source.name)'", message: error.localizedDescription)
                     }
                 }
                 

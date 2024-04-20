@@ -57,7 +57,7 @@ class Novel: Codable, Hashable {
         )
     }
 
-    var sourceType: SourceType
+    var sourceType: NovelSourceType
 
     init(
         path: String,
@@ -72,7 +72,7 @@ class Novel: Codable, Hashable {
         dateAdded: Date,
         dateUpdated: Date,
         category: Category,
-        sourceType: SourceType
+        sourceType: NovelSourceType
     ) {
         self.path = path
         self.title = title
@@ -106,8 +106,15 @@ class Novel: Codable, Hashable {
             genres = newNovel.genres
             authors = newNovel.authors
             status = newNovel.status
-            chapters = newNovel.chapters
-            dateUpdated = Date.now
+
+            let lastChapterNumber = chapters.last?.number ?? -1
+
+            let newChapters = newNovel.chapters.filter { $0.number > lastChapterNumber }
+            if !newChapters.isEmpty {
+                chapters.append(contentsOf: newChapters)
+
+                dateUpdated = Date.now
+            }
         } catch {
             AlertUtils.showAlert(title: "Failed to update novel '\(title)'", message: error.localizedDescription)
         }
@@ -135,18 +142,39 @@ class NovelChapter: Codable, Hashable {
         case _title = "title"
         case _number = "number"
         case _releaseTime = "releaseTime"
+        case _content = "content"
+        case _sourceType = "sourceType"
     }
 
     var path: String
     var title: String
     var number: Int
     var releaseTime: Int64?
+    var content: [String]?
+    var sourceType: NovelSourceType
 
-    init(path: String, title: String, number: Int, releaseTime: Int64?) {
+    init(
+        path: String,
+        title: String,
+        number: Int,
+        releaseTime: Int64?,
+        content: [String]?,
+        sourceType: NovelSourceType
+    ) {
         self.path = path
         self.title = title
         self.number = number
         self.releaseTime = releaseTime
+        self.content = content
+        self.sourceType = sourceType
+    }
+
+    func fetchContent() async {
+        do {
+            content = try await sourceType.source.parseNovelChapter(novelChapterPath: path)
+        } catch {
+            AlertUtils.showAlert(title: "Failed to fetch novel chapter's '\(title)' content", message: error.localizedDescription)
+        }
     }
 
     func hash(into hasher: inout Hasher) {
@@ -158,16 +186,11 @@ class NovelChapter: Codable, Hashable {
     }
 }
 
-struct NovelChapterContent {
-    let title: String
-    let contents: [String]
-}
-
 struct NovelPreview: Hashable {
     let path: String
     let title: String
     let coverURL: String
-    let sourceType: SourceType
+    let sourceType: NovelSourceType
 
     func hash(into hasher: inout Hasher) {
         hasher.combine(path)

@@ -9,8 +9,7 @@ struct WWWeebApp: App {
     let library: Library
 
     init() {
-        library = Library()
-        library.load()
+        library = Library.load()
     }
 
     var body: some Scene {
@@ -31,20 +30,9 @@ struct WWWeebApp: App {
             }
             .modifier(LibraryEnvironmentModifier(library: library))
             .onChange(of: scenePhase) { _, newScenePhase in
-                switch newScenePhase {
-                    case .background:
-                        library.save()
-                    case .inactive:
-                        break
-                    case .active:
-                        break
-                    @unknown
-                    default:
-                        break
+                if newScenePhase == .background {
+                    Library.save(library)
                 }
-            }
-            .onReceive(NotificationCenter.default.publisher(for: UIApplication.willTerminateNotification)) { _ in
-                library.save()
             }
         }
     }

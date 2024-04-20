@@ -18,7 +18,7 @@ struct LibraryView: View {
         NavigationView {
             ScrollView(.vertical) {
                 HStack {
-                    TextField("Enter novel title...", text: $novelsSearchText, onCommit: { performNovelsSearch() })
+                    TextField("Enter title...", text: $novelsSearchText, onCommit: { performNovelsSearch() })
                         .textFieldStyle(RoundedBorderTextFieldStyle())
                         .autocorrectionDisabled()
                         .textInputAutocapitalization(.never)

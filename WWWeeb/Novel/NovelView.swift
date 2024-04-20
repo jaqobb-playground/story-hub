@@ -9,14 +9,12 @@ struct NovelView: View {
     @Environment(\.library)
     private var library
 
+    @State
     var novel: Novel?
     var novelPreview: NovelPreview?
 
-    @State
-    var novelUsed: Novel?
-
     init(novel: Novel) {
-        self.novel = novel
+        _novel = State(initialValue: novel)
     }
 
     init(novelPreview: NovelPreview) {
@@ -25,7 +23,7 @@ struct NovelView: View {
 
     var body: some View {
         Form {
-            if let novel = novelUsed {
+            if let novel = novel {
                 NovelInformation(novel)
             } else {
                 HStack {
@@ -37,26 +35,23 @@ struct NovelView: View {
                 .listRowBackground(Color.clear)
             }
         }
-        .navigationTitle("Novel")
+        .navigationTitle(novel != nil ? novel!.title : novelPreview!.title)
+        .navigationBarTitleDisplayMode(.inline)
         .onAppear {
-            if let novel = novel {
-                novelUsed = novel
-            } else {
-                if let novelPreview = novelPreview {
-                    Task.init {
-                        do {
-                            novelUsed = try await novelPreview.sourceType.source.parseNovel(novelPath: novelPreview.path)
-                        } catch {
-                            AlertUtils.showAlert(title: "Failed to fetch novel '\(novelPreview.title)'", message: error.localizedDescription) { _ in
-                                presentationMode.wrappedValue.dismiss()
-                            }
+            if let novelPreview = novelPreview {
+                Task.init {
+                    do {
+                        novel = try await novelPreview.sourceType.source.parseNovel(novelPath: novelPreview.path)
+                    } catch {
+                        AlertUtils.showAlert(title: "Failed to fetch novel '\(novelPreview.title)'", message: error.localizedDescription) { _ in
+                            presentationMode.wrappedValue.dismiss()
                         }
                     }
                 }
             }
         }
         .refreshable {
-            if let novel = novelUsed {
+            if let novel = novel {
                 await novel.update()
             }
         }
@@ -164,7 +159,7 @@ private struct NovelInformation: View {
             if !library.novels.contains(novel) {
                 Button("Add to library") {
                     presentationMode.wrappedValue.dismiss()
-                    
+
                     library.novels.insert(novel)
                 }
                 .frame(maxWidth: .infinity, alignment: .center)
@@ -214,17 +209,13 @@ private struct NovelChaptersChunk: View {
                 .contextMenu {
                     Section {
                         Button {
-                            for novelChapter in novelChaptersChunk {
-                                novel.chaptersRead.insert(novelChapter.path)
-                            }
+                            novel.chaptersRead.formUnion(novelChaptersChunk.map({ $0.path }))
                         } label: {
                             Label("Mark as read", systemImage: "checkmark")
                         }
 
                         Button(role: .destructive) {
-                            for novelChapter in novelChaptersChunk {
-                                novel.chaptersRead.remove(novelChapter.path)
-                            }
+                            novel.chaptersRead.subtract(novelChaptersChunk.map({ $0.path }))
                         } label: {
                             Label("Mark as not read", systemImage: "xmark")
                         }
@@ -251,6 +242,8 @@ private struct NovelChaptersChunkDetails: View {
 }
 
 private struct NovelChapters: View {
+    @Environment(\.presentationMode)
+    private var presentationMode
     @Environment(\.library)
     private var library
 
@@ -265,6 +258,14 @@ private struct NovelChapters: View {
                 .foregroundColor(novel.chaptersRead.contains(novelChapter.path) ? .gray : .primary)
                 .contextMenu {
                     Section {
+                        Button {
+                            Task.init {
+                                await novelChapter.fetchContent()
+                            }
+                        } label: {
+                            Label("Download", systemImage: "square.and.arrow.down")
+                        }
+
                         Button {
                             novel.chaptersRead.insert(novelChapter.path)
                         } label: {
