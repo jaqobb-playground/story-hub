@@ -29,21 +29,21 @@ struct LibraryView: View {
                         }
 
                         Menu {
-                            Section(header: Text("Include novels")) {
-                                ForEach(Novel.Category.allCases, id: \.id) { novelCategory in
+                            Section(header: Text("Include Novels")) {
+                                ForEach(Library.NovelsInclude.allCases, id: \.id) { novelsInclude in
                                     Button {
-                                        if !library.novelsCategoryIncludes.contains(novelCategory) {
-                                            library.novelsCategoryIncludes.insert(novelCategory)
+                                        if !library.novelsIncludes.contains(novelsInclude) {
+                                            library.novelsIncludes.insert(novelsInclude)
                                         } else {
-                                            library.novelsCategoryIncludes.remove(novelCategory)
+                                            library.novelsIncludes.remove(novelsInclude)
                                         }
 
                                         performNovelsSearch()
                                     } label: {
-                                        if library.novelsCategoryIncludes.contains(novelCategory) {
-                                            Label(novelCategory.name, systemImage: "checkmark")
+                                        if library.novelsIncludes.contains(novelsInclude) {
+                                            Label(novelsInclude.name, systemImage: "checkmark")
                                         } else {
-                                            Text(novelCategory.name)
+                                            Text(novelsInclude.name)
                                         }
                                     }
                                 }
@@ -53,7 +53,7 @@ struct LibraryView: View {
                         }
 
                         Menu {
-                            Section(header: Text("Sort novels by")) {
+                            Section(header: Text("Sort Novels By")) {
                                 ForEach(Library.NovelsSortingMode.allCases, id: \.id) { novelsSortingMode in
                                     if library.novelsSortingMode.id == novelsSortingMode.id {
                                         Label(novelsSortingMode.name, systemImage: "checkmark")
@@ -114,7 +114,15 @@ struct LibraryView: View {
                 }
             }
 
-            if !library.novelsCategoryIncludes.contains(novel.category) {
+            var novelsIncludesAnyMatch = false
+            for novelsInclude in library.novelsIncludes {
+                if novelsInclude.shouldInclude(novel: novel) {
+                    novelsIncludesAnyMatch = true
+                    break
+                }
+            }
+            
+            if !novelsIncludesAnyMatch {
                 continue
             }
 
@@ -192,7 +200,7 @@ private struct NovelCell: View {
                             performNovelsSearch()
                         }
                     } label: {
-                        Label("Mark as read", systemImage: "checkmark")
+                        Label("Mark as Read", systemImage: "checkmark")
                     }
 
                     Button(role: .destructive) {
@@ -208,7 +216,7 @@ private struct NovelCell: View {
                             performNovelsSearch()
                         }
                     } label: {
-                        Label("Mark as not read", systemImage: "xmark")
+                        Label("Unmark as Read", systemImage: "xmark")
                     }
                 }
 
@@ -228,7 +236,7 @@ private struct NovelCell: View {
                             }
                         }
                     } label: {
-                        Label("Change category to", systemImage: "book")
+                        Label("Change Category To", systemImage: "book")
                     }
 
                     Button {
@@ -241,6 +249,16 @@ private struct NovelCell: View {
                         Label("Update", systemImage: "arrow.clockwise")
                     }
                 }
+                
+                Section {
+                    Button(role: .destructive) {
+                        for novelChapter in novel.chapters {
+                            novelChapter.content = nil
+                        }
+                    } label: {
+                        Label("Remove All Downloads", systemImage: "trash")
+                    }
+                }
 
                 Section {
                     Button(role: .destructive) {
@@ -248,7 +266,7 @@ private struct NovelCell: View {
                         
                         performNovelsSearch()
                     } label: {
-                        Label("Remove from library", systemImage: "trash")
+                        Label("Remove from Library", systemImage: "bookmark.slash")
                     }
                 }
             }

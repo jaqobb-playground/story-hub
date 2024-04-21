@@ -96,6 +96,30 @@ private struct NovelPreviewCell: View {
             }
             .padding(.horizontal, 12)
             .padding(.vertical, 12)
+            .contextMenu {
+                Section {
+                    if let novel = novel {
+                        Button(role: .destructive) {
+                            library.novels.remove(novel)
+                        } label: {
+                            Label("Remove from Library", systemImage: "bookmark.slash")
+                        }
+                    } else {
+                        Button {
+                            Task.init {
+                                do {
+                                    library.novels.insert(try await novelPreview.sourceType.source.parseNovel(novelPath: novelPreview.path))
+                                } catch {
+                                    AlertUtils.showAlert(title: "Failed to fetch novel '\(novelPreview.title)'", message: error.localizedDescription)
+                                }
+                            }
+                        } label: {
+                            Label("Add to Library", systemImage: "bookmark")
+                        }
+                        
+                    }
+                }
+            }
         }
         .buttonStyle(PlainButtonStyle())
     }

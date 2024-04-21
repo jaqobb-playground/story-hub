@@ -6,9 +6,40 @@ import SwiftUI
 class Library: Codable {
     static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "library")
 
+    enum NovelsInclude: String, Identifiable, Codable, CaseIterable {
+        case reading
+        case completed
+        case unread
+
+        var id: String {
+            rawValue
+        }
+
+        var name: String {
+            switch self {
+                case .reading:
+                    return "Reading"
+                case .completed:
+                    return "Completed"
+                case .unread:
+                    return "Unread"
+            }
+        }
+
+        func shouldInclude(novel: Novel) -> Bool {
+            switch self {
+                case .reading:
+                    return novel.category == .reading
+                case .completed:
+                    return novel.category == .completed
+                case .unread:
+                    return novel.chaptersRead.isEmpty
+            }
+        }
+    }
+
     enum NovelsSortingMode: String, Identifiable, Codable, CaseIterable {
         case title
-        case unread
         case date_added
         case date_updated
 
@@ -20,8 +51,6 @@ class Library: Codable {
             switch self {
                 case .title:
                     return "Title"
-                case .unread:
-                    return "Unread"
                 case .date_added:
                     return "Date added"
                 case .date_updated:
@@ -33,18 +62,6 @@ class Library: Codable {
             switch self {
                 case .title:
                     return { $0.title < $1.title }
-                case .unread:
-                    return {
-                        if $0.chaptersRead.count == 0 && $1.chaptersRead.count != 0 {
-                            return true
-                        }
-
-                        if $0.chaptersRead.count != 0 && $1.chaptersRead.count == 0 {
-                            return false
-                        }
-
-                        return $0.title < $1.title
-                    }
                 case .date_added:
                     return { $0.dateAdded > $1.dateAdded }
                 case .date_updated:
@@ -55,17 +72,17 @@ class Library: Codable {
 
     enum CodingKeys: String, CodingKey {
         case _novels = "novels"
-        case _novelsCategoryIncludes = "novelsCategoryIncludes"
+        case _novelsIncludes = "novelsIncludes"
         case _novelsSortingMode = "novelsSortingMode"
     }
 
     var novels: Set<Novel>
-    var novelsCategoryIncludes: Set<Novel.Category>
+    var novelsIncludes: Set<NovelsInclude>
     var novelsSortingMode: NovelsSortingMode
 
     init() {
         novels = []
-        novelsCategoryIncludes = [.reading]
+        novelsIncludes = [.reading]
         novelsSortingMode = .title
     }
 

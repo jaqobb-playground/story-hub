@@ -42,12 +42,14 @@ struct NovelChapterView: View {
                                 Button {
                                     reader.scrollTo(0, anchor: .top)
                                     
+                                    // TODO: Toggleable with settings?
+                                    novel.chaptersRead.insert(novelChapter.path)
                                     novelChapter = novel.chapters[novelChapterIndex - 1]
                                     
                                     fetchNovelChapterContent()
                                 } label: {
                                     Image(systemName: "arrow.backward")
-                                    Text("Previous chapter")
+                                    Text("Previous Chapter")
                                 }
                             } else {
                                 Spacer()
@@ -59,11 +61,13 @@ struct NovelChapterView: View {
                                 Button {
                                     reader.scrollTo(0, anchor: .top)
                                     
+                                    // TODO: Toggleable with settings?
+                                    novel.chaptersRead.insert(novelChapter.path)
                                     novelChapter = novel.chapters[novelChapterIndex + 1]
                                     
                                     fetchNovelChapterContent()
                                 } label: {
-                                    Text("Next chapter")
+                                    Text("Next Chapter")
                                     Image(systemName: "arrow.forward")
                                 }
                             } else {

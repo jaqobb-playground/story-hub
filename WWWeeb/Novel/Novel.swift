@@ -89,13 +89,6 @@ class Novel: Codable, Hashable {
         self.sourceType = sourceType
     }
 
-    func splitChaptersIntoChunks(chunkSize: Int) -> [[NovelChapter]] {
-        return stride(from: 0, to: chapters.count, by: chunkSize).map { startIndex in
-            let endIndex = min(startIndex + chunkSize, chapters.count)
-            return Array(chapters[startIndex ..< endIndex])
-        }
-    }
-
     func update() async {
         do {
             let newNovel = try await sourceType.source.parseNovel(novelPath: path)
@@ -183,6 +176,15 @@ class NovelChapter: Codable, Hashable {
 
     static func == (lhs: NovelChapter, rhs: NovelChapter) -> Bool {
         return lhs.path == rhs.path
+    }
+}
+
+extension Array where Element == NovelChapter {
+    func splitIntoChunks(of chunkSize: Int) -> [[Element]] {
+        return stride(from: 0, to: self.count, by: chunkSize).map { startIndex in
+            let endIndex = Swift.min(startIndex + chunkSize, self.count)
+            return Array(self[startIndex ..< endIndex])
+        }
     }
 }
 

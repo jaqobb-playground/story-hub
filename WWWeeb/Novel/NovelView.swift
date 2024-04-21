@@ -128,13 +128,13 @@ private struct NovelInformation: View {
                 LabeledContent {
                     Text(novel.dateAdded.formatted())
                 } label: {
-                    Label("Date added", systemImage: "calendar.badge.plus")
+                    Label("Date Added", systemImage: "calendar.badge.plus")
                 }
 
                 LabeledContent {
                     Text(novel.dateUpdated.formatted())
                 } label: {
-                    Label("Date updated", systemImage: "calendar.badge.clock")
+                    Label("Date Updated", systemImage: "calendar.badge.clock")
                 }
 
                 Picker(selection: novel.categoryBinding) {
@@ -148,7 +148,7 @@ private struct NovelInformation: View {
         }
 
         Section(header: Text("Chapters")) {
-            let novelChapterChunked = novel.splitChaptersIntoChunks(chunkSize: 100)
+            let novelChapterChunked = novel.chapters.splitIntoChunks(of: 100)
 
             List(novelChapterChunked.reversed(), id: \.self) { novelChaptersChunk in
                 NovelChaptersChunk(novel: novel, novelChaptersChunk: novelChaptersChunk)
@@ -157,17 +157,21 @@ private struct NovelInformation: View {
 
         Section {
             if !library.novels.contains(novel) {
-                Button("Add to library") {
+                Button {
                     presentationMode.wrappedValue.dismiss()
 
                     library.novels.insert(novel)
+                } label: {
+                    Text("Add to Library")
                 }
                 .frame(maxWidth: .infinity, alignment: .center)
             } else {
-                Button("Remove from library") {
+                Button {
                     presentationMode.wrappedValue.dismiss()
 
                     library.novels.remove(novel)
+                } label: {
+                    Text("Remove from Library")
                 }
                 .foregroundColor(.red)
                 .frame(maxWidth: .infinity, alignment: .center)
@@ -182,6 +186,8 @@ private struct NovelChaptersChunk: View {
 
     let novel: Novel
     let novelChaptersChunk: [NovelChapter]
+    @State
+    var novelChaptersChunkMidDownload: Bool = false
 
     private var firstChapterNumber: String {
         String(novelChaptersChunk.first!.number).trimmingCharacters(in: .whitespaces)
@@ -204,23 +210,68 @@ private struct NovelChaptersChunk: View {
                 novelChapters: novelChaptersChunk.reversed()
             )
         } label: {
-            Text("\(firstChapterNumber) - \(lastChapterNumber)")
-                .foregroundColor(allChaptersRead ? .gray : .primary)
-                .contextMenu {
-                    Section {
-                        Button {
-                            novel.chaptersRead.formUnion(novelChaptersChunk.map({ $0.path }))
-                        } label: {
-                            Label("Mark as read", systemImage: "checkmark")
+            LabeledContent {
+                if novelChaptersChunkMidDownload {
+                    ProgressView()
+                }
+            } label: {
+                Text("\(firstChapterNumber) - \(lastChapterNumber)")
+                    .foregroundColor(allChaptersRead ? .gray : .primary)
+                    .contextMenu {
+                        Section {
+                            Button {
+                                Task.init {
+                                    novelChaptersChunkMidDownload = true
+
+                                    let batches = novelChaptersChunk.splitIntoChunks(of: 15)
+                                    for (batchIndex, batch) in batches.enumerated() {
+                                        await withTaskGroup(of: Void.self) { group in
+                                            for novelChapter in batch {
+                                                group.addTask {
+                                                    await novelChapter.fetchContent()
+                                                }
+                                            }
+                                        }
+
+                                        if batchIndex < batches.count - 1 {
+                                            try? await Task.sleep(nanoseconds: 5_000_000_000)
+                                        }
+                                    }
+
+                                    novelChaptersChunkMidDownload = false
+                                }
+                            } label: {
+                                if novelChaptersChunk.contains(where: { $0.content != nil }) {
+                                    Label("Redownload All", systemImage: "arrow.clockwise")
+                                } else {
+                                    Label("Download All", systemImage: "square.and.arrow.down")
+                                }
+                            }
+
+                            Button(role: .destructive) {
+                                for novelChapter in novelChaptersChunk {
+                                    novelChapter.content = nil
+                                }
+                            } label: {
+                                Label("Remove All Downloads", systemImage: "trash")
+                            }
                         }
 
-                        Button(role: .destructive) {
-                            novel.chaptersRead.subtract(novelChaptersChunk.map({ $0.path }))
-                        } label: {
-                            Label("Mark as not read", systemImage: "xmark")
+                        Section {
+                            Button {
+                                novel.chaptersRead.formUnion(novelChaptersChunk.map({ $0.path }))
+                            } label: {
+                                Label("Mark as Read", systemImage: "checkmark")
+                            }
+
+                            Button(role: .destructive) {
+                                novel.chaptersRead.subtract(novelChaptersChunk.map({ $0.path }))
+                            } label: {
+                                Label("Unmark as Read", systemImage: "xmark")
+                            }
                         }
                     }
-                }
+            }
         }
     }
 }
@@ -234,14 +285,14 @@ private struct NovelChaptersChunkDetails: View {
     var body: some View {
         Form {
             List(novelChapters, id: \.self) { novelChapter in
-                NovelChapters(novel: novel, novelChapter: novelChapter)
+                NovelChapterCell(novel: novel, novelChapter: novelChapter)
             }
         }
         .navigationTitle("Chapters \(firstChapterNumber) - \(lastChapterNumber)")
     }
 }
 
-private struct NovelChapters: View {
+private struct NovelChapterCell: View {
     @Environment(\.presentationMode)
     private var presentationMode
     @Environment(\.library)
@@ -249,36 +300,60 @@ private struct NovelChapters: View {
 
     let novel: Novel
     let novelChapter: NovelChapter
+    @State
+    var novelChapterMidDownload: Bool = false
 
     var body: some View {
         NavigationLink {
             NovelChapterView(novel: novel, novelChapter: novelChapter)
         } label: {
-            Text(novelChapter.title)
-                .foregroundColor(novel.chaptersRead.contains(novelChapter.path) ? .gray : .primary)
-                .contextMenu {
-                    Section {
-                        Button {
-                            Task.init {
-                                await novelChapter.fetchContent()
+            LabeledContent {
+                if novelChapterMidDownload {
+                    ProgressView()
+                }
+            } label: {
+                Text(novelChapter.title)
+                    .foregroundColor(novel.chaptersRead.contains(novelChapter.path) ? .gray : .primary)
+                    .contextMenu {
+                        Section {
+                            Button {
+                                Task.init {
+                                    novelChapterMidDownload = true
+
+                                    await novelChapter.fetchContent()
+
+                                    novelChapterMidDownload = false
+                                }
+                            } label: {
+                                if novelChapter.content != nil {
+                                    Label("Redownload", systemImage: "arrow.clockwise")
+                                } else {
+                                    Label("Download", systemImage: "square.and.arrow.down")
+                                }
                             }
-                        } label: {
-                            Label("Download", systemImage: "square.and.arrow.down")
+
+                            Button(role: .destructive) {
+                                novelChapter.content = nil
+                            } label: {
+                                Label("Remove Download", systemImage: "trash")
+                            }
                         }
 
-                        Button {
-                            novel.chaptersRead.insert(novelChapter.path)
-                        } label: {
-                            Label("Mark as read", systemImage: "checkmark")
-                        }
+                        Section {
+                            Button {
+                                novel.chaptersRead.insert(novelChapter.path)
+                            } label: {
+                                Label("Mark as Read", systemImage: "checkmark")
+                            }
 
-                        Button(role: .destructive) {
-                            novel.chaptersRead.remove(novelChapter.path)
-                        } label: {
-                            Label("Mark as not read", systemImage: "xmark")
+                            Button(role: .destructive) {
+                                novel.chaptersRead.remove(novelChapter.path)
+                            } label: {
+                                Label("Unmark as Read", systemImage: "xmark")
+                            }
                         }
                     }
-                }
+            }
         }
     }
 }
