@@ -29,21 +29,21 @@ struct LibraryView: View {
                         }
 
                         Menu {
-                            Section(header: Text("Include Novels")) {
-                                ForEach(Library.NovelsInclude.allCases, id: \.id) { novelsInclude in
+                            Section(header: Text("Novel Filters")) {
+                                ForEach(Novel.Filter.allCases) { novelFilter in
                                     Button {
-                                        if !library.novelsIncludes.contains(novelsInclude) {
-                                            library.novelsIncludes.insert(novelsInclude)
+                                        if !library.novelFilters.contains(novelFilter) {
+                                            library.novelFilters.insert(novelFilter)
                                         } else {
-                                            library.novelsIncludes.remove(novelsInclude)
+                                            library.novelFilters.remove(novelFilter)
                                         }
 
                                         performNovelsSearch()
                                     } label: {
-                                        if library.novelsIncludes.contains(novelsInclude) {
-                                            Label(novelsInclude.name, systemImage: "checkmark")
+                                        if library.novelFilters.contains(novelFilter) {
+                                            Label(novelFilter.name, systemImage: "checkmark")
                                         } else {
-                                            Text(novelsInclude.name)
+                                            Text(novelFilter.name)
                                         }
                                     }
                                 }
@@ -54,16 +54,16 @@ struct LibraryView: View {
 
                         Menu {
                             Section(header: Text("Sort Novels By")) {
-                                ForEach(Library.NovelsSortingMode.allCases, id: \.id) { novelsSortingMode in
-                                    if library.novelsSortingMode.id == novelsSortingMode.id {
-                                        Label(novelsSortingMode.name, systemImage: "checkmark")
+                                ForEach(Novel.SortingMode.allCases) { novelSortingMode in
+                                    if library.novelSortingMode == novelSortingMode {
+                                        Label(novelSortingMode.name, systemImage: "checkmark")
                                     } else {
                                         Button {
-                                            library.novelsSortingMode = novelsSortingMode
+                                            library.novelSortingMode = novelSortingMode
 
                                             performNovelsSearch()
                                         } label: {
-                                            Text(novelsSortingMode.name)
+                                            Text(novelSortingMode.name)
                                         }
                                     }
                                 }
@@ -114,22 +114,14 @@ struct LibraryView: View {
                 }
             }
 
-            var novelsIncludesAnyMatch = false
-            for novelsInclude in library.novelsIncludes {
-                if novelsInclude.shouldInclude(novel: novel) {
-                    novelsIncludesAnyMatch = true
-                    break
-                }
-            }
-            
-            if !novelsIncludesAnyMatch {
+            if !library.novelFilters.contains(where: { $0.matches(novel: novel) }) {
                 continue
             }
 
             novels.append(novel)
         }
 
-        novels.sort(by: library.novelsSortingMode.comparator())
+        novels.sort(by: library.novelSortingMode.comparator())
         novelsSearchInProgress = false
     }
 }
@@ -193,6 +185,7 @@ private struct NovelCell: View {
                             let (inserted, _) = novel.chaptersRead.insert(novelChapter.path)
                             if inserted {
                                 novelChaptersReadChanged = true
+                                novel.lastChapterReadNumber = novelChapter.number
                             }
                         }
 
@@ -222,8 +215,8 @@ private struct NovelCell: View {
 
                 Section {
                     Menu {
-                        ForEach(Novel.Category.allCases, id: \.id) { novelCategory in
-                            if novel.category.id == novelCategory.id {
+                        ForEach(Novel.Category.allCases) { novelCategory in
+                            if novel.category == novelCategory {
                                 Label(novelCategory.name, systemImage: "checkmark")
                             } else {
                                 Button {

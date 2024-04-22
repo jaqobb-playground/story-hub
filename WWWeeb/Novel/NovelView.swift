@@ -41,9 +41,9 @@ struct NovelView: View {
             if let novelPreview = novelPreview {
                 Task.init {
                     do {
-                        novel = try await novelPreview.sourceType.source.parseNovel(novelPath: novelPreview.path)
+                        novel = try await novelPreview.provider.implementation.parseNovel(path: novelPreview.path)
                     } catch {
-                        AlertUtils.showAlert(title: "Failed to fetch novel '\(novelPreview.title)'", message: error.localizedDescription) { _ in
+                        AlertUtils.showAlert(title: "Failed to Fetch Novel '\(novelPreview.title)'", message: error.localizedDescription) { _ in
                             presentationMode.wrappedValue.dismiss()
                         }
                     }
@@ -61,6 +61,8 @@ struct NovelView: View {
 private struct NovelInformation: View {
     @Environment(\.presentationMode)
     private var presentationMode
+    @Environment(\.settings)
+    private var settings
     @Environment(\.library)
     private var library
 
@@ -148,10 +150,28 @@ private struct NovelInformation: View {
         }
 
         Section(header: Text("Chapters")) {
-            let novelChapterChunked = novel.chapters.splitIntoChunks(of: 100)
+            let novelChapterChunks = novel.chapters.splitIntoChunks(of: settings.novelChapterChunkSize)
+            List(novelChapterChunks.reversed(), id: \.self) { novelChapters in
+                NovelChaptersChunk(novel: novel, novelChapters: novelChapters)
+            }
+        }
 
-            List(novelChapterChunked.reversed(), id: \.self) { novelChaptersChunk in
-                NovelChaptersChunk(novel: novel, novelChaptersChunk: novelChaptersChunk)
+        Section(header: Text("Quick Actions")) {
+            NavigationLink {
+                NovelChapterView(novel: novel, novelChapter: novel.chapters[0])
+            } label: {
+                Text("Start Reading")
+            }
+
+            if novel.lastChapterReadNumber == -1 || novel.chapters.count <= novel.lastChapterReadNumber {
+                Text("Continue Reading")
+                    .foregroundColor(.gray)
+            } else {
+                NavigationLink {
+                    NovelChapterView(novel: novel, novelChapter: novel.chapters[novel.lastChapterReadNumber])
+                } label: {
+                    Text("Continue Reading")
+                }
             }
         }
 
@@ -164,7 +184,6 @@ private struct NovelInformation: View {
                 } label: {
                     Text("Add to Library")
                 }
-                .frame(maxWidth: .infinity, alignment: .center)
             } else {
                 Button {
                     presentationMode.wrappedValue.dismiss()
@@ -174,7 +193,6 @@ private struct NovelInformation: View {
                     Text("Remove from Library")
                 }
                 .foregroundColor(.red)
-                .frame(maxWidth: .infinity, alignment: .center)
             }
         }
     }
@@ -185,20 +203,20 @@ private struct NovelChaptersChunk: View {
     private var library
 
     let novel: Novel
-    let novelChaptersChunk: [NovelChapter]
+    let novelChapters: [NovelChapter]
     @State
-    var novelChaptersChunkMidDownload: Bool = false
+    var novelChaptersMidDownload: Bool = false
 
     private var firstChapterNumber: String {
-        String(novelChaptersChunk.first!.number).trimmingCharacters(in: .whitespaces)
+        String(novelChapters.first!.number).trimmingCharacters(in: .whitespaces)
     }
 
     private var lastChapterNumber: String {
-        String(novelChaptersChunk.last!.number).trimmingCharacters(in: .whitespaces)
+        String(novelChapters.last!.number).trimmingCharacters(in: .whitespaces)
     }
 
     private var allChaptersRead: Bool {
-        return novelChaptersChunk.allSatisfy { novel.chaptersRead.contains($0.path) }
+        return novelChapters.allSatisfy { novel.chaptersRead.contains($0.path) }
     }
 
     var body: some View {
@@ -207,11 +225,11 @@ private struct NovelChaptersChunk: View {
                 firstChapterNumber: firstChapterNumber,
                 lastChapterNumber: lastChapterNumber,
                 novel: novel,
-                novelChapters: novelChaptersChunk.reversed()
+                novelChapters: novelChapters.reversed()
             )
         } label: {
             LabeledContent {
-                if novelChaptersChunkMidDownload {
+                if novelChaptersMidDownload {
                     ProgressView()
                 }
             } label: {
@@ -221,27 +239,27 @@ private struct NovelChaptersChunk: View {
                         Section {
                             Button {
                                 Task.init {
-                                    novelChaptersChunkMidDownload = true
+                                    novelChaptersMidDownload = true
 
-                                    let batches = novelChaptersChunk.splitIntoChunks(of: 15)
-                                    for (batchIndex, batch) in batches.enumerated() {
+                                    let novelChapterChunks = novelChapters.splitIntoChunks(of: novel.provider.implementation.details.batchSize)
+                                    for (novelChapterChunkIndex, novelChapters) in novelChapterChunks.enumerated() {
                                         await withTaskGroup(of: Void.self) { group in
-                                            for novelChapter in batch {
+                                            for novelChapter in novelChapters {
                                                 group.addTask {
                                                     await novelChapter.fetchContent()
                                                 }
                                             }
                                         }
 
-                                        if batchIndex < batches.count - 1 {
-                                            try? await Task.sleep(nanoseconds: 5_000_000_000)
+                                        if novelChapterChunkIndex < novelChapterChunks.count - 1 {
+                                            try? await Task.sleep(nanoseconds: novel.provider.implementation.details.batchFetchPeriodNanos)
                                         }
                                     }
 
-                                    novelChaptersChunkMidDownload = false
+                                    novelChaptersMidDownload = false
                                 }
                             } label: {
-                                if novelChaptersChunk.contains(where: { $0.content != nil }) {
+                                if novelChapters.contains(where: { $0.content != nil }) {
                                     Label("Redownload All", systemImage: "arrow.clockwise")
                                 } else {
                                     Label("Download All", systemImage: "square.and.arrow.down")
@@ -249,7 +267,7 @@ private struct NovelChaptersChunk: View {
                             }
 
                             Button(role: .destructive) {
-                                for novelChapter in novelChaptersChunk {
+                                for novelChapter in novelChapters {
                                     novelChapter.content = nil
                                 }
                             } label: {
@@ -259,13 +277,13 @@ private struct NovelChaptersChunk: View {
 
                         Section {
                             Button {
-                                novel.chaptersRead.formUnion(novelChaptersChunk.map({ $0.path }))
+                                novel.chaptersRead.formUnion(novelChapters.map({ $0.path }))
                             } label: {
                                 Label("Mark as Read", systemImage: "checkmark")
                             }
 
                             Button(role: .destructive) {
-                                novel.chaptersRead.subtract(novelChaptersChunk.map({ $0.path }))
+                                novel.chaptersRead.subtract(novelChapters.map({ $0.path }))
                             } label: {
                                 Label("Unmark as Read", systemImage: "xmark")
                             }
@@ -342,6 +360,7 @@ private struct NovelChapterCell: View {
                         Section {
                             Button {
                                 novel.chaptersRead.insert(novelChapter.path)
+                                novel.lastChapterReadNumber = novelChapter.number
                             } label: {
                                 Label("Mark as Read", systemImage: "checkmark")
                             }

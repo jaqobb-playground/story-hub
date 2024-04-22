@@ -6,9 +6,11 @@ struct WWWeebApp: App {
     @Environment(\.scenePhase)
     private var scenePhase
 
+    let settings: Settings
     let library: Library
 
     init() {
+        settings = Settings.load()
         library = Library.load()
     }
 
@@ -28,9 +30,12 @@ struct WWWeebApp: App {
                         Label("Settings", systemImage: "gear")
                     }
             }
+            .modifier(SettingsEnvironmentModifier(settings: settings))
             .modifier(LibraryEnvironmentModifier(library: library))
+            .preferredColorScheme(settings.appearanceId == 2 ? .dark : settings.appearanceId == 1 ? .light : nil)
             .onChange(of: scenePhase) { _, newScenePhase in
                 if newScenePhase == .background {
+                    Settings.save(settings)
                     Library.save(library)
                 }
             }

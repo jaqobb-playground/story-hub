@@ -4,6 +4,8 @@ import SwiftUI
 import OSLog
 
 struct BrowseView: View {
+    @Environment(\.settings)
+    private var settings
     @Environment(\.library)
     private var library
 
@@ -52,11 +54,11 @@ struct BrowseView: View {
             novelPreviews = []
             
             Task.init {
-                for novelSourceType in NovelSourceType.allCases {
+                for novelProvider in settings.novelProviders {
                     do {
-                        self.novelPreviews.append(contentsOf: try await novelSourceType.source.fetchNovels(searchTerm: novelsSearchText))
+                        novelPreviews.append(contentsOf: try await novelProvider.implementation.fetchNovels(searchTerm: novelsSearchText))
                     } catch {
-                        AlertUtils.showAlert(title: "Failed to fetch novel previews from '\(novelSourceType.source.name)'", message: error.localizedDescription)
+                        AlertUtils.showAlert(title: "Failed to Fetch Novel Previews from '\(novelProvider.implementation.details.name)'", message: error.localizedDescription)
                     }
                 }
                 
@@ -108,9 +110,9 @@ private struct NovelPreviewCell: View {
                         Button {
                             Task.init {
                                 do {
-                                    library.novels.insert(try await novelPreview.sourceType.source.parseNovel(novelPath: novelPreview.path))
+                                    library.novels.insert(try await novelPreview.provider.implementation.parseNovel(path: novelPreview.path))
                                 } catch {
-                                    AlertUtils.showAlert(title: "Failed to fetch novel '\(novelPreview.title)'", message: error.localizedDescription)
+                                    AlertUtils.showAlert(title: "Failed to Fetch Novel '\(novelPreview.title)'", message: error.localizedDescription)
                                 }
                             }
                         } label: {

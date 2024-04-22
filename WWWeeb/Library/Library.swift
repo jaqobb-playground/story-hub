@@ -4,88 +4,35 @@ import SwiftUI
 
 @Observable
 class Library: Codable {
-    static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "library")
-
-    enum NovelsInclude: String, Identifiable, Codable, CaseIterable {
-        case reading
-        case completed
-        case unread
-
-        var id: String {
-            rawValue
-        }
-
-        var name: String {
-            switch self {
-                case .reading:
-                    return "Reading"
-                case .completed:
-                    return "Completed"
-                case .unread:
-                    return "Unread"
-            }
-        }
-
-        func shouldInclude(novel: Novel) -> Bool {
-            switch self {
-                case .reading:
-                    return novel.category == .reading
-                case .completed:
-                    return novel.category == .completed
-                case .unread:
-                    return novel.chaptersRead.isEmpty
-            }
-        }
-    }
-
-    enum NovelsSortingMode: String, Identifiable, Codable, CaseIterable {
-        case title
-        case date_added
-        case date_updated
-
-        var id: String {
-            rawValue
-        }
-
-        var name: String {
-            switch self {
-                case .title:
-                    return "Title"
-                case .date_added:
-                    return "Date added"
-                case .date_updated:
-                    return "Date updated"
-            }
-        }
-
-        func comparator() -> (Novel, Novel) -> Bool {
-            switch self {
-                case .title:
-                    return { $0.title < $1.title }
-                case .date_added:
-                    return { $0.dateAdded > $1.dateAdded }
-                case .date_updated:
-                    return { $0.dateUpdated > $1.dateUpdated }
-            }
-        }
-    }
-
     enum CodingKeys: String, CodingKey {
         case _novels = "novels"
-        case _novelsIncludes = "novelsIncludes"
-        case _novelsSortingMode = "novelsSortingMode"
+        case _novelFilters = "novelFilters"
+        case _novelSortingMode = "novelSortingMode"
     }
 
     var novels: Set<Novel>
-    var novelsIncludes: Set<NovelsInclude>
-    var novelsSortingMode: NovelsSortingMode
+    var novelFilters: Set<Novel.Filter>
+    var novelSortingMode: Novel.SortingMode
 
     init() {
-        novels = []
-        novelsIncludes = [.reading]
-        novelsSortingMode = .title
+        _novels = []
+        _novelFilters = [.reading]
+        _novelSortingMode = .title
     }
+    
+    required init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        _novels = try container.decodeIfPresent(Set<Novel>.self, forKey: ._novels) ?? []
+        _novelFilters = try container.decodeIfPresent(Set<Novel.Filter>.self, forKey: ._novelFilters) ?? [.reading]
+        _novelSortingMode = try container.decodeIfPresent(Novel.SortingMode.self, forKey: ._novelSortingMode) ?? .title
+    }
+}
 
+extension Library {
+    static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "library")
+}
+
+extension Library {
     static func load() -> Library {
         do {
             Library.logger.info("Loading library...")
@@ -99,7 +46,6 @@ class Library: Codable {
 
             return decodedLibrary
         } catch {
-            // TODO: Implement migration system for outdated libraries.
             Library.logger.warning("Failed to load library: \(error.localizedDescription)")
             return Library()
         }

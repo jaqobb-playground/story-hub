@@ -4,6 +4,8 @@ import SwiftUI
 struct NovelChapterView: View {
     @Environment(\.presentationMode)
     private var presentationMode
+    @Environment(\.settings)
+    private var settings
 
     let novel: Novel
     @State
@@ -13,13 +15,15 @@ struct NovelChapterView: View {
     var novelChapterIndex: Int {
         novelChapter.number - 1
     }
+
     var novelFirstChapterNumber: Int {
         novel.chapters.first?.number ?? -1
     }
+
     var novelLastChapterNumber: Int {
         novel.chapters.last?.number ?? -1
     }
-    
+
     init(novel: Novel, novelChapter: NovelChapter) {
         self.novel = novel
         _novelChapter = State(initialValue: novelChapter)
@@ -32,8 +36,8 @@ struct NovelChapterView: View {
                     LazyVStack {
                         ForEach(novelChapterContent.indices, id: \.self) { index in
                             Text(novelChapterContent[index])
-                                .padding(.horizontal, 12)
-                                .padding(.vertical, 6)
+                                .padding(.horizontal, settings.novelChapterHorizontalPadding)
+                                .padding(.vertical, settings.novelChapterVerticalPadding)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .id(index)
                         }
@@ -41,11 +45,13 @@ struct NovelChapterView: View {
                             if novelChapter.number > novelFirstChapterNumber {
                                 Button {
                                     reader.scrollTo(0, anchor: .top)
-                                    
-                                    // TODO: Toggleable with settings?
-                                    novel.chaptersRead.insert(novelChapter.path)
+
+                                    if settings.markNovelChapterAsReadWhenSwitching {
+                                        novel.chaptersRead.insert(novelChapter.path)
+                                        novel.lastChapterReadNumber = novelChapter.number
+                                    }
                                     novelChapter = novel.chapters[novelChapterIndex - 1]
-                                    
+
                                     fetchNovelChapterContent()
                                 } label: {
                                     Image(systemName: "arrow.backward")
@@ -54,17 +60,19 @@ struct NovelChapterView: View {
                             } else {
                                 Spacer()
                             }
-                            
+
                             Spacer()
-                            
+
                             if novelChapter.number < novelLastChapterNumber {
                                 Button {
                                     reader.scrollTo(0, anchor: .top)
-                                    
-                                    // TODO: Toggleable with settings?
-                                    novel.chaptersRead.insert(novelChapter.path)
+
+                                    if settings.markNovelChapterAsReadWhenSwitching {
+                                        novel.chaptersRead.insert(novelChapter.path)
+                                        novel.lastChapterReadNumber = novelChapter.number
+                                    }
                                     novelChapter = novel.chapters[novelChapterIndex + 1]
-                                    
+
                                     fetchNovelChapterContent()
                                 } label: {
                                     Text("Next Chapter")
@@ -79,8 +87,10 @@ struct NovelChapterView: View {
                         .padding(.bottom, 36)
                         .onAppear {
                             // With LazyVStack, when this appears it means we've reached the bottom (== chapter read).
-                            // TODO: Toggleable with settings?
-                            novel.chaptersRead.insert(novelChapter.path)
+                            if settings.markNovelChapterAsReadWhenFinished {
+                                novel.chaptersRead.insert(novelChapter.path)
+                                novel.lastChapterReadNumber = novelChapter.number
+                            }
                         }
                     }
                 } else {
@@ -94,16 +104,16 @@ struct NovelChapterView: View {
             }
         }
     }
-    
+
     private func fetchNovelChapterContent() {
         if let novelChapterContent = novelChapter.content {
             self.novelChapterContent = novelChapterContent
         } else {
             Task.init {
                 do {
-                    novelChapterContent = try await novel.sourceType.source.parseNovelChapter(novelChapterPath: novelChapter.path)
+                    novelChapterContent = try await novel.provider.implementation.parseNovelChapter(path: novelChapter.path)
                 } catch {
-                    AlertUtils.showAlert(title: "Failed to fetch novel chapter's '\(novelChapter.title)' content", message: error.localizedDescription) { _ in
+                    AlertUtils.showAlert(title: "Failed to Fetch Novel Chapter '\(novelChapter.title)' Content", message: error.localizedDescription) { _ in
                         presentationMode.wrappedValue.dismiss()
                     }
                 }

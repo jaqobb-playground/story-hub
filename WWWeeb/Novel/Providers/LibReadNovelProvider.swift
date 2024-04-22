@@ -1,23 +1,32 @@
 import Foundation
 import SwiftSoup
 
-extension NovelSource {
-    static let LibRead = LibReadSource()
+extension NovelProvider.Implementation {
+    static let LibRead = LibReadNovelProvider()
 
-    class LibReadSource: NovelSource {
+    class LibReadNovelProvider: NovelProvider.Implementation {
         fileprivate init() {
-            super.init(id: "lib_read", name: "Lib Read", site: "https://libread.org", version: "1.0", type: .lib_read)
+            super.init(
+                provider: .lib_read,
+                details: NovelProvider.Details(
+                    name: "Lib Read",
+                    site: "https://libread.org",
+                    version: "1.0",
+                    batchSize: 15,
+                    batchFetchPeriodNanos: 5_000_000_000
+                )
+            )
         }
 
         override func fetchNovels(searchTerm: String) async throws -> [NovelPreview] {
             do {
                 let html = try await URLUtils.fetchHTML(
-                    from: site + "/search/",
+                    from: details.site + "/search/",
                     method: "POST",
                     headers: [
                         "Content-Type": "application/x-www-form-urlencoded'",
-                        "Referer": site,
-                        "Origin": site,
+                        "Referer": details.site,
+                        "Origin": details.site,
                     ],
                     query: [
                         "searchkey": searchTerm,
@@ -25,28 +34,29 @@ extension NovelSource {
                 )
                 let document = try SwiftSoup.parse(html)
 
-                let novels = try document.select(".li-row > .li > .con").array().map { element -> NovelPreview in
-                    let path = try element.select("h3 > a").attr("href")
-                    let title = try element.select(".tit").text()
-                    let coverURL = try element.select(".pic > a > img").attr("src")
+                return try document.select(".li-row > .li > .con")
+                    .array()
+                    .map { element -> NovelPreview in
+                        let path = try element.select("h3 > a").attr("href")
+                        let title = try element.select(".tit").text()
+                        let coverURL = try element.select(".pic > a > img").attr("src")
 
-                    return NovelPreview(
-                        path: path,
-                        title: title,
-                        coverURL: coverURL,
-                        sourceType: type
-                    )
-                }
-
-                return novels.filter { !$0.title.isEmpty && !$0.path.isEmpty }
+                        return NovelPreview(
+                            path: path,
+                            title: title,
+                            coverURL: coverURL,
+                            provider: provider
+                        )
+                    }
+                    .filter { !$0.title.isEmpty && !$0.path.isEmpty }
             } catch {
                 throw NovelError.fetch(description: "Error fetching novels: \(error.localizedDescription)")
             }
         }
 
-        override func parseNovel(novelPath: String) async throws -> Novel {
+        override func parseNovel(path: String) async throws -> Novel {
             do {
-                let html = try await URLUtils.fetchHTML(from: site + novelPath)
+                let html = try await URLUtils.fetchHTML(from: details.site + path)
                 let document = try SwiftSoup.parse(html)
 
                 let title = try document.select("h1.tit").text()
@@ -58,21 +68,21 @@ extension NovelSource {
                 let chapters: [NovelChapter] = try document.select("#idData > li > a")
                     .enumerated()
                     .map { chapterIndex, chapterElement in
-                        let title = (try? chapterElement.attr("title")) ?? "Chapter \(chapterIndex + 1)"
-                        let path = (try? chapterElement.attr("href")) ?? novelPath + "/\(chapterIndex + 1)"
+                        let chapterTitle = (try? chapterElement.attr("title")) ?? "Chapter \(chapterIndex + 1)"
+                        let chapterPath = (try? chapterElement.attr("href")) ?? path + "/\(chapterIndex + 1)"
 
                         return NovelChapter(
-                            path: path,
-                            title: title,
+                            path: chapterPath,
+                            title: chapterTitle,
                             number: chapterIndex + 1,
                             releaseTime: nil,
                             content: nil,
-                            sourceType: type
+                            provider: provider
                         )
                     }
 
                 return Novel(
-                    path: novelPath,
+                    path: path,
                     title: title,
                     coverURL: coverURL,
                     summary: summary,
@@ -80,26 +90,27 @@ extension NovelSource {
                     authors: authors,
                     status: status,
                     chapters: chapters,
-                    chaptersRead: Set(),
+                    chaptersRead: [],
+                    lastChapterReadNumber: -1,
                     dateAdded: Date.now,
                     dateUpdated: Date.now,
                     category: .reading,
-                    sourceType: type
+                    provider: provider
                 )
             } catch {
-                throw NovelError.parse(description: "Error parsing novel '\(novelPath)': \(error.localizedDescription)")
+                throw NovelError.parse(description: "Error parsing novel '\(path)': \(error.localizedDescription)")
             }
         }
 
-        override func parseNovelChapter(novelChapterPath: String) async throws -> [String] {
+        override func parseNovelChapter(path: String) async throws -> [String] {
             do {
-                let html = try await URLUtils.fetchHTML(from: site + novelChapterPath)
+                let html = try await URLUtils.fetchHTML(from: details.site + path)
                 let document = try SwiftSoup.parse(html)
                 let documentTxt = try SwiftSoup.parse(try document.select("div.txt").html())
 
                 return try documentTxt.select("p").eachText()
             } catch {
-                throw NovelError.parse(description: "Error parsing novel chapter '\(novelChapterPath)': \(error.localizedDescription)")
+                throw NovelError.parse(description: "Error parsing novel chapter '\(path)': \(error.localizedDescription)")
             }
         }
     }
