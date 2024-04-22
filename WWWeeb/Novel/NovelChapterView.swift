@@ -48,7 +48,6 @@ struct NovelChapterView: View {
 
                                     if settings.markNovelChapterAsReadWhenSwitching {
                                         novel.chaptersRead.insert(novelChapter.path)
-                                        novel.lastChapterReadNumber = novelChapter.number
                                     }
                                     novelChapter = novel.chapters[novelChapterIndex - 1]
 
@@ -69,7 +68,6 @@ struct NovelChapterView: View {
 
                                     if settings.markNovelChapterAsReadWhenSwitching {
                                         novel.chaptersRead.insert(novelChapter.path)
-                                        novel.lastChapterReadNumber = novelChapter.number
                                     }
                                     novelChapter = novel.chapters[novelChapterIndex + 1]
 
@@ -89,7 +87,6 @@ struct NovelChapterView: View {
                             // With LazyVStack, when this appears it means we've reached the bottom (== chapter read).
                             if settings.markNovelChapterAsReadWhenFinished {
                                 novel.chaptersRead.insert(novelChapter.path)
-                                novel.lastChapterReadNumber = novelChapter.number
                             }
                         }
                     }

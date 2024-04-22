@@ -83,6 +83,17 @@ class Settings: Codable {
         _markNovelChapterAsReadWhenFinished = try container.decodeIfPresent(Bool.self, forKey: ._markNovelChapterAsReadWhenFinished) ?? true
         _markNovelChapterAsReadWhenSwitching = try container.decodeIfPresent(Bool.self, forKey: ._markNovelChapterAsReadWhenSwitching) ?? true
     }
+    
+    func encode(to encoder: any Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(_appearanceId, forKey: ._appearanceId)
+        try container.encode(_novelProviders, forKey: ._novelProviders)
+        try container.encode(_novelChapterChunkSize, forKey: ._novelChapterChunkSize)
+        try container.encode(_novelChapterHorizontalPadding, forKey: ._novelChapterHorizontalPadding)
+        try container.encode(_novelChapterVerticalPadding, forKey: ._novelChapterVerticalPadding)
+        try container.encode(_markNovelChapterAsReadWhenFinished, forKey: ._markNovelChapterAsReadWhenFinished)
+        try container.encode(_markNovelChapterAsReadWhenSwitching, forKey: ._markNovelChapterAsReadWhenSwitching)
+    }
 }
 
 extension Settings {

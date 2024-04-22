@@ -14,7 +14,6 @@ class Novel: Codable, Hashable {
         case _status = "status"
         case _chapters = "chapters"
         case _chaptersRead = "chaptersRead"
-        case _lastChapterReadNumber = "lastChapterReadNumber"
         case _dateAdded = "dateAdded"
         case _dateUpdated = "dateUpdated"
         case _category = "category"
@@ -30,7 +29,6 @@ class Novel: Codable, Hashable {
     var status: String
     var chapters: [NovelChapter]
     var chaptersRead: Set<String>
-    var lastChapterReadNumber: Int
     var dateAdded: Date
     var dateUpdated: Date
     var category: Category
@@ -68,7 +66,6 @@ class Novel: Codable, Hashable {
         _status = status
         _chapters = chapters
         _chaptersRead = chaptersRead
-        _lastChapterReadNumber = lastChapterReadNumber
         _dateAdded = dateAdded
         _dateUpdated = dateUpdated
         _category = category
@@ -86,11 +83,24 @@ class Novel: Codable, Hashable {
         _status = try container.decode(String.self, forKey: ._status)
         _chapters = try container.decode([NovelChapter].self, forKey: ._chapters)
         _chaptersRead = try container.decode(Set<String>.self, forKey: ._chaptersRead)
-        _lastChapterReadNumber = try container.decode(Int.self, forKey: ._lastChapterReadNumber)
         _dateAdded = try container.decode(Date.self, forKey: ._dateAdded)
         _dateUpdated = try container.decode(Date.self, forKey: ._dateUpdated)
         _category = try container.decode(Category.self, forKey: ._category)
         _provider = try container.decode(NovelProvider.self, forKey: ._provider)
+    }
+    
+    var lastChapterReadNumber: Int {
+        var lastChapterReadNumber = -1
+        
+        for chapter in chapters {
+            if !chaptersRead.contains(chapter.path) {
+                return lastChapterReadNumber
+            }
+            
+            lastChapterReadNumber = chapter.number
+        }
+        
+        return lastChapterReadNumber
     }
 
     func update() async {
@@ -115,6 +125,23 @@ class Novel: Codable, Hashable {
         } catch {
             AlertUtils.showAlert(title: "Failed to Update Novel '\(title)'", message: error.localizedDescription)
         }
+    }
+    
+    func encode(to encoder: any Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(_path, forKey: ._path)
+        try container.encode(_title, forKey: ._title)
+        try container.encode(_coverURL, forKey: ._coverURL)
+        try container.encode(_summary, forKey: ._summary)
+        try container.encode(_genres, forKey: ._genres)
+        try container.encode(_authors, forKey: ._authors)
+        try container.encode(_status, forKey: ._status)
+        try container.encode(_chapters, forKey: ._chapters)
+        try container.encode(_chaptersRead, forKey: ._chaptersRead)
+        try container.encode(_dateAdded, forKey: ._dateAdded)
+        try container.encode(_dateUpdated, forKey: ._dateUpdated)
+        try container.encode(_category, forKey: ._category)
+        try container.encode(_provider, forKey: ._provider)
     }
 
     func hash(into hasher: inout Hasher) {
@@ -259,8 +286,8 @@ class NovelChapter: Codable, Hashable {
         _path = try container.decode(String.self, forKey: ._path)
         _title = try container.decode(String.self, forKey: ._title)
         _number = try container.decode(Int.self, forKey: ._number)
-        _releaseTime = try container.decode(Int64?.self, forKey: ._releaseTime)
-        _content = try container.decode([String]?.self, forKey: ._content)
+        _releaseTime = try container.decodeIfPresent(Int64.self, forKey: ._releaseTime) ?? nil
+        _content = try container.decodeIfPresent([String].self, forKey: ._content) ?? nil
         _provider = try container.decode(NovelProvider.self, forKey: ._provider)
     }
 
@@ -270,6 +297,16 @@ class NovelChapter: Codable, Hashable {
         } catch {
             AlertUtils.showAlert(title: "Failed to Fetch Chapter '\(title)' Content", message: error.localizedDescription)
         }
+    }
+    
+    func encode(to encoder: any Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(_path, forKey: ._path)
+        try container.encode(_title, forKey: ._title)
+        try container.encode(_number, forKey: ._number)
+        try container.encodeIfPresent(_releaseTime, forKey: ._releaseTime)
+        try container.encodeIfPresent(_content, forKey: ._content)
+        try container.encode(_provider, forKey: ._provider)
     }
 
     func hash(into hasher: inout Hasher) {

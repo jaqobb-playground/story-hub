@@ -163,12 +163,13 @@ private struct NovelInformation: View {
                 Text("Start Reading")
             }
 
-            if novel.lastChapterReadNumber == -1 || novel.chapters.count <= novel.lastChapterReadNumber {
+            let novelLastChapterReadNumber = novel.lastChapterReadNumber
+            if novelLastChapterReadNumber == -1 || novel.chapters.count <= novelLastChapterReadNumber {
                 Text("Continue Reading")
                     .foregroundColor(.gray)
             } else {
                 NavigationLink {
-                    NovelChapterView(novel: novel, novelChapter: novel.chapters[novel.lastChapterReadNumber])
+                    NovelChapterView(novel: novel, novelChapter: novel.chapters[novelLastChapterReadNumber])
                 } label: {
                     Text("Continue Reading")
                 }
@@ -360,7 +361,6 @@ private struct NovelChapterCell: View {
                         Section {
                             Button {
                                 novel.chaptersRead.insert(novelChapter.path)
-                                novel.lastChapterReadNumber = novelChapter.number
                             } label: {
                                 Label("Mark as Read", systemImage: "checkmark")
                             }

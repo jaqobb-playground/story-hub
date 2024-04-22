@@ -26,6 +26,13 @@ class Library: Codable {
         _novelFilters = try container.decodeIfPresent(Set<Novel.Filter>.self, forKey: ._novelFilters) ?? [.reading]
         _novelSortingMode = try container.decodeIfPresent(Novel.SortingMode.self, forKey: ._novelSortingMode) ?? .title
     }
+    
+    func encode(to encoder: any Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(_novels, forKey: ._novels)
+        try container.encode(_novelFilters, forKey: ._novelFilters)
+        try container.encode(_novelSortingMode, forKey: ._novelSortingMode)
+    }
 }
 
 extension Library {

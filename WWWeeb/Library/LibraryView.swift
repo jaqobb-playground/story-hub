@@ -185,7 +185,6 @@ private struct NovelCell: View {
                             let (inserted, _) = novel.chaptersRead.insert(novelChapter.path)
                             if inserted {
                                 novelChaptersReadChanged = true
-                                novel.lastChapterReadNumber = novelChapter.number
                             }
                         }
 
