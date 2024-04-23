@@ -5,7 +5,8 @@ import SwiftUI
 @Observable
 class Settings: Codable {
     enum CodingKeys: String, CodingKey {
-        case _appearanceId = "appearanceId"
+        case _novelFilters = "novelFilters"
+        case _novelSortingMode = "novelSortingMode"
         case _novelProviders = "novelProviders"
         case _novelChapterChunkSize = "novelChapterChunkSize"
         case _novelChapterFontSize = "novelChapterFontSize"
@@ -15,64 +16,19 @@ class Settings: Codable {
         case _markNovelChapterAsReadWhenSwitching = "markNovelChapterAsReadWhenSwitching"
     }
 
-    var appearanceId: Int
-    var appearanceIdBinding: Binding<Int> {
-        Binding(
-            get: { self.appearanceId },
-            set: { self.appearanceId = $0 }
-        )
-    }
-
+    var novelFilters: Set<Novel.Filter>
+    var novelSortingMode: Novel.SortingMode
     var novelProviders: Set<NovelProvider>
     var novelChapterFontSize: CGFloat
-    var novelChapterFontSizeBinding: Binding<CGFloat> {
-        Binding(
-            get: { self.novelChapterFontSize },
-            set: { self.novelChapterFontSize = $0 }
-        )
-    }
     var novelChapterChunkSize: Int
-    var novelChapterChunkSizeBinding: Binding<Int> {
-        Binding(
-            get: { self.novelChapterChunkSize },
-            set: { self.novelChapterChunkSize = $0 }
-        )
-    }
-
     var novelChapterHorizontalPadding: CGFloat
-    var novelChapterHorizontalPaddingBinding: Binding<CGFloat> {
-        Binding(
-            get: { self.novelChapterHorizontalPadding },
-            set: { self.novelChapterHorizontalPadding = $0 }
-        )
-    }
-
     var novelChapterVerticalPadding: CGFloat
-    var novelChapterVerticalPaddingBinding: Binding<CGFloat> {
-        Binding(
-            get: { self.novelChapterVerticalPadding },
-            set: { self.novelChapterVerticalPadding = $0 }
-        )
-    }
-
     var markNovelChapterAsReadWhenFinished: Bool
-    var markNovelChapterAsReadWhenFinishedBinding: Binding<Bool> {
-        Binding(
-            get: { self.markNovelChapterAsReadWhenFinished },
-            set: { self.markNovelChapterAsReadWhenFinished = $0 }
-        )
-    }
-
     var markNovelChapterAsReadWhenSwitching: Bool
-    var markNovelChapterAsReadWhenSwitchingBinding: Binding<Bool> {
-        Binding(
-            get: { self.markNovelChapterAsReadWhenSwitching },
-            set: { self.markNovelChapterAsReadWhenSwitching = $0 }
-        )
-    }
 
     init() {
-        _appearanceId = 0
+        _novelFilters = [.reading]
+        _novelSortingMode = .title
         _novelProviders = []
         _novelChapterFontSize = 18
         _novelChapterChunkSize = 100
@@ -84,7 +40,8 @@ class Settings: Codable {
 
     required init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        _appearanceId = try container.decodeIfPresent(Int.self, forKey: ._appearanceId) ?? 0
+        _novelFilters = try container.decodeIfPresent(Set<Novel.Filter>.self, forKey: ._novelFilters) ?? [.reading]
+        _novelSortingMode = try container.decodeIfPresent(Novel.SortingMode.self, forKey: ._novelSortingMode) ?? .title
         _novelProviders = try container.decodeIfPresent(Set<NovelProvider>.self, forKey: ._novelProviders) ?? []
         _novelChapterFontSize = try container.decodeIfPresent(CGFloat.self, forKey: ._novelChapterFontSize) ?? 18
         _novelChapterChunkSize = try container.decodeIfPresent(Int.self, forKey: ._novelChapterChunkSize) ?? 100
@@ -93,10 +50,11 @@ class Settings: Codable {
         _markNovelChapterAsReadWhenFinished = try container.decodeIfPresent(Bool.self, forKey: ._markNovelChapterAsReadWhenFinished) ?? true
         _markNovelChapterAsReadWhenSwitching = try container.decodeIfPresent(Bool.self, forKey: ._markNovelChapterAsReadWhenSwitching) ?? true
     }
-    
+
     func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(_appearanceId, forKey: ._appearanceId)
+        try container.encode(_novelFilters, forKey: ._novelFilters)
+        try container.encode(_novelSortingMode, forKey: ._novelSortingMode)
         try container.encode(_novelProviders, forKey: ._novelProviders)
         try container.encode(_novelChapterFontSize, forKey: ._novelChapterFontSize)
         try container.encode(_novelChapterChunkSize, forKey: ._novelChapterChunkSize)

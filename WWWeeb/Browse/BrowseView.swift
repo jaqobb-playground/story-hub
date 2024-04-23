@@ -1,128 +1,79 @@
 import Kingfisher
-import OSLog
-import SwiftData
 import SwiftUI
 
 struct BrowseView: View {
     @Environment(\.verticalSizeClass)
-    var verticalSizeClass
+    private var verticalSizeClass
     @Environment(\.settings)
     private var settings
     @Environment(\.library)
     private var library
 
     @State
-    var novelsSearchInProgress = false
+    var settingsSheetVisible = false
     @State
-    var novelsSearchText = ""
+    var novelSearchInProgress = false
+    @State
+    var novelSearchBarFocused = false
+    @State
+    var novelSearchText = ""
     @State
     var novelPreviews: [NovelPreview] = []
 
     var body: some View {
-        NavigationStack {
-            ScrollView(.vertical) {
-                TextField("Enter title...", text: $novelsSearchText, onCommit: { performNovelsSearch() })
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
-                    .autocorrectionDisabled()
-                    .textInputAutocapitalization(.never)
-                    .padding(.horizontal)
-
-                Spacer()
-
-                let columns = Array(repeating: GridItem(.flexible()), count: verticalSizeClass == .regular ? 2 : 4)
-                LazyVGrid(columns: columns, spacing: 2) {
-                    ForEach(novelPreviews, id: \.path) { novelPreview in
-                        NovelPreviewCell(novelPreview: novelPreview, novel: library.novels[novelPreview.path])
-                    }
+        ScrollView(.vertical) {
+            let columns = Array(repeating: GridItem(.flexible()), count: verticalSizeClass == .regular ? 2 : 4)
+            LazyVGrid(columns: columns, spacing: 2) {
+                ForEach(novelPreviews, id: \.path) { novelPreview in
+                    NovelPreviewCell(novelPreview: novelPreview, novel: library.novels[novelPreview.path])
                 }
             }
-            .navigationTitle("Browse")
-            .onTapGesture {
-                UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+        }
+        .navigationTitle("Browse")
+        .navigationBarTitleDisplayMode(.large)
+        .searchable(text: $novelSearchText, isPresented: $novelSearchBarFocused, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search title...")
+        .autocorrectionDisabled()
+        .textInputAutocapitalization(.never)
+        .onSubmit(of: .search) {
+            performNovelSearch()
+        }
+        .toolbar {
+            ToolbarItem(id: "Settings", placement: .topBarTrailing) {
+                Button {
+                    settingsSheetVisible = true
+                } label: {
+                    Image(systemName: "slider.horizontal.3")
+                }
             }
+        }
+        .sheet(isPresented: $settingsSheetVisible) {
+            BrowseSettingsSheet(settingsSheetVisible: $settingsSheetVisible)
         }
     }
 
-    private func performNovelsSearch() {
-        if novelsSearchInProgress {
+    private func performNovelSearch() {
+        if novelSearchInProgress {
             return
         }
 
+        novelSearchBarFocused = false
         novelPreviews = []
-        if novelsSearchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+        if novelSearchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
             return
         }
 
-        novelsSearchInProgress = true
+        novelSearchInProgress = true
 
         Task.init {
             for novelProvider in settings.novelProviders {
                 do {
-                    novelPreviews.append(contentsOf: try await novelProvider.implementation.fetchNovels(searchTerm: novelsSearchText))
+                    novelPreviews.append(contentsOf: try await novelProvider.implementation.fetchNovels(searchTerm: novelSearchText))
                 } catch {
                     AlertUtils.showAlert(title: "Failed to Fetch Novel Previews from '\(novelProvider.implementation.details.name)'", message: error.localizedDescription)
                 }
             }
 
-            novelsSearchInProgress = false
+            novelSearchInProgress = false
         }
-    }
-}
-
-private struct NovelPreviewCell: View {
-    @Environment(\.library)
-    private var library
-
-    let novelPreview: NovelPreview
-    let novel: Novel?
-
-    var body: some View {
-        NavigationLink {
-            if let novel = novel {
-                NovelView(novel: novel)
-            } else {
-                NovelView(novelPreview: novelPreview)
-            }
-        } label: {
-            VStack(spacing: 4) {
-                KFImage(URL(string: novelPreview.coverURL))
-                    .resizable()
-                    .scaledToFit()
-                    .cornerRadius(10)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-
-                Text(novelPreview.title)
-                    .font(.headline)
-                    .multilineTextAlignment(.center)
-                    .lineLimit(1)
-                    .truncationMode(.tail)
-            }
-            .padding(.horizontal)
-            .padding(.vertical)
-            .contextMenu {
-                Section {
-                    if let novel = novel {
-                        Button(role: .destructive) {
-                            library.novels.remove(novel)
-                        } label: {
-                            Label("Remove from Library", systemImage: "bookmark.slash")
-                        }
-                    } else {
-                        Button {
-                            Task.init {
-                                do {
-                                    library.novels.insert(try await novelPreview.provider.implementation.parseNovel(path: novelPreview.path))
-                                } catch {
-                                    AlertUtils.showAlert(title: "Failed to Fetch Novel '\(novelPreview.title)'", message: error.localizedDescription)
-                                }
-                            }
-                        } label: {
-                            Label("Add to Library", systemImage: "bookmark")
-                        }
-                    }
-                }
-            }
-        }
-        .buttonStyle(PlainButtonStyle())
     }
 }

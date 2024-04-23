@@ -15,16 +15,15 @@
 		5C45A9202BC9258000299492 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5C45A91F2BC9258000299492 /* Preview Assets.xcassets */; };
 		5C45A9282BC925C600299492 /* BrowseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C45A9272BC925C600299492 /* BrowseView.swift */; };
 		5C45A92A2BC925DA00299492 /* LibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C45A9292BC925DA00299492 /* LibraryView.swift */; };
-		5C45A92E2BC925FF00299492 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C45A92D2BC925FF00299492 /* SettingsView.swift */; };
 		5C45A9312BC9261300299492 /* URLUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C45A9302BC9261300299492 /* URLUtils.swift */; };
 		5C45A9342BC9262E00299492 /* Novel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C45A9332BC9262E00299492 /* Novel.swift */; };
 		5C45A9392BC9266900299492 /* NovelProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C45A9382BC9266900299492 /* NovelProvider.swift */; };
 		5C45A93E2BC9268800299492 /* SwiftSoup in Frameworks */ = {isa = PBXBuildFile; productRef = 5C45A93D2BC9268800299492 /* SwiftSoup */; };
-		5C45A95C2BC9895600299492 /* NovelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C45A95B2BC9895600299492 /* NovelView.swift */; };
+		5C45A95C2BC9895600299492 /* NovelViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C45A95B2BC9895600299492 /* NovelViews.swift */; };
 		5C4FBAA22BCDBDF300AA786C /* LibReadNovelProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C4FBAA12BCDBDF300AA786C /* LibReadNovelProvider.swift */; };
+		5C706A682BD8499A00651FBB /* SettingsViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C706A672BD8499A00651FBB /* SettingsViews.swift */; };
 		5CBA31942BD7C8C40012CE3B /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 5CBA31932BD7C8C40012CE3B /* README.md */; };
 		5CBA31962BD7C8DE0012CE3B /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = 5CBA31952BD7C8DE0012CE3B /* .gitignore */; };
-		5CE52CA92BCAD22000758C35 /* NovelChapterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CE52CA82BCAD22000758C35 /* NovelChapterView.swift */; };
 		5CF895BF2BD6A177001CBBED /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CF895BE2BD6A177001CBBED /* Settings.swift */; };
 /* End PBXBuildFile section */
 
@@ -37,15 +36,14 @@
 		5C45A91F2BC9258000299492 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		5C45A9272BC925C600299492 /* BrowseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowseView.swift; sourceTree = "<group>"; };
 		5C45A9292BC925DA00299492 /* LibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryView.swift; sourceTree = "<group>"; };
-		5C45A92D2BC925FF00299492 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		5C45A9302BC9261300299492 /* URLUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLUtils.swift; sourceTree = "<group>"; };
 		5C45A9332BC9262E00299492 /* Novel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Novel.swift; sourceTree = "<group>"; };
 		5C45A9382BC9266900299492 /* NovelProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NovelProvider.swift; sourceTree = "<group>"; };
-		5C45A95B2BC9895600299492 /* NovelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NovelView.swift; sourceTree = "<group>"; };
+		5C45A95B2BC9895600299492 /* NovelViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NovelViews.swift; sourceTree = "<group>"; };
 		5C4FBAA12BCDBDF300AA786C /* LibReadNovelProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibReadNovelProvider.swift; sourceTree = "<group>"; };
+		5C706A672BD8499A00651FBB /* SettingsViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViews.swift; sourceTree = "<group>"; };
 		5CBA31932BD7C8C40012CE3B /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		5CBA31952BD7C8DE0012CE3B /* .gitignore */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
-		5CE52CA82BCAD22000758C35 /* NovelChapterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NovelChapterView.swift; sourceTree = "<group>"; };
 		5CF895BE2BD6A177001CBBED /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -124,10 +122,9 @@
 			isa = PBXGroup;
 			children = (
 				5C0851E42BD4354500E86111 /* Providers */,
-				5C45A9332BC9262E00299492 /* Novel.swift */,
 				5C45A9382BC9266900299492 /* NovelProvider.swift */,
-				5C45A95B2BC9895600299492 /* NovelView.swift */,
-				5CE52CA82BCAD22000758C35 /* NovelChapterView.swift */,
+				5C45A9332BC9262E00299492 /* Novel.swift */,
+				5C45A95B2BC9895600299492 /* NovelViews.swift */,
 			);
 			path = Novel;
 			sourceTree = "<group>";
@@ -153,7 +150,7 @@
 			isa = PBXGroup;
 			children = (
 				5CF895BE2BD6A177001CBBED /* Settings.swift */,
-				5C45A92D2BC925FF00299492 /* SettingsView.swift */,
+				5C706A672BD8499A00651FBB /* SettingsViews.swift */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -238,15 +235,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5C45A92E2BC925FF00299492 /* SettingsView.swift in Sources */,
 				5C45A9282BC925C600299492 /* BrowseView.swift in Sources */,
-				5CE52CA92BCAD22000758C35 /* NovelChapterView.swift in Sources */,
 				5C45A9312BC9261300299492 /* URLUtils.swift in Sources */,
 				5CF895BF2BD6A177001CBBED /* Settings.swift in Sources */,
 				5C45A9392BC9266900299492 /* NovelProvider.swift in Sources */,
+				5C706A682BD8499A00651FBB /* SettingsViews.swift in Sources */,
 				5C0559BA2BCFCDF10093A355 /* AlertUtils.swift in Sources */,
 				5C11E76D2BCE816300307AC6 /* Library.swift in Sources */,
-				5C45A95C2BC9895600299492 /* NovelView.swift in Sources */,
+				5C45A95C2BC9895600299492 /* NovelViews.swift in Sources */,
 				5C4FBAA22BCDBDF300AA786C /* LibReadNovelProvider.swift in Sources */,
 				5C45A92A2BC925DA00299492 /* LibraryView.swift in Sources */,
 				5C45A9192BC9257F00299492 /* WWWeebApp.swift in Sources */,
@@ -382,12 +378,13 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 19;
+				CURRENT_PROJECT_VERSION = 20;
 				DEVELOPMENT_ASSET_PATHS = "\"WWWeeb/Preview Content\"";
 				DEVELOPMENT_TEAM = 55HSKS6J8J;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = WWWeeb;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.entertainment";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -412,12 +409,13 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 19;
+				CURRENT_PROJECT_VERSION = 20;
 				DEVELOPMENT_ASSET_PATHS = "\"WWWeeb/Preview Content\"";
 				DEVELOPMENT_TEAM = 55HSKS6J8J;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = WWWeeb;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.entertainment";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

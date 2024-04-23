@@ -6,32 +6,22 @@ import SwiftUI
 class Library: Codable {
     enum CodingKeys: String, CodingKey {
         case _novels = "novels"
-        case _novelFilters = "novelFilters"
-        case _novelSortingMode = "novelSortingMode"
     }
 
     var novels: Set<Novel>
-    var novelFilters: Set<Novel.Filter>
-    var novelSortingMode: Novel.SortingMode
 
     init() {
         _novels = []
-        _novelFilters = [.reading]
-        _novelSortingMode = .title
     }
 
     required init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         _novels = try container.decodeIfPresent(Set<Novel>.self, forKey: ._novels) ?? []
-        _novelFilters = try container.decodeIfPresent(Set<Novel.Filter>.self, forKey: ._novelFilters) ?? [.reading]
-        _novelSortingMode = try container.decodeIfPresent(Novel.SortingMode.self, forKey: ._novelSortingMode) ?? .title
     }
 
     func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(_novels, forKey: ._novels)
-        try container.encode(_novelFilters, forKey: ._novelFilters)
-        try container.encode(_novelSortingMode, forKey: ._novelSortingMode)
     }
 }
 
