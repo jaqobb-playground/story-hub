@@ -19,14 +19,14 @@ class Library: Codable {
         _novelFilters = [.reading]
         _novelSortingMode = .title
     }
-    
+
     required init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         _novels = try container.decodeIfPresent(Set<Novel>.self, forKey: ._novels) ?? []
         _novelFilters = try container.decodeIfPresent(Set<Novel.Filter>.self, forKey: ._novelFilters) ?? [.reading]
         _novelSortingMode = try container.decodeIfPresent(Novel.SortingMode.self, forKey: ._novelSortingMode) ?? .title
     }
-    
+
     func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(_novels, forKey: ._novels)

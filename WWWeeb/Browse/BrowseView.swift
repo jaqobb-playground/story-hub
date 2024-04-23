@@ -1,9 +1,11 @@
 import Kingfisher
+import OSLog
 import SwiftData
 import SwiftUI
-import OSLog
 
 struct BrowseView: View {
+    @Environment(\.verticalSizeClass)
+    var verticalSizeClass
     @Environment(\.settings)
     private var settings
     @Environment(\.library)
@@ -17,30 +19,27 @@ struct BrowseView: View {
     var novelPreviews: [NovelPreview] = []
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             ScrollView(.vertical) {
-                HStack {
-                    TextField("Enter title...", text: $novelsSearchText, onCommit: { performNovelsSearch() })
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
-                        .padding(.leading)
-                        .autocorrectionDisabled()
-                        .textInputAutocapitalization(.never)
-
-                    Button(action: { performNovelsSearch() }) {
-                        Image(systemName: "magnifyingglass")
-                    }
-                    .padding(.trailing)
-                }
+                TextField("Enter title...", text: $novelsSearchText, onCommit: { performNovelsSearch() })
+                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                    .autocorrectionDisabled()
+                    .textInputAutocapitalization(.never)
+                    .padding(.horizontal)
 
                 Spacer()
 
-                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 2) {
+                let columns = Array(repeating: GridItem(.flexible()), count: verticalSizeClass == .regular ? 2 : 4)
+                LazyVGrid(columns: columns, spacing: 2) {
                     ForEach(novelPreviews, id: \.path) { novelPreview in
                         NovelPreviewCell(novelPreview: novelPreview, novel: library.novels[novelPreview.path])
                     }
                 }
             }
             .navigationTitle("Browse")
+            .onTapGesture {
+                UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+            }
         }
     }
 
@@ -48,11 +47,11 @@ struct BrowseView: View {
         if novelsSearchInProgress {
             return
         }
-        
+
         if !novelsSearchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
             novelsSearchInProgress = true
             novelPreviews = []
-            
+
             Task.init {
                 for novelProvider in settings.novelProviders {
                     do {
@@ -61,7 +60,7 @@ struct BrowseView: View {
                         AlertUtils.showAlert(title: "Failed to Fetch Novel Previews from '\(novelProvider.implementation.details.name)'", message: error.localizedDescription)
                     }
                 }
-                
+
                 novelsSearchInProgress = false
             }
         }
@@ -96,8 +95,8 @@ private struct NovelPreviewCell: View {
                     .lineLimit(1)
                     .truncationMode(.tail)
             }
-            .padding(.horizontal, 12)
-            .padding(.vertical, 12)
+            .padding(.horizontal)
+            .padding(.vertical)
             .contextMenu {
                 Section {
                     if let novel = novel {
@@ -118,7 +117,6 @@ private struct NovelPreviewCell: View {
                         } label: {
                             Label("Add to Library", systemImage: "bookmark")
                         }
-                        
                     }
                 }
             }

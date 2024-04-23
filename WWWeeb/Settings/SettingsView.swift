@@ -5,7 +5,7 @@ struct SettingsView: View {
     private var settings
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             Form {
                 Section(header: Text("General")) {
                     Picker("Appearance", selection: settings.appearanceIdBinding) {
@@ -32,36 +32,48 @@ struct SettingsView: View {
                             })
                         }
                         .navigationTitle("Providers")
-                        .navigationBarTitleDisplayMode(.inline)
                     } label: {
                         Text("Providers")
                     }
                     
-                    Picker("Chapter Chunk Size", selection: settings.novelChapterChunkSizeBinding) {
-                        ForEach(Array(stride(from: 50, through: 100, by: 5)), id: \.self) { chunkSize in
-                            Text("\(chunkSize)").tag(chunkSize)
-                        }
-                    }
+                    NavigationLink {
+                        Form {
+                            Picker("Chunk Size", selection: settings.novelChapterChunkSizeBinding) {
+                                ForEach(Array(stride(from: 50, through: 100, by: 5)), id: \.self) { chunkSize in
+                                    Text("\(chunkSize)").tag(chunkSize)
+                                }
+                            }
+                            
+                            Picker("Font Size", selection: settings.novelChapterFontSizeBinding) {
+                                ForEach(Array(stride(from: 12, through: 24, by: 2)), id: \.self) { size in
+                                    Text("\(size)").tag(CGFloat(size))
+                                }
+                            }
 
-                    Picker("Chapter Horizontal Padding", selection: settings.novelChapterHorizontalPaddingBinding) {
-                        ForEach(Array(stride(from: 2, through: 24, by: 2)), id: \.self) { padding in
-                            Text("\(padding)").tag(CGFloat(padding))
-                        }
-                    }
-                    
-                    Picker("Chapter Vertical Padding", selection: settings.novelChapterVerticalPaddingBinding) {
-                        ForEach(Array(stride(from: 2, through: 24, by: 2)), id: \.self) { padding in
-                            Text("\(padding)").tag(CGFloat(padding))
-                        }
-                    }
+                            Picker("Horizontal Padding", selection: settings.novelChapterHorizontalPaddingBinding) {
+                                ForEach(Array(stride(from: 2, through: 24, by: 2)), id: \.self) { padding in
+                                    Text("\(padding)").tag(CGFloat(padding))
+                                }
+                            }
+                            
+                            Picker("Vertical Padding", selection: settings.novelChapterVerticalPaddingBinding) {
+                                ForEach(Array(stride(from: 2, through: 24, by: 2)), id: \.self) { padding in
+                                    Text("\(padding)").tag(CGFloat(padding))
+                                }
+                            }
 
-                    Toggle(isOn: settings.markNovelChapterAsReadWhenFinishedBinding, label: {
-                        Text("Mark Chapter as Read when Finished")
-                    })
+                            Toggle(isOn: settings.markNovelChapterAsReadWhenFinishedBinding, label: {
+                                Text("Mark as Read when Finished")
+                            })
 
-                    Toggle(isOn: settings.markNovelChapterAsReadWhenSwitchingBinding, label: {
-                        Text("Mark Chapter as Read when Switching")
-                    })
+                            Toggle(isOn: settings.markNovelChapterAsReadWhenSwitchingBinding, label: {
+                                Text("Mark as Read when Switching")
+                            })
+                        }
+                        .navigationTitle("Chapters")
+                    } label: {
+                        Text("Chapters")
+                    }
                 }
 
                 Section(header: Text("About")) {

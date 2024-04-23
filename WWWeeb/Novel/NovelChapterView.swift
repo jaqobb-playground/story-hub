@@ -36,11 +36,13 @@ struct NovelChapterView: View {
                     LazyVStack {
                         ForEach(novelChapterContent.indices, id: \.self) { index in
                             Text(novelChapterContent[index])
+                                .font(.system(size: settings.novelChapterFontSize))
                                 .padding(.horizontal, settings.novelChapterHorizontalPadding)
                                 .padding(.vertical, settings.novelChapterVerticalPadding)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .id(index)
                         }
+                        
                         HStack {
                             if novelChapter.number > novelFirstChapterNumber {
                                 Button {
@@ -80,9 +82,8 @@ struct NovelChapterView: View {
                                 Spacer()
                             }
                         }
-                        .padding(.horizontal, 12)
-                        .padding(.top, 12)
-                        .padding(.bottom, 36)
+                        .padding(.horizontal)
+                        .padding(.vertical)
                         .onAppear {
                             // With LazyVStack, when this appears it means we've reached the bottom (== chapter read).
                             if settings.markNovelChapterAsReadWhenFinished {

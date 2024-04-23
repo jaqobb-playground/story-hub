@@ -4,108 +4,15 @@ import SwiftData
 import SwiftUI
 
 struct LibraryView: View {
+    @Environment(\.verticalSizeClass)
+    private var verticalSizeClass
     @Environment(\.library)
     private var library
 
     @State
-    var novelsSearchInProgress = false
-    @State
     var novelsSearchText: String = ""
-    @State
-    var novels: [Novel] = []
-
-    var body: some View {
-        NavigationView {
-            ScrollView(.vertical) {
-                HStack {
-                    TextField("Enter title...", text: $novelsSearchText, onCommit: { performNovelsSearch() })
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
-                        .autocorrectionDisabled()
-                        .textInputAutocapitalization(.never)
-
-                    HStack(spacing: 12) {
-                        Button(action: { performNovelsSearch() }) {
-                            Image(systemName: "magnifyingglass")
-                        }
-
-                        Menu {
-                            Section(header: Text("Novel Filters")) {
-                                ForEach(Novel.Filter.allCases) { novelFilter in
-                                    Button {
-                                        if !library.novelFilters.contains(novelFilter) {
-                                            library.novelFilters.insert(novelFilter)
-                                        } else {
-                                            library.novelFilters.remove(novelFilter)
-                                        }
-
-                                        performNovelsSearch()
-                                    } label: {
-                                        if library.novelFilters.contains(novelFilter) {
-                                            Label(novelFilter.name, systemImage: "checkmark")
-                                        } else {
-                                            Text(novelFilter.name)
-                                        }
-                                    }
-                                }
-                            }
-                        } label: {
-                            Image(systemName: "line.3.horizontal.decrease")
-                        }
-
-                        Menu {
-                            Section(header: Text("Sort Novels By")) {
-                                ForEach(Novel.SortingMode.allCases) { novelSortingMode in
-                                    if library.novelSortingMode == novelSortingMode {
-                                        Label(novelSortingMode.name, systemImage: "checkmark")
-                                    } else {
-                                        Button {
-                                            library.novelSortingMode = novelSortingMode
-
-                                            performNovelsSearch()
-                                        } label: {
-                                            Text(novelSortingMode.name)
-                                        }
-                                    }
-                                }
-                            }
-                        } label: {
-                            Image(systemName: "arrow.up.arrow.down")
-                        }
-                    }
-                    .padding(.trailing)
-                }
-                .padding(.leading)
-
-                Spacer()
-
-                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 2) {
-                    ForEach(novels, id: \.path) { novel in
-                        NovelCell(novel: novel, performNovelsSearch: performNovelsSearch)
-                    }
-                }
-            }
-            .navigationTitle("Library")
-            .refreshable {
-                for novel in novels {
-                    await novel.update()
-                }
-            }
-            .onAppear {
-                // This should ensure the first search is done after the library is actually loaded.
-                Task.init {
-                    performNovelsSearch()
-                }
-            }
-        }
-    }
-
-    private func performNovelsSearch() {
-        if novelsSearchInProgress {
-            return
-        }
-
-        novelsSearchInProgress = true
-        novels = []
+    var novels: [Novel] {
+        var novels: [Novel] = []
 
         for novel in library.novels {
             if !novelsSearchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
@@ -122,7 +29,85 @@ struct LibraryView: View {
         }
 
         novels.sort(by: library.novelSortingMode.comparator())
-        novelsSearchInProgress = false
+        return novels
+    }
+
+    var body: some View {
+        NavigationStack {
+            ScrollView(.vertical) {
+                TextField("Enter title...", text: $novelsSearchText)
+                    .textFieldStyle(.roundedBorder)
+                    .autocorrectionDisabled()
+                    .textInputAutocapitalization(.never)
+                    .padding(.horizontal)
+
+                HStack(spacing: 16) {
+                    Menu {
+                        Section(header: Text("Novels")) {
+                            ForEach(Novel.Filter.allCases) { novelFilter in
+                                Button {
+                                    if !library.novelFilters.contains(novelFilter) {
+                                        library.novelFilters.insert(novelFilter)
+                                    } else {
+                                        library.novelFilters.remove(novelFilter)
+                                    }
+                                } label: {
+                                    if library.novelFilters.contains(novelFilter) {
+                                        Label(novelFilter.name, systemImage: "checkmark")
+                                    } else {
+                                        Text(novelFilter.name)
+                                    }
+                                }
+                            }
+                        }
+                    } label: {
+                        Label("Filters", systemImage: "line.3.horizontal.decrease")
+                    }
+
+                    Menu {
+                        Section(header: Text("Novels")) {
+                            ForEach(Novel.SortingMode.allCases) { novelSortingMode in
+                                if library.novelSortingMode == novelSortingMode {
+                                    Label(novelSortingMode.name, systemImage: "checkmark")
+                                } else {
+                                    Button {
+                                        library.novelSortingMode = novelSortingMode
+                                    } label: {
+                                        Text(novelSortingMode.name)
+                                    }
+                                }
+                            }
+                        }
+                    } label: {
+                        Label("Sort By", systemImage: "arrow.up.arrow.down")
+                    }
+
+                    Spacer()
+                }
+                .padding(.horizontal)
+
+                Spacer()
+
+                let columns = Array(repeating: GridItem(.flexible()), count: verticalSizeClass == .regular ? 2 : 4)
+                LazyVGrid(columns: columns, spacing: 2) {
+                    ForEach(novels, id: \.path) { novel in
+                        NovelCell(novel: novel)
+                    }
+                }
+            }
+            .navigationTitle("Library")
+            .refreshable {
+                await Task {
+                    for novel in library.novels.filter({ $0.category != .completed }) {
+                        await novel.update()
+                    }
+                }
+                .value
+            }
+            .onTapGesture {
+                UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+            }
+        }
     }
 }
 
@@ -139,8 +124,6 @@ private struct NovelCell: View {
     var novelChaptersTotalString: String {
         String(novel.chapters.count).trimmingCharacters(in: .whitespaces)
     }
-    
-    let performNovelsSearch: () -> Void
 
     var body: some View {
         NavigationLink {
@@ -175,38 +158,18 @@ private struct NovelCell: View {
                     .lineLimit(1)
                     .truncationMode(.tail)
             }
-            .padding(.horizontal, 12)
-            .padding(.vertical, 12)
+            .padding(.horizontal)
+            .padding(.vertical)
             .contextMenu {
                 Section {
                     Button {
-                        var novelChaptersReadChanged = false
-                        for novelChapter in novel.chapters {
-                            let (inserted, _) = novel.chaptersRead.insert(novelChapter.path)
-                            if inserted {
-                                novelChaptersReadChanged = true
-                            }
-                        }
-
-                        if novelChaptersReadChanged {
-                            performNovelsSearch()
-                        }
+                        novel.chaptersRead.formUnion(novel.chapters.map({ $0.path }))
                     } label: {
                         Label("Mark as Read", systemImage: "checkmark")
                     }
 
                     Button(role: .destructive) {
-                        var novelChaptersReadChanged = false
-                        for novelChapter in novel.chapters {
-                            let removed = novel.chaptersRead.remove(novelChapter.path) != nil
-                            if removed {
-                                novelChaptersReadChanged = true
-                            }
-                        }
-
-                        if novelChaptersReadChanged {
-                            performNovelsSearch()
-                        }
+                        novel.chaptersRead.subtract(novel.chapters.map({ $0.path }))
                     } label: {
                         Label("Unmark as Read", systemImage: "xmark")
                     }
@@ -220,8 +183,6 @@ private struct NovelCell: View {
                             } else {
                                 Button {
                                     novel.category = novelCategory
-
-                                    performNovelsSearch()
                                 } label: {
                                     Text(novelCategory.name)
                                 }
@@ -234,14 +195,12 @@ private struct NovelCell: View {
                     Button {
                         Task.init {
                             await novel.update()
-                            
-                            performNovelsSearch()
                         }
                     } label: {
                         Label("Update", systemImage: "arrow.clockwise")
                     }
                 }
-                
+
                 Section {
                     Button(role: .destructive) {
                         for novelChapter in novel.chapters {
@@ -255,8 +214,6 @@ private struct NovelCell: View {
                 Section {
                     Button(role: .destructive) {
                         library.novels.remove(novel)
-                        
-                        performNovelsSearch()
                     } label: {
                         Label("Remove from Library", systemImage: "bookmark.slash")
                     }

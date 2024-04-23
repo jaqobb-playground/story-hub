@@ -8,6 +8,7 @@ class Settings: Codable {
         case _appearanceId = "appearanceId"
         case _novelProviders = "novelProviders"
         case _novelChapterChunkSize = "novelChapterChunkSize"
+        case _novelChapterFontSize = "novelChapterFontSize"
         case _novelChapterHorizontalPadding = "novelChapterHorizontalPadding"
         case _novelChapterVerticalPadding = "novelChapterVerticalPadding"
         case _markNovelChapterAsReadWhenFinished = "markNovelChapterAsReadWhenFinished"
@@ -23,6 +24,13 @@ class Settings: Codable {
     }
 
     var novelProviders: Set<NovelProvider>
+    var novelChapterFontSize: CGFloat
+    var novelChapterFontSizeBinding: Binding<CGFloat> {
+        Binding(
+            get: { self.novelChapterFontSize },
+            set: { self.novelChapterFontSize = $0 }
+        )
+    }
     var novelChapterChunkSize: Int
     var novelChapterChunkSizeBinding: Binding<Int> {
         Binding(
@@ -66,6 +74,7 @@ class Settings: Codable {
     init() {
         _appearanceId = 0
         _novelProviders = []
+        _novelChapterFontSize = 18
         _novelChapterChunkSize = 100
         _novelChapterHorizontalPadding = 12
         _novelChapterVerticalPadding = 6
@@ -77,6 +86,7 @@ class Settings: Codable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         _appearanceId = try container.decodeIfPresent(Int.self, forKey: ._appearanceId) ?? 0
         _novelProviders = try container.decodeIfPresent(Set<NovelProvider>.self, forKey: ._novelProviders) ?? []
+        _novelChapterFontSize = try container.decodeIfPresent(CGFloat.self, forKey: ._novelChapterFontSize) ?? 18
         _novelChapterChunkSize = try container.decodeIfPresent(Int.self, forKey: ._novelChapterChunkSize) ?? 100
         _novelChapterHorizontalPadding = try container.decodeIfPresent(CGFloat.self, forKey: ._novelChapterHorizontalPadding) ?? 12
         _novelChapterVerticalPadding = try container.decodeIfPresent(CGFloat.self, forKey: ._novelChapterVerticalPadding) ?? 6
@@ -88,6 +98,7 @@ class Settings: Codable {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(_appearanceId, forKey: ._appearanceId)
         try container.encode(_novelProviders, forKey: ._novelProviders)
+        try container.encode(_novelChapterFontSize, forKey: ._novelChapterFontSize)
         try container.encode(_novelChapterChunkSize, forKey: ._novelChapterChunkSize)
         try container.encode(_novelChapterHorizontalPadding, forKey: ._novelChapterHorizontalPadding)
         try container.encode(_novelChapterVerticalPadding, forKey: ._novelChapterVerticalPadding)
