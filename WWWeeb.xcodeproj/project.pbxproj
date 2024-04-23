@@ -22,6 +22,8 @@
 		5C45A93E2BC9268800299492 /* SwiftSoup in Frameworks */ = {isa = PBXBuildFile; productRef = 5C45A93D2BC9268800299492 /* SwiftSoup */; };
 		5C45A95C2BC9895600299492 /* NovelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C45A95B2BC9895600299492 /* NovelView.swift */; };
 		5C4FBAA22BCDBDF300AA786C /* LibReadNovelProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C4FBAA12BCDBDF300AA786C /* LibReadNovelProvider.swift */; };
+		5CBA31942BD7C8C40012CE3B /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 5CBA31932BD7C8C40012CE3B /* README.md */; };
+		5CBA31962BD7C8DE0012CE3B /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = 5CBA31952BD7C8DE0012CE3B /* .gitignore */; };
 		5CE52CA92BCAD22000758C35 /* NovelChapterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CE52CA82BCAD22000758C35 /* NovelChapterView.swift */; };
 		5CF895BF2BD6A177001CBBED /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CF895BE2BD6A177001CBBED /* Settings.swift */; };
 /* End PBXBuildFile section */
@@ -41,6 +43,8 @@
 		5C45A9382BC9266900299492 /* NovelProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NovelProvider.swift; sourceTree = "<group>"; };
 		5C45A95B2BC9895600299492 /* NovelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NovelView.swift; sourceTree = "<group>"; };
 		5C4FBAA12BCDBDF300AA786C /* LibReadNovelProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibReadNovelProvider.swift; sourceTree = "<group>"; };
+		5CBA31932BD7C8C40012CE3B /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		5CBA31952BD7C8DE0012CE3B /* .gitignore */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 		5CE52CA82BCAD22000758C35 /* NovelChapterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NovelChapterView.swift; sourceTree = "<group>"; };
 		5CF895BE2BD6A177001CBBED /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -69,6 +73,8 @@
 		5C45A90C2BC9257F00299492 = {
 			isa = PBXGroup;
 			children = (
+				5CBA31952BD7C8DE0012CE3B /* .gitignore */,
+				5CBA31932BD7C8C40012CE3B /* README.md */,
 				5C45A9172BC9257F00299492 /* WWWeeb */,
 				5C45A9162BC9257F00299492 /* Products */,
 			);
@@ -218,6 +224,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5CBA31962BD7C8DE0012CE3B /* .gitignore in Resources */,
+				5CBA31942BD7C8C40012CE3B /* README.md in Resources */,
 				5C45A9202BC9258000299492 /* Preview Assets.xcassets in Resources */,
 				5C45A91D2BC9258000299492 /* Assets.xcassets in Resources */,
 			);
@@ -374,7 +382,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 18;
+				CURRENT_PROJECT_VERSION = 19;
 				DEVELOPMENT_ASSET_PATHS = "\"WWWeeb/Preview Content\"";
 				DEVELOPMENT_TEAM = 55HSKS6J8J;
 				ENABLE_PREVIEWS = YES;
@@ -404,7 +412,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 18;
+				CURRENT_PROJECT_VERSION = 19;
 				DEVELOPMENT_ASSET_PATHS = "\"WWWeeb/Preview Content\"";
 				DEVELOPMENT_TEAM = 55HSKS6J8J;
 				ENABLE_PREVIEWS = YES;

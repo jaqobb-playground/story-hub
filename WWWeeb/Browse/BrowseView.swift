@@ -48,21 +48,23 @@ struct BrowseView: View {
             return
         }
 
-        if !novelsSearchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-            novelsSearchInProgress = true
-            novelPreviews = []
+        novelPreviews = []
+        if novelsSearchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            return
+        }
 
-            Task.init {
-                for novelProvider in settings.novelProviders {
-                    do {
-                        novelPreviews.append(contentsOf: try await novelProvider.implementation.fetchNovels(searchTerm: novelsSearchText))
-                    } catch {
-                        AlertUtils.showAlert(title: "Failed to Fetch Novel Previews from '\(novelProvider.implementation.details.name)'", message: error.localizedDescription)
-                    }
+        novelsSearchInProgress = true
+
+        Task.init {
+            for novelProvider in settings.novelProviders {
+                do {
+                    novelPreviews.append(contentsOf: try await novelProvider.implementation.fetchNovels(searchTerm: novelsSearchText))
+                } catch {
+                    AlertUtils.showAlert(title: "Failed to Fetch Novel Previews from '\(novelProvider.implementation.details.name)'", message: error.localizedDescription)
                 }
-
-                novelsSearchInProgress = false
             }
+
+            novelsSearchInProgress = false
         }
     }
 }
