@@ -71,7 +71,7 @@ class Novel: Codable, Hashable {
         _category = category
         _provider = provider
     }
-    
+
     required init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         _path = try container.decode(String.self, forKey: ._path)
@@ -88,18 +88,18 @@ class Novel: Codable, Hashable {
         _category = try container.decode(Category.self, forKey: ._category)
         _provider = try container.decode(NovelProvider.self, forKey: ._provider)
     }
-    
+
     var lastChapterReadNumber: Int {
         var lastChapterReadNumber = -1
-        
+
         for chapter in chapters {
             if !chaptersRead.contains(chapter.path) {
                 return lastChapterReadNumber
             }
-            
+
             lastChapterReadNumber = chapter.number
         }
-        
+
         return lastChapterReadNumber
     }
 
@@ -126,7 +126,7 @@ class Novel: Codable, Hashable {
             AlertUtils.showAlert(title: "Failed to Update Novel '\(title)'", message: error.localizedDescription)
         }
     }
-    
+
     func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(_path, forKey: ._path)
@@ -177,7 +177,8 @@ extension Novel {
     enum Filter: String, Identifiable, Codable, CaseIterable {
         case reading
         case completed
-        case unread
+        case unread_chapters
+        case not_started
 
         var id: String {
             rawValue
@@ -189,8 +190,10 @@ extension Novel {
                     return "Reading"
                 case .completed:
                     return "Completed"
-                case .unread:
-                    return "Unread"
+                case .unread_chapters:
+                    return "Unread Chapter(s)"
+                case .not_started:
+                    return "Not Started"
             }
         }
 
@@ -200,7 +203,9 @@ extension Novel {
                     return novel.category == .reading
                 case .completed:
                     return novel.category == .completed
-                case .unread:
+                case .unread_chapters:
+                    return novel.chapters.count > novel.chaptersRead.count
+                case .not_started:
                     return novel.chaptersRead.isEmpty
             }
         }
@@ -280,7 +285,7 @@ class NovelChapter: Codable, Hashable {
         _content = content
         _provider = provider
     }
-    
+
     required init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         _path = try container.decode(String.self, forKey: ._path)
@@ -298,7 +303,7 @@ class NovelChapter: Codable, Hashable {
             AlertUtils.showAlert(title: "Failed to Fetch Chapter '\(title)' Content", message: error.localizedDescription)
         }
     }
-    
+
     func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(_path, forKey: ._path)
@@ -321,13 +326,6 @@ class NovelChapter: Codable, Hashable {
 extension Array where Element == NovelChapter {
     subscript(_ path: String) -> Element? {
         return first { $0.path == path }
-    }
-    
-    func splitIntoChunks(of chunkSize: Int) -> [[Element]] {
-        return stride(from: 0, to: count, by: chunkSize).map { startIndex in
-            let endIndex = Swift.min(startIndex + chunkSize, self.count)
-            return Array(self[startIndex ..< endIndex])
-        }
     }
 }
 

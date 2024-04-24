@@ -12,30 +12,46 @@ struct BrowseView: View {
     @State
     var settingsSheetVisible = false
     @State
-    var novelSearchInProgress = false
+    var searchInProgress = false
     @State
-    var novelSearchBarFocused = false
+    var searchBarFocused = false
     @State
-    var novelSearchText = ""
+    var searchText = ""
     @State
     var novelPreviews: [NovelPreview] = []
 
     var body: some View {
         ScrollView(.vertical) {
-            let columns = Array(repeating: GridItem(.flexible()), count: verticalSizeClass == .regular ? 2 : 4)
-            LazyVGrid(columns: columns, spacing: 2) {
-                ForEach(novelPreviews, id: \.path) { novelPreview in
-                    NovelPreviewCell(novelPreview: novelPreview, novel: library.novels[novelPreview.path])
+            let novelPreviewChunks = novelPreviews.chunked(into: verticalSizeClass == .regular ? 2 : 4)
+            ForEach(novelPreviewChunks, id: \.self) { novelPreviews in
+                VStack {
+                    HStack(spacing: 12) {
+                        ForEach(novelPreviews, id: \.path) { novelPreview in
+                            NovelPreviewCell(novelPreview: novelPreview, novel: library.novels[novelPreview.path])
+                        }
+
+                        let missingNovelPreviews = (verticalSizeClass == .regular ? 2 : 4) - novelPreviews.count
+                        if missingNovelPreviews > 0 {
+                            ForEach(0 ..< missingNovelPreviews, id: \.self) { _ in
+                                Spacer()
+                                    .scaledToFit()
+                                    .cornerRadius(10)
+                                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            }
+                        }
+                    }
+                    .padding(.horizontal)
                 }
+                .padding(.bottom)
             }
         }
         .navigationTitle("Browse")
         .navigationBarTitleDisplayMode(.large)
-        .searchable(text: $novelSearchText, isPresented: $novelSearchBarFocused, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search title...")
+        .searchable(text: $searchText, isPresented: $searchBarFocused, placement: .navigationBarDrawer(displayMode: .always))
         .autocorrectionDisabled()
         .textInputAutocapitalization(.never)
         .onSubmit(of: .search) {
-            performNovelSearch()
+            performSearch()
         }
         .toolbar {
             ToolbarItem(id: "Settings", placement: .topBarTrailing) {
@@ -51,29 +67,30 @@ struct BrowseView: View {
         }
     }
 
-    private func performNovelSearch() {
-        if novelSearchInProgress {
+    private func performSearch() {
+        if searchInProgress {
             return
         }
 
-        novelSearchBarFocused = false
+        searchBarFocused = false
         novelPreviews = []
-        if novelSearchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+
+        if searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
             return
         }
 
-        novelSearchInProgress = true
+        searchInProgress = true
 
         Task.init {
             for novelProvider in settings.novelProviders {
                 do {
-                    novelPreviews.append(contentsOf: try await novelProvider.implementation.fetchNovels(searchTerm: novelSearchText))
+                    novelPreviews.append(contentsOf: try await novelProvider.implementation.fetchNovels(searchTerm: searchText))
                 } catch {
                     AlertUtils.showAlert(title: "Failed to Fetch Novel Previews from '\(novelProvider.implementation.details.name)'", message: error.localizedDescription)
                 }
             }
 
-            novelSearchInProgress = false
+            searchInProgress = false
         }
     }
 }

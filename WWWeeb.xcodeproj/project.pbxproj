@@ -22,6 +22,7 @@
 		5C45A95C2BC9895600299492 /* NovelViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C45A95B2BC9895600299492 /* NovelViews.swift */; };
 		5C4FBAA22BCDBDF300AA786C /* LibReadNovelProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C4FBAA12BCDBDF300AA786C /* LibReadNovelProvider.swift */; };
 		5C706A682BD8499A00651FBB /* SettingsViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C706A672BD8499A00651FBB /* SettingsViews.swift */; };
+		5CA024B32BD9139A0084B229 /* ArrayExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CA024B22BD9139A0084B229 /* ArrayExtensions.swift */; };
 		5CBA31942BD7C8C40012CE3B /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 5CBA31932BD7C8C40012CE3B /* README.md */; };
 		5CBA31962BD7C8DE0012CE3B /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = 5CBA31952BD7C8DE0012CE3B /* .gitignore */; };
 		5CF895BF2BD6A177001CBBED /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CF895BE2BD6A177001CBBED /* Settings.swift */; };
@@ -42,6 +43,7 @@
 		5C45A95B2BC9895600299492 /* NovelViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NovelViews.swift; sourceTree = "<group>"; };
 		5C4FBAA12BCDBDF300AA786C /* LibReadNovelProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibReadNovelProvider.swift; sourceTree = "<group>"; };
 		5C706A672BD8499A00651FBB /* SettingsViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViews.swift; sourceTree = "<group>"; };
+		5CA024B22BD9139A0084B229 /* ArrayExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArrayExtensions.swift; sourceTree = "<group>"; };
 		5CBA31932BD7C8C40012CE3B /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		5CBA31952BD7C8DE0012CE3B /* .gitignore */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 		5CF895BE2BD6A177001CBBED /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
@@ -89,6 +91,7 @@
 		5C45A9172BC9257F00299492 /* WWWeeb */ = {
 			isa = PBXGroup;
 			children = (
+				5CA024B12BD9138C0084B229 /* Extensions */,
 				5C45A92F2BC9260C00299492 /* Utils */,
 				5C45A9322BC9262100299492 /* Novel */,
 				5C45A9432BC926C400299492 /* Browse */,
@@ -153,6 +156,14 @@
 				5C706A672BD8499A00651FBB /* SettingsViews.swift */,
 			);
 			path = Settings;
+			sourceTree = "<group>";
+		};
+		5CA024B12BD9138C0084B229 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				5CA024B22BD9139A0084B229 /* ArrayExtensions.swift */,
+			);
+			path = Extensions;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -235,6 +246,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5CA024B32BD9139A0084B229 /* ArrayExtensions.swift in Sources */,
 				5C45A9282BC925C600299492 /* BrowseView.swift in Sources */,
 				5C45A9312BC9261300299492 /* URLUtils.swift in Sources */,
 				5CF895BF2BD6A177001CBBED /* Settings.swift in Sources */,
@@ -378,7 +390,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 20;
+				CURRENT_PROJECT_VERSION = 21;
 				DEVELOPMENT_ASSET_PATHS = "\"WWWeeb/Preview Content\"";
 				DEVELOPMENT_TEAM = 55HSKS6J8J;
 				ENABLE_PREVIEWS = YES;
@@ -409,7 +421,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 20;
+				CURRENT_PROJECT_VERSION = 21;
 				DEVELOPMENT_ASSET_PATHS = "\"WWWeeb/Preview Content\"";
 				DEVELOPMENT_TEAM = 55HSKS6J8J;
 				ENABLE_PREVIEWS = YES;

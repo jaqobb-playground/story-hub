@@ -12,17 +12,47 @@ struct BrowseSettingsSheet: View {
             Form {
                 Section(header: Text("Novel Providers")) {
                     List(NovelProvider.allCases) { novelProvider in
-                        Toggle(isOn: Binding<Bool>(
-                            get: { settings.novelProviders.contains(novelProvider) },
-                            set: { newValue in
-                                if newValue {
-                                    settings.novelProviders.insert(novelProvider)
-                                } else {
-                                    settings.novelProviders.remove(novelProvider)
+                        NavigationLink {
+                            Form {
+                                LabeledContent {
+                                    Text(novelProvider.id)
+                                } label: {
+                                    Text("ID")
+                                }
+                                
+                                LabeledContent {
+                                    Text(novelProvider.implementation.details.name)
+                                } label: {
+                                    Text("Name")
+                                }
+                                
+                                LabeledContent {
+                                    Text(novelProvider.implementation.details.site)
+                                } label: {
+                                    Text("Site")
+                                }
+                                
+                                LabeledContent {
+                                    Text(novelProvider.implementation.details.version)
+                                } label: {
+                                    Text("Version")
                                 }
                             }
-                        )) {
-                            Text(novelProvider.implementation.details.name)
+                            .navigationTitle(novelProvider.implementation.details.name)
+                            .navigationBarTitleDisplayMode(.inline)
+                        } label: {
+                            Toggle(isOn: Binding<Bool>(
+                                get: { settings.novelProviders.contains(novelProvider) },
+                                set: { newValue in
+                                    if newValue {
+                                        settings.novelProviders.insert(novelProvider)
+                                    } else {
+                                        settings.novelProviders.remove(novelProvider)
+                                    }
+                                }
+                            )) {
+                                Text(novelProvider.implementation.details.name)
+                            }
                         }
                     }
                 }

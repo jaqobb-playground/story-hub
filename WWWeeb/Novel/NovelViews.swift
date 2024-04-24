@@ -27,6 +27,14 @@ struct NovelView: View {
         Form {
             if let novel = novel {
                 NovelInformation(novel)
+            } else {
+                HStack {
+                    Spacer()
+                    ProgressView()
+                    Spacer()
+                }
+                .listRowInsets(.init())
+                .listRowBackground(Color.clear)
             }
         }
         .navigationTitle(novel != nil ? novel!.title : novelPreview!.title)
@@ -179,7 +187,7 @@ struct NovelInformation: View {
         }
 
         Section(header: Text("Chapters")) {
-            let novelChapterChunks = novel.chapters.splitIntoChunks(of: settings.novelChapterChunkSize)
+            let novelChapterChunks = novel.chapters.chunked(into: settings.novelChapterChunkSize)
             List(novelChapterChunks.reversed(), id: \.self) { novelChapters in
                 NovelChaptersChunk(novel: novel, novelChapters: novelChapters)
             }
@@ -188,12 +196,16 @@ struct NovelInformation: View {
         Section {
             if !library.novels.contains(novel) {
                 Button {
+                    presentationMode.wrappedValue.dismiss()
+
                     library.novels.insert(novel)
                 } label: {
                     Text("Add to Library")
                 }
             } else {
                 Button {
+                    presentationMode.wrappedValue.dismiss()
+
                     library.novels.remove(novel)
                 } label: {
                     Text("Remove from Library")
@@ -247,7 +259,7 @@ struct NovelChaptersChunk: View {
                                 Task.init {
                                     novelChaptersMidDownload = true
 
-                                    let novelChapterChunks = novelChapters.splitIntoChunks(of: novel.provider.implementation.details.batchSize)
+                                    let novelChapterChunks = novelChapters.chunked(into: novel.provider.implementation.details.batchSize)
                                     for (novelChapterChunkIndex, novelChapters) in novelChapterChunks.enumerated() {
                                         await withTaskGroup(of: Void.self) { group in
                                             for novelChapter in novelChapters {
@@ -291,7 +303,7 @@ struct NovelChaptersChunk: View {
                             Button(role: .destructive) {
                                 novel.chaptersRead.subtract(novelChapters.map({ $0.path }))
                             } label: {
-                                Label("Unmark as Read", systemImage: "xmark")
+                                Label("Mark as Unread", systemImage: "xmark")
                             }
                         }
                     }
@@ -374,7 +386,7 @@ struct NovelChapterCell: View {
                             Button(role: .destructive) {
                                 novel.chaptersRead.remove(novelChapter.path)
                             } label: {
-                                Label("Unmark as Read", systemImage: "xmark")
+                                Label("Mark as Unread", systemImage: "xmark")
                             }
                         }
                     }
@@ -400,6 +412,9 @@ struct NovelPreviewCell: View {
         } label: {
             VStack(spacing: 4) {
                 KFImage(URL(string: novelPreview.coverURL))
+                    .placeholder { progress in
+                        ProgressView(progress)
+                    }
                     .resizable()
                     .scaledToFit()
                     .cornerRadius(10)
@@ -411,8 +426,6 @@ struct NovelPreviewCell: View {
                     .lineLimit(1)
                     .truncationMode(.tail)
             }
-            .padding(.horizontal)
-            .padding(.vertical)
             .contextMenu {
                 if let novel = novel {
                     Button(role: .destructive) {
@@ -469,6 +482,10 @@ struct NovelCell: View {
                         Image(systemName: "exclamationmark.circle.fill")
                             .font(.system(size: 24))
                             .foregroundColor(.blue)
+                            .background(Color.white)
+                            .clipShape(Circle())
+                            .overlay(Circle().stroke(Color.black, lineWidth: 1))
+                            .shadow(radius: 3)
                             .padding(.horizontal, 6)
                             .padding(.vertical, 6)
                     }
@@ -486,8 +503,6 @@ struct NovelCell: View {
                     .lineLimit(1)
                     .truncationMode(.tail)
             }
-            .padding(.horizontal)
-            .padding(.vertical)
             .contextMenu {
                 Section {
                     NavigationLink {
@@ -508,7 +523,7 @@ struct NovelCell: View {
                         }
                     }
                 }
-                
+
                 Section {
                     Button(role: .destructive) {
                         for novelChapter in novel.chapters {
@@ -529,7 +544,7 @@ struct NovelCell: View {
                     Button(role: .destructive) {
                         novel.chaptersRead.subtract(novel.chapters.map({ $0.path }))
                     } label: {
-                        Label("Unmark as Read", systemImage: "xmark")
+                        Label("Mark as Unread", systemImage: "xmark")
                     }
                 }
 
@@ -603,7 +618,7 @@ struct NovelChapterView: View {
         ScrollViewReader { reader in
             ScrollView(.vertical) {
                 if let novelChapterContent = novelChapterContent {
-                    LazyVStack {
+                    VStack {
                         ForEach(novelChapterContent.indices, id: \.self) { index in
                             Text(novelChapterContent[index])
                                 .font(.system(size: settings.novelChapterFontSize))
@@ -612,7 +627,9 @@ struct NovelChapterView: View {
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .id(index)
                         }
-                        
+                    }
+
+                    LazyVStack {
                         Color.clear
                             .onAppear {
                                 // With LazyVStack, when this appears it means we've reached the bottom (== chapter read).
@@ -620,6 +637,12 @@ struct NovelChapterView: View {
                                     novel.chaptersRead.insert(novelChapter.path)
                                 }
                             }
+                    }
+                } else {
+                    HStack {
+                        Spacer()
+                        ProgressView()
+                        Spacer()
                     }
                 }
             }
@@ -633,7 +656,7 @@ struct NovelChapterView: View {
                         Image(systemName: "slider.horizontal.3")
                     }
                 }
-                
+
                 ToolbarItem(id: "Previous Chapter", placement: .bottomBar) {
                     if novelChapter.number > novelFirstChapterNumber {
                         Button {
@@ -652,12 +675,12 @@ struct NovelChapterView: View {
                         Spacer()
                     }
                 }
-                
+
                 // Any better way to do this?
                 ToolbarItem(id: "Sneaky Spacer", placement: .status) {
                     Spacer()
                 }
-                
+
                 ToolbarItem(id: "Next Chapter", placement: .bottomBar) {
                     if novelChapter.number < novelLastChapterNumber {
                         Button {

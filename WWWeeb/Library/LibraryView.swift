@@ -14,13 +14,13 @@ struct LibraryView: View {
     @State
     var settingsSheetVisible = false
     @State
-    var novelSearchText: String = ""
+    var searchText: String = ""
     var novels: [Novel] {
         var novels: [Novel] = []
 
         for novel in library.novels {
-            if !novelSearchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                if !novel.title.lowercased().contains(novelSearchText.lowercased()) {
+            if !searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                if !novel.title.lowercased().contains(searchText.lowercased()) {
                     continue
                 }
             }
@@ -38,16 +38,32 @@ struct LibraryView: View {
 
     var body: some View {
         ScrollView(.vertical) {
-            let columns = Array(repeating: GridItem(.flexible()), count: verticalSizeClass == .regular ? 2 : 4)
-            LazyVGrid(columns: columns, spacing: 2) {
-                ForEach(novels, id: \.path) { novel in
-                    NovelCell(novel: novel)
+            let novelChunks = novels.chunked(into: verticalSizeClass == .regular ? 2 : 4)
+            ForEach(novelChunks, id: \.self) { novels in
+                VStack {
+                    HStack(spacing: 12) {
+                        ForEach(novels, id: \.path) { novel in
+                            NovelCell(novel: novel)
+                        }
+
+                        let missingNovels = (verticalSizeClass == .regular ? 2 : 4) - novels.count
+                        if missingNovels > 0 {
+                            ForEach(0 ..< missingNovels, id: \.self) { _ in
+                                Spacer()
+                                    .scaledToFit()
+                                    .cornerRadius(10)
+                                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            }
+                        }
+                    }
+                    .padding(.horizontal)
                 }
+                .padding(.bottom)
             }
         }
         .navigationTitle("Library")
         .navigationBarTitleDisplayMode(.large)
-        .searchable(text: $novelSearchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search title...")
+        .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always))
         .autocorrectionDisabled()
         .textInputAutocapitalization(.never)
         .toolbar {
