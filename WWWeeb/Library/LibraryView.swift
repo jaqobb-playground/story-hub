@@ -4,8 +4,8 @@ import SwiftData
 import SwiftUI
 
 struct LibraryView: View {
-    @Environment(\.verticalSizeClass)
-    private var verticalSizeClass
+    @Environment(\.horizontalSizeClass)
+    private var horizontalSizeClass
     @Environment(\.settings)
     private var settings
     @Environment(\.library)
@@ -39,7 +39,7 @@ struct LibraryView: View {
     var body: some View {
         ScrollView(.vertical) {
             if !novels.isEmpty {
-                let novelChunks = novels.chunked(into: verticalSizeClass == .regular ? 2 : 4)
+                let novelChunks = novels.chunked(into: horizontalSizeClass == .compact ? 2 : 4)
                 ForEach(novelChunks, id: \.self) { novels in
                     VStack {
                         HStack(spacing: 12) {
@@ -47,7 +47,7 @@ struct LibraryView: View {
                                 NovelCell(novel: novel)
                             }
 
-                            let missingNovels = (verticalSizeClass == .regular ? 2 : 4) - novels.count
+                            let missingNovels = (horizontalSizeClass == .compact ? 2 : 4) - novels.count
                             if missingNovels > 0 {
                                 ForEach(0 ..< missingNovels, id: \.self) { _ in
                                     Spacer()

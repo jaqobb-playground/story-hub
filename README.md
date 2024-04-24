@@ -14,7 +14,7 @@ WWWeeb works by scraping only the most necessary data from the providers, making
 
 Currently, WWWeeb supports the following novel providers:
 
-* Lib Read (<https://libread.org/>) - since 0.9.50.1
+* Free Web Novel (<https://freewebnovel.com/>) - since 0.9.50.23
 
 ## Comic providers
 

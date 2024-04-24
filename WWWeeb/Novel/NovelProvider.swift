@@ -1,16 +1,16 @@
 import Foundation
 
 enum NovelProvider: String, Identifiable, Codable, CaseIterable {
-    case lib_read
+    case freeWebNovel
 
     var id: String {
         rawValue
     }
 
-    var implementation: Implementation {
+    var implementation: NovelProvider.Implementation {
         switch self {
-            case .lib_read:
-                return NovelProvider.Implementation.LibRead
+            case .freeWebNovel:
+                return NovelProvider.Implementation.FreeWebNovel
         }
     }
 }

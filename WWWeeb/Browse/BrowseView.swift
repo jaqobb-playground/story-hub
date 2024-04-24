@@ -2,8 +2,8 @@ import Kingfisher
 import SwiftUI
 
 struct BrowseView: View {
-    @Environment(\.verticalSizeClass)
-    private var verticalSizeClass
+    @Environment(\.horizontalSizeClass)
+    private var horizontalSizeClass
     @Environment(\.settings)
     private var settings
     @Environment(\.library)
@@ -22,7 +22,7 @@ struct BrowseView: View {
 
     var body: some View {
         ScrollView(.vertical) {
-            let novelPreviewChunks = novelPreviews.chunked(into: verticalSizeClass == .regular ? 2 : 4)
+            let novelPreviewChunks = novelPreviews.chunked(into: horizontalSizeClass == .compact ? 2 : 4)
             ForEach(novelPreviewChunks, id: \.self) { novelPreviews in
                 VStack {
                     HStack(spacing: 12) {
@@ -30,7 +30,7 @@ struct BrowseView: View {
                             NovelPreviewCell(novelPreview: novelPreview, novel: library.novels[novelPreview.path])
                         }
 
-                        let missingNovelPreviews = (verticalSizeClass == .regular ? 2 : 4) - novelPreviews.count
+                        let missingNovelPreviews = (horizontalSizeClass == .compact ? 2 : 4) - novelPreviews.count
                         if missingNovelPreviews > 0 {
                             ForEach(0 ..< missingNovelPreviews, id: \.self) { _ in
                                 Spacer()

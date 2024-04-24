@@ -94,12 +94,12 @@ struct NovelInformation: View {
             HStack {
                 Spacer()
 
-                VStack(alignment: .center, spacing: 2) {
+                VStack(alignment: .center, spacing: 8) {
                     KFImage(URL(string: novel.coverURL))
-                        .resizable()
-                        .scaledToFit()
+                        .placeholder { progress in
+                            ProgressView(progress)
+                        }
                         .cornerRadius(10)
-                        .frame(maxWidth: 200, maxHeight: 300)
 
                     Text(novel.title)
                         .font(.title)
@@ -117,6 +117,8 @@ struct NovelInformation: View {
                 List(novel.authors, id: \.self) { author in
                     Text(author)
                 }
+                .navigationTitle("Authors")
+                .navigationBarTitleDisplayMode(.inline)
             } label: {
                 Label("Authors", systemImage: "person")
             }
@@ -125,6 +127,8 @@ struct NovelInformation: View {
                 List(novel.genres, id: \.self) { genre in
                     Text(genre)
                 }
+                .navigationTitle("Genres")
+                .navigationBarTitleDisplayMode(.inline)
             } label: {
                 Label("Genres", systemImage: "list.bullet")
             }
@@ -133,6 +137,8 @@ struct NovelInformation: View {
                 List(novel.summary, id: \.self) { summaryContent in
                     Text(summaryContent)
                 }
+                .navigationTitle("Summary")
+                .navigationBarTitleDisplayMode(.inline)
             } label: {
                 Label("Summary", systemImage: "text.book.closed")
             }
@@ -325,7 +331,7 @@ struct NovelChaptersChunkDetails: View {
             }
         }
         .navigationTitle("Chapters \(firstChapterNumber) - \(lastChapterNumber)")
-        .navigationBarTitleDisplayMode(.large)
+        .navigationBarTitleDisplayMode(.inline)
     }
 }
 
@@ -473,6 +479,9 @@ struct NovelCell: View {
             VStack(spacing: 4) {
                 ZStack(alignment: .topTrailing) {
                     KFImage(URL(string: novel.coverURL))
+                        .placeholder { progress in
+                            ProgressView(progress)
+                        }
                         .resizable()
                         .scaledToFit()
                         .cornerRadius(10)

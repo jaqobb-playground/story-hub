@@ -2,15 +2,15 @@ import Foundation
 import SwiftSoup
 
 extension NovelProvider.Implementation {
-    static let LibRead = LibReadNovelProvider()
+    static let FreeWebNovel = FreeWebNovelNovelProvider()
 
-    class LibReadNovelProvider: NovelProvider.Implementation {
+    class FreeWebNovelNovelProvider: NovelProvider.Implementation {
         fileprivate init() {
             super.init(
-                provider: .lib_read,
+                provider: .freeWebNovel,
                 details: NovelProvider.Details(
-                    name: "Lib Read",
-                    site: "https://libread.org",
+                    name: "Free Web Novel",
+                    site: "https://freewebnovel.com",
                     version: "1.0",
                     batchSize: 15,
                     batchFetchPeriodNanos: 5_000_000_000
