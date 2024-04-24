@@ -38,27 +38,32 @@ struct LibraryView: View {
 
     var body: some View {
         ScrollView(.vertical) {
-            let novelChunks = novels.chunked(into: verticalSizeClass == .regular ? 2 : 4)
-            ForEach(novelChunks, id: \.self) { novels in
-                VStack {
-                    HStack(spacing: 12) {
-                        ForEach(novels, id: \.path) { novel in
-                            NovelCell(novel: novel)
-                        }
+            if !novels.isEmpty {
+                let novelChunks = novels.chunked(into: verticalSizeClass == .regular ? 2 : 4)
+                ForEach(novelChunks, id: \.self) { novels in
+                    VStack {
+                        HStack(spacing: 12) {
+                            ForEach(novels, id: \.path) { novel in
+                                NovelCell(novel: novel)
+                            }
 
-                        let missingNovels = (verticalSizeClass == .regular ? 2 : 4) - novels.count
-                        if missingNovels > 0 {
-                            ForEach(0 ..< missingNovels, id: \.self) { _ in
-                                Spacer()
-                                    .scaledToFit()
-                                    .cornerRadius(10)
-                                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            let missingNovels = (verticalSizeClass == .regular ? 2 : 4) - novels.count
+                            if missingNovels > 0 {
+                                ForEach(0 ..< missingNovels, id: \.self) { _ in
+                                    Spacer()
+                                        .scaledToFit()
+                                        .cornerRadius(10)
+                                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                }
                             }
                         }
+                        .padding(.horizontal)
                     }
-                    .padding(.horizontal)
+                    .padding(.bottom)
                 }
-                .padding(.bottom)
+            } else {
+                // Here so that the library can still be refreshed even when there are no novels rendered.
+                Color.clear
             }
         }
         .navigationTitle("Library")
