@@ -32,14 +32,8 @@ class Novel: Codable, Hashable {
     var dateAdded: Date
     var dateUpdated: Date
     var category: Category
-    var categoryBinding: Binding<Category> {
-        Binding(
-            get: { self.category },
-            set: { self.category = $0 }
-        )
-    }
-
     var provider: NovelProvider
+    var updating: Bool = false
 
     init(
         path: String,
@@ -104,6 +98,12 @@ class Novel: Codable, Hashable {
     }
 
     func update() async {
+        if updating {
+            return
+        }
+        
+        updating = true
+        
         do {
             let updatedNovel = try await provider.implementation.parseNovel(path: path)
 
@@ -125,6 +125,8 @@ class Novel: Codable, Hashable {
         } catch {
             AlertUtils.showAlert(title: "Failed to Update Novel '\(title)'", message: error.localizedDescription)
         }
+        
+        updating = false
     }
 
     func encode(to encoder: any Encoder) throws {
@@ -266,7 +268,6 @@ class NovelChapter: Codable, Hashable {
     var path: String
     var title: String
     var number: Int
-    var releaseTime: Int64?
     var content: [String]?
     var provider: NovelProvider
 
@@ -274,14 +275,12 @@ class NovelChapter: Codable, Hashable {
         path: String,
         title: String,
         number: Int,
-        releaseTime: Int64?,
         content: [String]?,
         provider: NovelProvider
     ) {
         _path = path
         _title = title
         _number = number
-        _releaseTime = releaseTime
         _content = content
         _provider = provider
     }
@@ -291,7 +290,6 @@ class NovelChapter: Codable, Hashable {
         _path = try container.decode(String.self, forKey: ._path)
         _title = try container.decode(String.self, forKey: ._title)
         _number = try container.decode(Int.self, forKey: ._number)
-        _releaseTime = try container.decodeIfPresent(Int64.self, forKey: ._releaseTime) ?? nil
         _content = try container.decodeIfPresent([String].self, forKey: ._content) ?? nil
         _provider = try container.decode(NovelProvider.self, forKey: ._provider)
     }
@@ -309,7 +307,6 @@ class NovelChapter: Codable, Hashable {
         try container.encode(_path, forKey: ._path)
         try container.encode(_title, forKey: ._title)
         try container.encode(_number, forKey: ._number)
-        try container.encodeIfPresent(_releaseTime, forKey: ._releaseTime)
         try container.encodeIfPresent(_content, forKey: ._content)
         try container.encode(_provider, forKey: ._provider)
     }

@@ -71,6 +71,7 @@ struct LibraryView: View {
         .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always))
         .autocorrectionDisabled()
         .textInputAutocapitalization(.never)
+        .scrollBounceBehavior(.basedOnSize)
         .toolbar {
             ToolbarItem(id: "Add", placement: .topBarTrailing) {
                 NavigationLink {

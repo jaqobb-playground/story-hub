@@ -22,27 +22,40 @@ struct BrowseView: View {
 
     var body: some View {
         ScrollView(.vertical) {
-            let novelPreviewChunks = novelPreviews.chunked(into: horizontalSizeClass == .compact ? 2 : 4)
-            ForEach(novelPreviewChunks, id: \.self) { novelPreviews in
-                VStack {
-                    HStack(spacing: 12) {
-                        ForEach(novelPreviews, id: \.path) { novelPreview in
-                            NovelPreviewCell(novelPreview: novelPreview, novel: library.novels[novelPreview.path])
-                        }
+            if !novelPreviews.isEmpty {
+                let novelPreviewChunks = novelPreviews.chunked(into: horizontalSizeClass == .compact ? 2 : 4)
+                ForEach(novelPreviewChunks, id: \.self) { novelPreviews in
+                    VStack {
+                        HStack(spacing: 12) {
+                            ForEach(novelPreviews, id: \.path) { novelPreview in
+                                NovelPreviewCell(novelPreview: novelPreview, novel: library.novels[novelPreview.path])
+                            }
 
-                        let missingNovelPreviews = (horizontalSizeClass == .compact ? 2 : 4) - novelPreviews.count
-                        if missingNovelPreviews > 0 {
-                            ForEach(0 ..< missingNovelPreviews, id: \.self) { _ in
-                                Spacer()
-                                    .scaledToFit()
-                                    .cornerRadius(10)
-                                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            let missingNovelPreviews = (horizontalSizeClass == .compact ? 2 : 4) - novelPreviews.count
+                            if missingNovelPreviews > 0 {
+                                ForEach(0 ..< missingNovelPreviews, id: \.self) { _ in
+                                    Spacer()
+                                        .scaledToFit()
+                                        .cornerRadius(10)
+                                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                }
                             }
                         }
+                        .padding(.horizontal)
                     }
-                    .padding(.horizontal)
+                    .padding(.bottom)
                 }
-                .padding(.bottom)
+            } else if searchInProgress {
+                ZStack {
+                    Spacer()
+                        .containerRelativeFrame([.horizontal, .vertical])
+
+                    ProgressView()
+                        .scaleEffect(2)
+                }
+            } else {
+                // Currently useless but it's here for the future me that forgets to add this while adding a behaviour that requires something to be rendered.
+                Color.clear
             }
         }
         .navigationTitle("Browse")
@@ -50,6 +63,7 @@ struct BrowseView: View {
         .searchable(text: $searchText, isPresented: $searchBarFocused, placement: .navigationBarDrawer(displayMode: .always))
         .autocorrectionDisabled()
         .textInputAutocapitalization(.never)
+        .scrollBounceBehavior(.basedOnSize)
         .onSubmit(of: .search) {
             performSearch()
         }

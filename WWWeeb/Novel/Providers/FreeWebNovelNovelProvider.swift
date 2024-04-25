@@ -75,7 +75,6 @@ extension NovelProvider.Implementation {
                             path: chapterPath,
                             title: chapterTitle,
                             number: chapterIndex + 1,
-                            releaseTime: nil,
                             content: nil,
                             provider: provider
                         )

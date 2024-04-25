@@ -27,17 +27,9 @@ struct NovelView: View {
         Form {
             if let novel = novel {
                 NovelInformation(novel)
-            } else {
-                HStack {
-                    Spacer()
-                    ProgressView()
-                    Spacer()
-                }
-                .listRowInsets(.init())
-                .listRowBackground(Color.clear)
             }
         }
-        .navigationTitle(novel != nil ? novel!.title : novelPreview!.title)
+        .navigationTitle(novel != nil ? novel!.title : "Loading...")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(id: "Setting", placement: .topBarTrailing) {
@@ -162,7 +154,10 @@ struct NovelInformation: View {
                     Label("Date Updated", systemImage: "calendar.badge.clock")
                 }
 
-                Picker(selection: novel.categoryBinding) {
+                Picker(selection: Binding<Novel.Category>(
+                    get: { novel.category },
+                    set: { novel.category = $0 }
+                )) {
                     ForEach(Novel.Category.allCases, id: \.self) { category in
                         Text(category.name).tag(category)
                     }
@@ -477,7 +472,7 @@ struct NovelCell: View {
             NovelView(novel: novel)
         } label: {
             VStack(spacing: 4) {
-                ZStack(alignment: .topTrailing) {
+                ZStack {
                     KFImage(URL(string: novel.coverURL))
                         .placeholder { progress in
                             ProgressView(progress)
@@ -486,17 +481,28 @@ struct NovelCell: View {
                         .scaledToFit()
                         .cornerRadius(10)
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .blur(radius: novel.updating ? 5 : 0, opaque: false)
+                        .animation(.easeInOut(duration: 0.5), value: novel.updating)
 
                     if novel.chaptersRead.count < novel.chapters.count {
-                        Image(systemName: "exclamationmark.circle.fill")
-                            .font(.system(size: 24))
-                            .foregroundColor(.blue)
-                            .background(Color.white)
-                            .clipShape(Circle())
-                            .overlay(Circle().stroke(Color.black, lineWidth: 1))
-                            .shadow(radius: 3)
-                            .padding(.horizontal, 6)
-                            .padding(.vertical, 6)
+                        ZStack(alignment: .topTrailing) {
+                            Color.clear
+
+                            Image(systemName: "exclamationmark.circle.fill")
+                                .font(.system(size: 24))
+                                .foregroundColor(.blue)
+                                .background(Color.white)
+                                .clipShape(Circle())
+                                .overlay(Circle().stroke(Color.black, lineWidth: 1))
+                                .shadow(radius: 3)
+                                .padding(.horizontal, 6)
+                                .padding(.vertical, 6)
+                        }
+                    }
+
+                    if novel.updating {
+                        ProgressView()
+                            .scaleEffect(2)
                     }
                 }
 
@@ -647,15 +653,9 @@ struct NovelChapterView: View {
                                 }
                             }
                     }
-                } else {
-                    HStack {
-                        Spacer()
-                        ProgressView()
-                        Spacer()
-                    }
                 }
             }
-            .navigationTitle(novelChapter.title)
+            .navigationTitle(novelChapterContent != nil ? novelChapter.title : "Loading...")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(id: "Setting", placement: .topBarTrailing) {
@@ -674,6 +674,7 @@ struct NovelChapterView: View {
                             if settings.markNovelChapterAsReadWhenSwitching {
                                 novel.chaptersRead.insert(novelChapter.path)
                             }
+                            novelChapterContent = nil
                             novelChapter = novel.chapters[novelChapterIndex - 1]
 
                             fetchNovelChapterContent()
@@ -698,6 +699,7 @@ struct NovelChapterView: View {
                             if settings.markNovelChapterAsReadWhenSwitching {
                                 novel.chaptersRead.insert(novelChapter.path)
                             }
+                            novelChapterContent = nil
                             novelChapter = novel.chapters[novelChapterIndex + 1]
 
                             fetchNovelChapterContent()
