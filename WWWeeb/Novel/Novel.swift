@@ -98,12 +98,8 @@ class Novel: Codable, Hashable {
     }
 
     func update() async {
-        if updating {
-            return
-        }
-        
         updating = true
-        
+
         do {
             let updatedNovel = try await provider.implementation.parseNovel(path: path)
 
@@ -125,7 +121,9 @@ class Novel: Codable, Hashable {
         } catch {
             AlertUtils.showAlert(title: "Failed to Update Novel '\(title)'", message: error.localizedDescription)
         }
-        
+
+        try? await Task.sleep(nanoseconds: 500_000_000)
+
         updating = false
     }
 

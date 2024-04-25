@@ -503,6 +503,7 @@ struct NovelCell: View {
                     if novel.updating {
                         ProgressView()
                             .scaleEffect(2)
+                            .animation(.easeInOut(duration: 0.5), value: novel.updating)
                     }
                 }
 

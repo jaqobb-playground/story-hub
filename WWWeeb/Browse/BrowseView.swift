@@ -63,7 +63,6 @@ struct BrowseView: View {
         .searchable(text: $searchText, isPresented: $searchBarFocused, placement: .navigationBarDrawer(displayMode: .always))
         .autocorrectionDisabled()
         .textInputAutocapitalization(.never)
-        .scrollBounceBehavior(.basedOnSize)
         .onSubmit(of: .search) {
             performSearch()
         }
