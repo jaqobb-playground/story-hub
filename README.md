@@ -14,7 +14,8 @@ WWWeeb works by scraping only the most necessary data from the providers, making
 
 Currently, WWWeeb supports the following novel providers:
 
-* Free Web Novel (<https://freewebnovel.com/>) - since 0.9.50.23
+* Free Web Novel (<https://freewebnovel.com>) - since 0.9.50.23
+* Scribble Hub (<https://scribblehub.com>) - since 0.9.50.26
 
 ## Comic providers
 
