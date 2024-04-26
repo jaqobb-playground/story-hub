@@ -1,13 +1,9 @@
 import Foundation
 
 struct URLUtils {
-    static func fetchHTML(from urlString: String, method: String = "GET", headers: [String: String]? = nil, query: [String: String]? = nil) async throws -> String {
-        guard var components = URLComponents(string: urlString) else {
+    static func fetchHTML(from urlString: String, method: String = "GET", headers: [String: String]? = nil) async throws -> String {
+        guard let components = URLComponents(string: urlString) else {
             throw NSError(domain: "Invalid URL", code: 0, userInfo: nil)
-        }
-
-        if let queryItems = query?.map({ URLQueryItem(name: $0, value: $1) }) {
-            components.queryItems = queryItems
         }
 
         var request = URLRequest(url: components.url!)

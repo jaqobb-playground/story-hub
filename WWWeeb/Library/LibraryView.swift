@@ -13,6 +13,7 @@ struct LibraryView: View {
 
     @State
     var settingsSheetVisible = false
+    
     @State
     var searchText: String = ""
     var novels: [Novel] {

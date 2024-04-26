@@ -15,7 +15,6 @@
 		5C45A9202BC9258000299492 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5C45A91F2BC9258000299492 /* Preview Assets.xcassets */; };
 		5C45A9282BC925C600299492 /* BrowseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C45A9272BC925C600299492 /* BrowseView.swift */; };
 		5C45A92A2BC925DA00299492 /* LibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C45A9292BC925DA00299492 /* LibraryView.swift */; };
-		5C45A9312BC9261300299492 /* URLUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C45A9302BC9261300299492 /* URLUtils.swift */; };
 		5C45A9342BC9262E00299492 /* Novel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C45A9332BC9262E00299492 /* Novel.swift */; };
 		5C45A9392BC9266900299492 /* NovelProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C45A9382BC9266900299492 /* NovelProvider.swift */; };
 		5C45A93E2BC9268800299492 /* SwiftSoup in Frameworks */ = {isa = PBXBuildFile; productRef = 5C45A93D2BC9268800299492 /* SwiftSoup */; };
@@ -25,6 +24,8 @@
 		5CA024B32BD9139A0084B229 /* ArrayExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CA024B22BD9139A0084B229 /* ArrayExtensions.swift */; };
 		5CBA31942BD7C8C40012CE3B /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 5CBA31932BD7C8C40012CE3B /* README.md */; };
 		5CBA31962BD7C8DE0012CE3B /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = 5CBA31952BD7C8DE0012CE3B /* .gitignore */; };
+		5CEE7A4D2BDAE3D5008EAD87 /* ScribbleHubNovelProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CEE7A4C2BDAE3D5008EAD87 /* ScribbleHubNovelProvider.swift */; };
+		5CEE7A542BDB138B008EAD87 /* URLUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CEE7A532BDB138B008EAD87 /* URLUtils.swift */; };
 		5CF895BF2BD6A177001CBBED /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CF895BE2BD6A177001CBBED /* Settings.swift */; };
 /* End PBXBuildFile section */
 
@@ -37,7 +38,6 @@
 		5C45A91F2BC9258000299492 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		5C45A9272BC925C600299492 /* BrowseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowseView.swift; sourceTree = "<group>"; };
 		5C45A9292BC925DA00299492 /* LibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryView.swift; sourceTree = "<group>"; };
-		5C45A9302BC9261300299492 /* URLUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLUtils.swift; sourceTree = "<group>"; };
 		5C45A9332BC9262E00299492 /* Novel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Novel.swift; sourceTree = "<group>"; };
 		5C45A9382BC9266900299492 /* NovelProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NovelProvider.swift; sourceTree = "<group>"; };
 		5C45A95B2BC9895600299492 /* NovelViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NovelViews.swift; sourceTree = "<group>"; };
@@ -46,6 +46,8 @@
 		5CA024B22BD9139A0084B229 /* ArrayExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArrayExtensions.swift; sourceTree = "<group>"; };
 		5CBA31932BD7C8C40012CE3B /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		5CBA31952BD7C8DE0012CE3B /* .gitignore */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
+		5CEE7A4C2BDAE3D5008EAD87 /* ScribbleHubNovelProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScribbleHubNovelProvider.swift; sourceTree = "<group>"; };
+		5CEE7A532BDB138B008EAD87 /* URLUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLUtils.swift; sourceTree = "<group>"; };
 		5CF895BE2BD6A177001CBBED /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -66,6 +68,7 @@
 			isa = PBXGroup;
 			children = (
 				5C4FBAA12BCDBDF300AA786C /* FreeWebNovelNovelProvider.swift */,
+				5CEE7A4C2BDAE3D5008EAD87 /* ScribbleHubNovelProvider.swift */,
 			);
 			path = Providers;
 			sourceTree = "<group>";
@@ -115,8 +118,8 @@
 		5C45A92F2BC9260C00299492 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
-				5C45A9302BC9261300299492 /* URLUtils.swift */,
 				5C0559B92BCFCDF10093A355 /* AlertUtils.swift */,
+				5CEE7A532BDB138B008EAD87 /* URLUtils.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -248,11 +251,12 @@
 			files = (
 				5CA024B32BD9139A0084B229 /* ArrayExtensions.swift in Sources */,
 				5C45A9282BC925C600299492 /* BrowseView.swift in Sources */,
-				5C45A9312BC9261300299492 /* URLUtils.swift in Sources */,
 				5CF895BF2BD6A177001CBBED /* Settings.swift in Sources */,
 				5C45A9392BC9266900299492 /* NovelProvider.swift in Sources */,
+				5CEE7A4D2BDAE3D5008EAD87 /* ScribbleHubNovelProvider.swift in Sources */,
 				5C706A682BD8499A00651FBB /* SettingsViews.swift in Sources */,
 				5C0559BA2BCFCDF10093A355 /* AlertUtils.swift in Sources */,
+				5CEE7A542BDB138B008EAD87 /* URLUtils.swift in Sources */,
 				5C11E76D2BCE816300307AC6 /* Library.swift in Sources */,
 				5C45A95C2BC9895600299492 /* NovelViews.swift in Sources */,
 				5C4FBAA22BCDBDF300AA786C /* FreeWebNovelNovelProvider.swift in Sources */,
@@ -390,7 +394,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 25;
+				CURRENT_PROJECT_VERSION = 26;
 				DEVELOPMENT_ASSET_PATHS = "\"WWWeeb/Preview Content\"";
 				DEVELOPMENT_TEAM = 55HSKS6J8J;
 				ENABLE_PREVIEWS = YES;
@@ -420,7 +424,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 25;
+				CURRENT_PROJECT_VERSION = 26;
 				DEVELOPMENT_ASSET_PATHS = "\"WWWeeb/Preview Content\"";
 				DEVELOPMENT_TEAM = 55HSKS6J8J;
 				ENABLE_PREVIEWS = YES;

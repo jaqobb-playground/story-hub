@@ -11,6 +11,7 @@ struct BrowseView: View {
 
     @State
     var settingsSheetVisible = false
+    
     @State
     var searchInProgress = false
     @State
@@ -22,7 +23,15 @@ struct BrowseView: View {
 
     var body: some View {
         ScrollView(.vertical) {
-            if !novelPreviews.isEmpty {
+            if searchInProgress {
+                ZStack {
+                    Spacer()
+                        .containerRelativeFrame([.horizontal, .vertical])
+
+                    ProgressView()
+                        .scaleEffect(2)
+                }
+            } else if !novelPreviews.isEmpty {
                 let novelPreviewChunks = novelPreviews.chunked(into: horizontalSizeClass == .compact ? 2 : 4)
                 ForEach(novelPreviewChunks, id: \.self) { novelPreviews in
                     VStack {
@@ -44,14 +53,6 @@ struct BrowseView: View {
                         .padding(.horizontal)
                     }
                     .padding(.bottom)
-                }
-            } else if searchInProgress {
-                ZStack {
-                    Spacer()
-                        .containerRelativeFrame([.horizontal, .vertical])
-
-                    ProgressView()
-                        .scaleEffect(2)
                 }
             } else {
                 // Currently useless but it's here for the future me that forgets to add this while adding a behaviour that requires something to be rendered.

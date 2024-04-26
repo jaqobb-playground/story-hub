@@ -2,6 +2,7 @@ import Foundation
 
 enum NovelProvider: String, Identifiable, Codable, CaseIterable {
     case freeWebNovel
+    case scribbleHub
 
     var id: String {
         rawValue
@@ -11,6 +12,8 @@ enum NovelProvider: String, Identifiable, Codable, CaseIterable {
         switch self {
             case .freeWebNovel:
                 return NovelProvider.Implementation.FreeWebNovel
+            case .scribbleHub:
+                return NovelProvider.Implementation.ScribbleHub
         }
     }
 }

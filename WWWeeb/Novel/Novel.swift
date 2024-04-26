@@ -45,7 +45,6 @@ class Novel: Codable, Hashable {
         status: String,
         chapters: [NovelChapter],
         chaptersRead: Set<String>,
-        lastChapterReadNumber: Int,
         dateAdded: Date,
         dateUpdated: Date,
         category: Category,
@@ -115,7 +114,6 @@ class Novel: Codable, Hashable {
             let newChapters = updatedNovel.chapters.filter { $0.number > lastChapterNumber }
             if !newChapters.isEmpty {
                 chapters.append(contentsOf: newChapters)
-
                 dateUpdated = Date.now
             }
         } catch {
@@ -266,20 +264,17 @@ class NovelChapter: Codable, Hashable {
     var path: String
     var title: String
     var number: Int
-    var content: [String]?
     var provider: NovelProvider
 
     init(
         path: String,
         title: String,
         number: Int,
-        content: [String]?,
         provider: NovelProvider
     ) {
         _path = path
         _title = title
         _number = number
-        _content = content
         _provider = provider
     }
 
@@ -288,16 +283,7 @@ class NovelChapter: Codable, Hashable {
         _path = try container.decode(String.self, forKey: ._path)
         _title = try container.decode(String.self, forKey: ._title)
         _number = try container.decode(Int.self, forKey: ._number)
-        _content = try container.decodeIfPresent([String].self, forKey: ._content) ?? nil
         _provider = try container.decode(NovelProvider.self, forKey: ._provider)
-    }
-
-    func fetchContent() async {
-        do {
-            content = try await provider.implementation.parseNovelChapter(path: path)
-        } catch {
-            AlertUtils.showAlert(title: "Failed to Fetch Chapter '\(title)' Content", message: error.localizedDescription)
-        }
     }
 
     func encode(to encoder: any Encoder) throws {
@@ -305,7 +291,6 @@ class NovelChapter: Codable, Hashable {
         try container.encode(_path, forKey: ._path)
         try container.encode(_title, forKey: ._title)
         try container.encode(_number, forKey: ._number)
-        try container.encodeIfPresent(_content, forKey: ._content)
         try container.encode(_provider, forKey: ._provider)
     }
 

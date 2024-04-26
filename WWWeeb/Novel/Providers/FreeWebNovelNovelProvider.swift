@@ -1,3 +1,4 @@
+import Alamofire
 import Foundation
 import SwiftSoup
 
@@ -21,20 +22,17 @@ extension NovelProvider.Implementation {
         override func fetchNovels(searchTerm: String) async throws -> [NovelPreview] {
             do {
                 let html = try await URLUtils.fetchHTML(
-                    from: details.site + "/search/",
+                    from: details.site + "/search/?searchkey=" + searchTerm,
                     method: "POST",
                     headers: [
-                        "Content-Type": "application/x-www-form-urlencoded'",
+                        "Content-Type": "application/x-www-form-urlencoded",
                         "Referer": details.site,
                         "Origin": details.site,
-                    ],
-                    query: [
-                        "searchkey": searchTerm,
                     ]
                 )
-                let document = try SwiftSoup.parse(html)
+                let htmlAsDocument = try SwiftSoup.parse(html)
 
-                return try document.select(".li-row > .li > .con")
+                return try htmlAsDocument.select(".li-row > .li > .con")
                     .array()
                     .map { element -> NovelPreview in
                         let path = try element.select("h3 > a").attr("href")
@@ -57,25 +55,24 @@ extension NovelProvider.Implementation {
         override func parseNovel(path: String) async throws -> Novel {
             do {
                 let html = try await URLUtils.fetchHTML(from: details.site + path)
-                let document = try SwiftSoup.parse(html)
+                let htmlAsDocument = try SwiftSoup.parse(html)
 
-                let title = try document.select("h1.tit").text()
-                let coverURL = try document.select(".pic > img").attr("src")
-                let summary = try document.select(".inner > p").eachText()
-                let genres = (try document.select("[title=Genre]").first()?.nextElementSibling()?.text().replacingOccurrences(of: "[\t\n]", with: "", options: .regularExpression).components(separatedBy: ", ")) ?? []
-                let authors = (try document.select("[title=Author]").first()?.nextElementSibling()?.text().replacingOccurrences(of: "[\t\n]", with: "", options: .regularExpression).components(separatedBy: ", ")) ?? []
-                let status = (try document.select("[title=Status]").first()?.nextElementSibling()?.text().replacingOccurrences(of: "[\t\n]", with: "", options: .regularExpression)) ?? ""
-                let chapters: [NovelChapter] = try document.select("#idData > li > a")
+                let title = try htmlAsDocument.select("h1.tit").text()
+                let coverURL = try htmlAsDocument.select(".pic > img").attr("src")
+                let summary = try htmlAsDocument.select(".inner > p").eachText()
+                let genres = (try htmlAsDocument.select("[title=Genre]").first()?.nextElementSibling()?.text().replacingOccurrences(of: "[\t\n]", with: "", options: .regularExpression).components(separatedBy: ", ")) ?? ["Unknown"]
+                let authors = (try htmlAsDocument.select("[title=Author]").first()?.nextElementSibling()?.text().replacingOccurrences(of: "[\t\n]", with: "", options: .regularExpression).components(separatedBy: ", ")) ?? ["Unknown"]
+                let status = (try htmlAsDocument.select("[title=Status]").first()?.nextElementSibling()?.text().replacingOccurrences(of: "[\t\n]", with: "", options: .regularExpression)) ?? "Unknown"
+                let chapters: [NovelChapter] = try htmlAsDocument.select("#idData > li > a")
                     .enumerated()
                     .map { chapterIndex, chapterElement in
-                        let chapterTitle = (try? chapterElement.attr("title")) ?? "Chapter \(chapterIndex + 1)"
-                        let chapterPath = (try? chapterElement.attr("href")) ?? path + "/\(chapterIndex + 1)"
+                        let chapterTitle = try chapterElement.attr("title")
+                        let chapterPath = try chapterElement.attr("href")
 
                         return NovelChapter(
                             path: chapterPath,
                             title: chapterTitle,
                             number: chapterIndex + 1,
-                            content: nil,
                             provider: provider
                         )
                     }
@@ -90,7 +87,6 @@ extension NovelProvider.Implementation {
                     status: status,
                     chapters: chapters,
                     chaptersRead: [],
-                    lastChapterReadNumber: -1,
                     dateAdded: Date.now,
                     dateUpdated: Date.now,
                     category: .reading,
@@ -104,10 +100,12 @@ extension NovelProvider.Implementation {
         override func parseNovelChapter(path: String) async throws -> [String] {
             do {
                 let html = try await URLUtils.fetchHTML(from: details.site + path)
-                let document = try SwiftSoup.parse(html)
-                let documentTxt = try SwiftSoup.parse(try document.select("div.txt").html())
+                let htmlAsDocument = try SwiftSoup.parse(html)
 
-                return try documentTxt.select("p").eachText()
+                let txt = try SwiftSoup.parse(try htmlAsDocument.select("div.txt").html())
+                let content = try txt.select("p").eachText()
+
+                return content
             } catch {
                 throw NovelError.parse(description: "Error parsing novel chapter '\(path)': \(error.localizedDescription)")
             }

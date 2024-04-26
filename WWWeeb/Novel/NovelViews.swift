@@ -11,6 +11,7 @@ struct NovelView: View {
 
     @State
     var settingsSheetVisible = false
+
     @State
     var novel: Novel?
     var novelPreview: NovelPreview?
@@ -24,46 +25,67 @@ struct NovelView: View {
     }
 
     var body: some View {
-        Form {
-            if let novel = novel {
+        if let novel = novel {
+            Form {
                 NovelInformation(novel)
             }
-        }
-        .navigationTitle(novel != nil ? novel!.title : "Loading...")
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(id: "Setting", placement: .topBarTrailing) {
-                Button {
-                    settingsSheetVisible = true
-                } label: {
-                    Image(systemName: "slider.horizontal.3")
-                }
-            }
-        }
-        .sheet(isPresented: $settingsSheetVisible) {
-            NovelSettingsSheet(settingsSheetVisible: $settingsSheetVisible)
-        }
-        .onAppear {
-            if let novelPreview = novelPreview {
-                Task.init {
-                    do {
-                        novel = try await novelPreview.provider.implementation.parseNovel(path: novelPreview.path)
-                    } catch {
-                        AlertUtils.showAlert(title: "Failed to Fetch Novel '\(novelPreview.title)'", message: error.localizedDescription) { _ in
-                            presentationMode.wrappedValue.dismiss()
-                        }
-                    }
-                }
-            }
-        }
-        .refreshable {
-            if let novel = novel {
+            .modifier(NovelViewModifier(settingsSheetVisible: $settingsSheetVisible, title: novel.title))
+            .refreshable {
                 await Task {
                     await novel.update()
                 }
                 .value
             }
+        } else {
+            ZStack {
+                Spacer()
+                    .containerRelativeFrame([.horizontal, .vertical])
+
+                ProgressView()
+                    .scaleEffect(2)
+            }
+            .modifier(NovelViewModifier(settingsSheetVisible: $settingsSheetVisible, title: novelPreview!.title))
+            .onAppear {
+                fetchNovel()
+            }
         }
+    }
+
+    private func fetchNovel() {
+        Task.init {
+            do {
+                novel = try await novelPreview!.provider.implementation.parseNovel(path: novelPreview!.path)
+            } catch {
+                AlertUtils.showAlert(title: "Failed to Fetch Novel '\(novelPreview!.title)'", message: error.localizedDescription) { _ in
+                    presentationMode.wrappedValue.dismiss()
+                }
+            }
+        }
+    }
+}
+
+struct NovelViewModifier: ViewModifier {
+    @Binding
+    var settingsSheetVisible: Bool
+
+    var title: String
+
+    func body(content: Content) -> some View {
+        content
+            .navigationTitle(title)
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(id: "Setting", placement: .topBarTrailing) {
+                    Button {
+                        settingsSheetVisible = true
+                    } label: {
+                        Image(systemName: "slider.horizontal.3")
+                    }
+                }
+            }
+            .sheet(isPresented: $settingsSheetVisible) {
+                NovelSettingsSheet(settingsSheetVisible: $settingsSheetVisible)
+            }
     }
 }
 
@@ -105,6 +127,42 @@ struct NovelInformation: View {
         }
 
         Section(header: Text("Information")) {
+            NavigationLink {
+                Form {
+                    LabeledContent {
+                        Text(novel.provider.id)
+                    } label: {
+                        Text("ID")
+                    }
+
+                    LabeledContent {
+                        Text(novel.provider.implementation.details.name)
+                    } label: {
+                        Text("Name")
+                    }
+
+                    LabeledContent {
+                        Text(novel.provider.implementation.details.site)
+                    } label: {
+                        Text("Site")
+                    }
+
+                    LabeledContent {
+                        Text(novel.provider.implementation.details.version)
+                    } label: {
+                        Text("Version")
+                    }
+                }
+                .navigationTitle(novel.provider.implementation.details.name)
+                .navigationBarTitleDisplayMode(.inline)
+            } label: {
+                LabeledContent {
+                    Text(novel.provider.implementation.details.name)
+                } label: {
+                    Label("Provider", systemImage: "books.vertical")
+                }
+            }
+
             NavigationLink {
                 List(novel.authors, id: \.self) { author in
                     Text(author)
@@ -167,30 +225,32 @@ struct NovelInformation: View {
             }
         }
 
-        Section(header: Text("Quick Actions")) {
-            NavigationLink {
-                NovelChapterView(novel: novel, novelChapter: novel.chapters[0])
-            } label: {
-                Text("Start Reading")
-            }
-
-            let novelLastChapterReadNumber = novel.lastChapterReadNumber
-            if novelLastChapterReadNumber == -1 || novel.chapters.count <= novelLastChapterReadNumber {
-                Text("Continue Reading")
-                    .foregroundColor(.gray)
-            } else {
+        if !novel.chapters.isEmpty {
+            Section(header: Text("Quick Actions")) {
                 NavigationLink {
-                    NovelChapterView(novel: novel, novelChapter: novel.chapters[novelLastChapterReadNumber])
+                    NovelChapterView(novel: novel, novelChapter: novel.chapters[0])
                 } label: {
+                    Text("Start Reading")
+                }
+
+                let novelLastChapterReadNumber = novel.lastChapterReadNumber
+                if novelLastChapterReadNumber == -1 || novel.chapters.count <= novelLastChapterReadNumber {
                     Text("Continue Reading")
+                        .foregroundColor(.gray)
+                } else {
+                    NavigationLink {
+                        NovelChapterView(novel: novel, novelChapter: novel.chapters[novelLastChapterReadNumber])
+                    } label: {
+                        Text("Continue Reading")
+                    }
                 }
             }
-        }
 
-        Section(header: Text("Chapters")) {
-            let novelChapterChunks = novel.chapters.chunked(into: settings.novelChapterChunkSize)
-            List(novelChapterChunks.reversed(), id: \.self) { novelChapters in
-                NovelChaptersChunk(novel: novel, novelChapters: novelChapters)
+            Section(header: Text("Chapters")) {
+                let novelChapterChunks = novel.chapters.chunked(into: settings.novelChapterChunkSize)
+                List(novelChapterChunks.reversed(), id: \.self) { novelChapters in
+                    NovelChaptersChunk(novel: novel, novelChapters: novelChapters)
+                }
             }
         }
 
@@ -223,8 +283,6 @@ struct NovelChaptersChunk: View {
 
     let novel: Novel
     let novelChapters: [NovelChapter]
-    @State
-    var novelChaptersMidDownload: Bool = false
 
     private var firstChapterNumber: String {
         String(novelChapters.first!.number).trimmingCharacters(in: .whitespaces)
@@ -247,68 +305,23 @@ struct NovelChaptersChunk: View {
                 novelChapters: novelChapters.reversed()
             )
         } label: {
-            LabeledContent {
-                if novelChaptersMidDownload {
-                    ProgressView()
-                }
-            } label: {
-                Text("\(firstChapterNumber) - \(lastChapterNumber)")
-                    .foregroundColor(allChaptersRead ? .gray : .primary)
-                    .contextMenu {
-                        Section {
-                            Button {
-                                Task.init {
-                                    novelChaptersMidDownload = true
-
-                                    let novelChapterChunks = novelChapters.chunked(into: novel.provider.implementation.details.batchSize)
-                                    for (novelChapterChunkIndex, novelChapters) in novelChapterChunks.enumerated() {
-                                        await withTaskGroup(of: Void.self) { group in
-                                            for novelChapter in novelChapters {
-                                                group.addTask {
-                                                    await novelChapter.fetchContent()
-                                                }
-                                            }
-                                        }
-
-                                        if novelChapterChunkIndex < novelChapterChunks.count - 1 {
-                                            try? await Task.sleep(nanoseconds: novel.provider.implementation.details.batchFetchPeriodNanos)
-                                        }
-                                    }
-
-                                    novelChaptersMidDownload = false
-                                }
-                            } label: {
-                                if novelChapters.contains(where: { $0.content != nil }) {
-                                    Label("Redownload All", systemImage: "arrow.clockwise")
-                                } else {
-                                    Label("Download All", systemImage: "square.and.arrow.down")
-                                }
-                            }
-
-                            Button(role: .destructive) {
-                                for novelChapter in novelChapters {
-                                    novelChapter.content = nil
-                                }
-                            } label: {
-                                Label("Remove All Downloads", systemImage: "trash")
-                            }
+            Text("\(firstChapterNumber) - \(lastChapterNumber)")
+                .foregroundColor(allChaptersRead ? .gray : .primary)
+                .contextMenu {
+                    Section {
+                        Button {
+                            novel.chaptersRead.formUnion(novelChapters.map({ $0.path }))
+                        } label: {
+                            Label("Mark as Read", systemImage: "checkmark")
                         }
 
-                        Section {
-                            Button {
-                                novel.chaptersRead.formUnion(novelChapters.map({ $0.path }))
-                            } label: {
-                                Label("Mark as Read", systemImage: "checkmark")
-                            }
-
-                            Button(role: .destructive) {
-                                novel.chaptersRead.subtract(novelChapters.map({ $0.path }))
-                            } label: {
-                                Label("Mark as Unread", systemImage: "xmark")
-                            }
+                        Button(role: .destructive) {
+                            novel.chaptersRead.subtract(novelChapters.map({ $0.path }))
+                        } label: {
+                            Label("Mark as Unread", systemImage: "xmark")
                         }
                     }
-            }
+                }
         }
     }
 }
@@ -338,60 +351,28 @@ struct NovelChapterCell: View {
 
     let novel: Novel
     let novelChapter: NovelChapter
-    @State
-    var novelChapterMidDownload: Bool = false
 
     var body: some View {
         NavigationLink {
             NovelChapterView(novel: novel, novelChapter: novelChapter)
         } label: {
-            LabeledContent {
-                if novelChapterMidDownload {
-                    ProgressView()
-                }
-            } label: {
-                Text(novelChapter.title)
-                    .foregroundColor(novel.chaptersRead.contains(novelChapter.path) ? .gray : .primary)
-                    .contextMenu {
-                        Section {
-                            Button {
-                                Task.init {
-                                    novelChapterMidDownload = true
-
-                                    await novelChapter.fetchContent()
-
-                                    novelChapterMidDownload = false
-                                }
-                            } label: {
-                                if novelChapter.content != nil {
-                                    Label("Redownload", systemImage: "arrow.clockwise")
-                                } else {
-                                    Label("Download", systemImage: "square.and.arrow.down")
-                                }
-                            }
-
-                            Button(role: .destructive) {
-                                novelChapter.content = nil
-                            } label: {
-                                Label("Remove Download", systemImage: "trash")
-                            }
+            Text(novelChapter.title)
+                .foregroundColor(novel.chaptersRead.contains(novelChapter.path) ? .gray : .primary)
+                .contextMenu {
+                    Section {
+                        Button {
+                            novel.chaptersRead.insert(novelChapter.path)
+                        } label: {
+                            Label("Mark as Read", systemImage: "checkmark")
                         }
 
-                        Section {
-                            Button {
-                                novel.chaptersRead.insert(novelChapter.path)
-                            } label: {
-                                Label("Mark as Read", systemImage: "checkmark")
-                            }
-
-                            Button(role: .destructive) {
-                                novel.chaptersRead.remove(novelChapter.path)
-                            } label: {
-                                Label("Mark as Unread", systemImage: "xmark")
-                            }
+                        Button(role: .destructive) {
+                            novel.chaptersRead.remove(novelChapter.path)
+                        } label: {
+                            Label("Mark as Unread", systemImage: "xmark")
                         }
                     }
-            }
+                }
         }
     }
 }
@@ -520,33 +501,25 @@ struct NovelCell: View {
                     .truncationMode(.tail)
             }
             .contextMenu {
-                Section {
-                    NavigationLink {
-                        NovelChapterView(novel: novel, novelChapter: novel.chapters[0])
-                    } label: {
-                        Text("Start Reading")
-                    }
-
-                    let novelLastChapterReadNumber = novel.lastChapterReadNumber
-                    if novelLastChapterReadNumber == -1 || novel.chapters.count <= novelLastChapterReadNumber {
-                        Text("Continue Reading")
-                            .foregroundColor(.gray)
-                    } else {
+                if !novel.chapters.isEmpty {
+                    Section {
                         NavigationLink {
-                            NovelChapterView(novel: novel, novelChapter: novel.chapters[novelLastChapterReadNumber])
+                            NovelChapterView(novel: novel, novelChapter: novel.chapters[0])
                         } label: {
-                            Text("Continue Reading")
+                            Text("Start Reading")
                         }
-                    }
-                }
 
-                Section {
-                    Button(role: .destructive) {
-                        for novelChapter in novel.chapters {
-                            novelChapter.content = nil
+                        let novelLastChapterReadNumber = novel.lastChapterReadNumber
+                        if novelLastChapterReadNumber == -1 || novel.chapters.count <= novelLastChapterReadNumber {
+                            Text("Continue Reading")
+                                .foregroundColor(.gray)
+                        } else {
+                            NavigationLink {
+                                NovelChapterView(novel: novel, novelChapter: novel.chapters[novelLastChapterReadNumber])
+                            } label: {
+                                Text("Continue Reading")
+                            }
                         }
-                    } label: {
-                        Label("Remove All Downloads", systemImage: "trash")
                     }
                 }
 
@@ -608,6 +581,7 @@ struct NovelChapterView: View {
 
     @State
     var settingsSheetVisible = false
+
     let novel: Novel
     @State
     var novelChapter: NovelChapter
@@ -628,6 +602,7 @@ struct NovelChapterView: View {
     init(novel: Novel, novelChapter: NovelChapter) {
         self.novel = novel
         _novelChapter = State(initialValue: novelChapter)
+        _novelChapterContent = State(initialValue: nil)
     }
 
     var body: some View {
@@ -654,9 +629,17 @@ struct NovelChapterView: View {
                                 }
                             }
                     }
+                } else {
+                    ZStack {
+                        Spacer()
+                            .containerRelativeFrame([.horizontal, .vertical])
+
+                        ProgressView()
+                            .scaleEffect(2)
+                    }
                 }
             }
-            .navigationTitle(novelChapterContent != nil ? novelChapter.title : "Loading...")
+            .navigationTitle(novelChapter.title)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(id: "Setting", placement: .topBarTrailing) {
@@ -722,16 +705,12 @@ struct NovelChapterView: View {
     }
 
     private func fetchNovelChapterContent() {
-        if let novelChapterContent = novelChapter.content {
-            self.novelChapterContent = novelChapterContent
-        } else {
-            Task.init {
-                do {
-                    novelChapterContent = try await novel.provider.implementation.parseNovelChapter(path: novelChapter.path)
-                } catch {
-                    AlertUtils.showAlert(title: "Failed to Fetch Novel Chapter '\(novelChapter.title)' Content", message: error.localizedDescription) { _ in
-                        presentationMode.wrappedValue.dismiss()
-                    }
+        Task.init {
+            do {
+                novelChapterContent = try await novel.provider.implementation.parseNovelChapter(path: novelChapter.path)
+            } catch {
+                AlertUtils.showAlert(title: "Failed to Fetch Novel Chapter '\(novelChapter.title)' Content", message: error.localizedDescription) { _ in
+                    presentationMode.wrappedValue.dismiss()
                 }
             }
         }
