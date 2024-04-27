@@ -8,19 +8,13 @@ extension NovelProvider.Implementation {
         fileprivate init() {
             super.init(
                 provider: .freeWebNovel,
-                details: NovelProvider.Details(
-                    name: "Free Web Novel",
-                    site: "https://freewebnovel.com",
-                    version: "1.0",
-                    batchSize: 15,
-                    batchFetchPeriodNanos: 5_000_000_000
-                )
+                details: NovelProvider.Details(name: "Free Web Novel", site: "https://freewebnovel.com")
             )
         }
 
         override func fetchNovels(searchTerm: String) async throws -> [NovelPreview] {
             do {
-                let html = try await URLUtils.fetchHTML(
+                let html = try await URLUtils.fetchContent(
                     from: details.site + "/search/?searchkey=" + searchTerm,
                     method: "POST",
                     headers: [
@@ -53,15 +47,29 @@ extension NovelProvider.Implementation {
 
         override func parseNovel(path: String) async throws -> Novel {
             do {
-                let html = try await URLUtils.fetchHTML(from: details.site + path)
+                let html = try await URLUtils.fetchContent(from: details.site + path)
                 let htmlAsDocument = try SwiftSoup.parse(html)
 
                 let title = try htmlAsDocument.select("h1.tit").text()
                 let coverURL = try htmlAsDocument.select(".pic > img").attr("src")
                 let summary = try htmlAsDocument.select(".inner > p").eachText()
-                let genres = (try htmlAsDocument.select("[title=Genre]").first()?.nextElementSibling()?.text().replacingOccurrences(of: "[\t\n]", with: "", options: .regularExpression).components(separatedBy: ", ")) ?? ["Unknown"]
-                let authors = (try htmlAsDocument.select("[title=Author]").first()?.nextElementSibling()?.text().replacingOccurrences(of: "[\t\n]", with: "", options: .regularExpression).components(separatedBy: ", ")) ?? ["Unknown"]
-                let status = (try htmlAsDocument.select("[title=Status]").first()?.nextElementSibling()?.text().replacingOccurrences(of: "[\t\n]", with: "", options: .regularExpression)) ?? "Unknown"
+                let genres = try htmlAsDocument.select("[title=Genre]")
+                    .first()!
+                    .nextElementSibling()!
+                    .text()
+                    .replacingOccurrences(of: "[\\t\\n]", with: "", options: .regularExpression)
+                    .components(separatedBy: ", ")
+                let authors = try htmlAsDocument.select("[title=Author]")
+                    .first()!
+                    .nextElementSibling()!
+                    .text()
+                    .replacingOccurrences(of: "[\\t\\n]", with: "", options: .regularExpression)
+                    .components(separatedBy: ", ")
+                let status = try htmlAsDocument.select("[title=Status]")
+                    .first()!
+                    .nextElementSibling()!
+                    .text()
+                    .replacingOccurrences(of: "[\\t\\n]", with: "", options: .regularExpression)
                 let chapters: [NovelChapter] = try htmlAsDocument.select("#idData > li > a")
                     .enumerated()
                     .map { chapterIndex, chapterElement in
@@ -98,7 +106,7 @@ extension NovelProvider.Implementation {
 
         override func parseNovelChapter(path: String) async throws -> [String] {
             do {
-                let html = try await URLUtils.fetchHTML(from: details.site + path)
+                let html = try await URLUtils.fetchContent(from: details.site + path)
                 let htmlAsDocument = try SwiftSoup.parse(html)
 
                 let txt = try SwiftSoup.parse(try htmlAsDocument.select("div.txt").html())

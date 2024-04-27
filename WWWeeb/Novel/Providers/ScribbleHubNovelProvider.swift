@@ -8,19 +8,13 @@ extension NovelProvider.Implementation {
         fileprivate init() {
             super.init(
                 provider: .scribbleHub,
-                details: NovelProvider.Details(
-                    name: "Scribble Hub",
-                    site: "https://www.scribblehub.com",
-                    version: "1.0",
-                    batchSize: 15,
-                    batchFetchPeriodNanos: 5_000_000_000
-                )
+                details: NovelProvider.Details(name: "Scribble Hub", site: "https://www.scribblehub.com")
             )
         }
 
         override func fetchNovels(searchTerm: String) async throws -> [NovelPreview] {
             do {
-                let html = try await URLUtils.fetchHTML(
+                let html = try await URLUtils.fetchContent(
                     from: details.site + "/?s=" + searchTerm + "&post_type=fictionposts",
                     method: "POST"
                 )
@@ -48,7 +42,7 @@ extension NovelProvider.Implementation {
 
         override func parseNovel(path: String) async throws -> Novel {
             do {
-                let html = try await URLUtils.fetchHTML(from: details.site + path + "?toc=-1#content1")
+                let html = try await URLUtils.fetchContent(from: details.site + path + "?toc=-1#content1")
                 let htmlAsDocument = try SwiftSoup.parse(html)
 
                 let title = try htmlAsDocument.select(".fic_title").attr("title")
@@ -112,7 +106,7 @@ extension NovelProvider.Implementation {
 
         override func parseNovelChapter(path: String) async throws -> [String] {
             do {
-                let html = try await URLUtils.fetchHTML(from: details.site + path)
+                let html = try await URLUtils.fetchContent(from: details.site + path)
                 let htmlAsDocument = try SwiftSoup.parse(html)
 
                 let txt = try htmlAsDocument.select("div.chp_raw")

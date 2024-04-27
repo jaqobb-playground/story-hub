@@ -127,40 +127,10 @@ struct NovelInformation: View {
         }
 
         Section(header: Text("Information")) {
-            NavigationLink {
-                Form {
-                    LabeledContent {
-                        Text(novel.provider.id)
-                    } label: {
-                        Text("ID")
-                    }
-
-                    LabeledContent {
-                        Text(novel.provider.implementation.details.name)
-                    } label: {
-                        Text("Name")
-                    }
-
-                    LabeledContent {
-                        Text(novel.provider.implementation.details.site)
-                    } label: {
-                        Text("Site")
-                    }
-
-                    LabeledContent {
-                        Text(novel.provider.implementation.details.version)
-                    } label: {
-                        Text("Version")
-                    }
-                }
-                .navigationTitle(novel.provider.implementation.details.name)
-                .navigationBarTitleDisplayMode(.inline)
+            LabeledContent {
+                Text(novel.provider.implementation.details.name)
             } label: {
-                LabeledContent {
-                    Text(novel.provider.implementation.details.name)
-                } label: {
-                    Label("Provider", systemImage: "books.vertical")
-                }
+                Label("Provider", systemImage: "books.vertical")
             }
 
             NavigationLink {

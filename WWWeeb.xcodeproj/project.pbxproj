@@ -22,6 +22,7 @@
 		5C4FBAA22BCDBDF300AA786C /* FreeWebNovelNovelProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C4FBAA12BCDBDF300AA786C /* FreeWebNovelNovelProvider.swift */; };
 		5C706A682BD8499A00651FBB /* SettingsViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C706A672BD8499A00651FBB /* SettingsViews.swift */; };
 		5CA024B32BD9139A0084B229 /* ArrayExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CA024B22BD9139A0084B229 /* ArrayExtensions.swift */; };
+		5CADB2B62BDCF86300A0CAB2 /* MTLNovelNovelProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CADB2B52BDCF86300A0CAB2 /* MTLNovelNovelProvider.swift */; };
 		5CBA31942BD7C8C40012CE3B /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 5CBA31932BD7C8C40012CE3B /* README.md */; };
 		5CBA31962BD7C8DE0012CE3B /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = 5CBA31952BD7C8DE0012CE3B /* .gitignore */; };
 		5CEE7A4D2BDAE3D5008EAD87 /* ScribbleHubNovelProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CEE7A4C2BDAE3D5008EAD87 /* ScribbleHubNovelProvider.swift */; };
@@ -44,6 +45,7 @@
 		5C4FBAA12BCDBDF300AA786C /* FreeWebNovelNovelProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FreeWebNovelNovelProvider.swift; sourceTree = "<group>"; };
 		5C706A672BD8499A00651FBB /* SettingsViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViews.swift; sourceTree = "<group>"; };
 		5CA024B22BD9139A0084B229 /* ArrayExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArrayExtensions.swift; sourceTree = "<group>"; };
+		5CADB2B52BDCF86300A0CAB2 /* MTLNovelNovelProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MTLNovelNovelProvider.swift; sourceTree = "<group>"; };
 		5CBA31932BD7C8C40012CE3B /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		5CBA31952BD7C8DE0012CE3B /* .gitignore */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 		5CEE7A4C2BDAE3D5008EAD87 /* ScribbleHubNovelProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScribbleHubNovelProvider.swift; sourceTree = "<group>"; };
@@ -69,6 +71,7 @@
 			children = (
 				5C4FBAA12BCDBDF300AA786C /* FreeWebNovelNovelProvider.swift */,
 				5CEE7A4C2BDAE3D5008EAD87 /* ScribbleHubNovelProvider.swift */,
+				5CADB2B52BDCF86300A0CAB2 /* MTLNovelNovelProvider.swift */,
 			);
 			path = Providers;
 			sourceTree = "<group>";
@@ -261,6 +264,7 @@
 				5C45A95C2BC9895600299492 /* NovelViews.swift in Sources */,
 				5C4FBAA22BCDBDF300AA786C /* FreeWebNovelNovelProvider.swift in Sources */,
 				5C45A92A2BC925DA00299492 /* LibraryView.swift in Sources */,
+				5CADB2B62BDCF86300A0CAB2 /* MTLNovelNovelProvider.swift in Sources */,
 				5C45A9192BC9257F00299492 /* WWWeebApp.swift in Sources */,
 				5C45A9342BC9262E00299492 /* Novel.swift in Sources */,
 			);
@@ -394,7 +398,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 27;
+				CURRENT_PROJECT_VERSION = 28;
 				DEVELOPMENT_ASSET_PATHS = "\"WWWeeb/Preview Content\"";
 				DEVELOPMENT_TEAM = 55HSKS6J8J;
 				ENABLE_PREVIEWS = YES;
@@ -424,7 +428,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 27;
+				CURRENT_PROJECT_VERSION = 28;
 				DEVELOPMENT_ASSET_PATHS = "\"WWWeeb/Preview Content\"";
 				DEVELOPMENT_TEAM = 55HSKS6J8J;
 				ENABLE_PREVIEWS = YES;

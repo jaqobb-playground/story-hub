@@ -1,7 +1,7 @@
 import Foundation
 
 struct URLUtils {
-    static func fetchHTML(from urlString: String, method: String = "GET", headers: [String: String]? = nil) async throws -> String {
+    static func fetchContent(from urlString: String, method: String = "GET", headers: [String: String]? = nil) async throws -> String {
         guard let components = URLComponents(string: urlString) else {
             throw NSError(domain: "Invalid URL", code: 0, userInfo: nil)
         }
@@ -21,10 +21,10 @@ struct URLUtils {
             throw NSError(domain: "HTTP Error", code: 0, userInfo: nil)
         }
 
-        guard let htmlString = String(data: data, encoding: .utf8) else {
+        guard let content = String(data: data, encoding: .utf8) else {
             throw NSError(domain: "Invalid Data", code: 0, userInfo: nil)
         }
 
-        return htmlString
+        return content
     }
 }

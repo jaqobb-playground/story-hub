@@ -3,6 +3,7 @@ import Foundation
 enum NovelProvider: String, Identifiable, Codable, CaseIterable {
     case freeWebNovel
     case scribbleHub
+    case mtlNovel
 
     var id: String {
         rawValue
@@ -14,6 +15,8 @@ enum NovelProvider: String, Identifiable, Codable, CaseIterable {
                 return NovelProvider.Implementation.FreeWebNovel
             case .scribbleHub:
                 return NovelProvider.Implementation.ScribbleHub
+            case .mtlNovel:
+                return NovelProvider.Implementation.MTLNovel
         }
     }
 }
@@ -22,9 +25,6 @@ extension NovelProvider {
     struct Details {
         let name: String
         let site: String
-        let version: String
-        let batchSize: Int
-        let batchFetchPeriodNanos: UInt64
     }
 }
 

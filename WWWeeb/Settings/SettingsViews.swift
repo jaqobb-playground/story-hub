@@ -12,47 +12,17 @@ struct BrowseSettingsSheet: View {
             Form {
                 Section(header: Text("Novel Providers")) {
                     List(NovelProvider.allCases) { novelProvider in
-                        NavigationLink {
-                            Form {
-                                LabeledContent {
-                                    Text(novelProvider.id)
-                                } label: {
-                                    Text("ID")
-                                }
-                                
-                                LabeledContent {
-                                    Text(novelProvider.implementation.details.name)
-                                } label: {
-                                    Text("Name")
-                                }
-                                
-                                LabeledContent {
-                                    Text(novelProvider.implementation.details.site)
-                                } label: {
-                                    Text("Site")
-                                }
-                                
-                                LabeledContent {
-                                    Text(novelProvider.implementation.details.version)
-                                } label: {
-                                    Text("Version")
+                        Toggle(isOn: Binding<Bool>(
+                            get: { settings.novelProviders.contains(novelProvider) },
+                            set: { newValue in
+                                if newValue {
+                                    settings.novelProviders.insert(novelProvider)
+                                } else {
+                                    settings.novelProviders.remove(novelProvider)
                                 }
                             }
-                            .navigationTitle(novelProvider.implementation.details.name)
-                            .navigationBarTitleDisplayMode(.inline)
-                        } label: {
-                            Toggle(isOn: Binding<Bool>(
-                                get: { settings.novelProviders.contains(novelProvider) },
-                                set: { newValue in
-                                    if newValue {
-                                        settings.novelProviders.insert(novelProvider)
-                                    } else {
-                                        settings.novelProviders.remove(novelProvider)
-                                    }
-                                }
-                            )) {
-                                Text(novelProvider.implementation.details.name)
-                            }
+                        )) {
+                            Text(novelProvider.implementation.details.name)
                         }
                     }
                 }
@@ -60,7 +30,7 @@ struct BrowseSettingsSheet: View {
                 Section(header: Text("Comic Providers")) {
                     Text("We are not quite there yet! :(")
                 }
-                
+
                 AboutSection()
             }
             .navigationTitle("Settings")
@@ -123,7 +93,7 @@ struct LibrarySettingsSheet: View {
                 Section(header: Text("Comics")) {
                     Text("We are not quite there yet! :(")
                 }
-                
+
                 AboutSection()
             }
             .navigationTitle("Settings")
@@ -202,7 +172,7 @@ struct NovelSettingsSheet: View {
                         Text("Mark as Read when Switching")
                     })
                 }
-                
+
                 AboutSection()
             }
             .navigationTitle("Settings")
@@ -225,14 +195,14 @@ private struct AboutSection: View {
         }
         return "Unknown"
     }
+
     var appBuild: String {
         if let build = Bundle.main.infoDictionary?["CFBundleVersion"] as? String {
             return build
         }
         return "Unknown"
     }
-    
-    
+
     var body: some View {
         Section(header: Text("About")) {
             LabeledContent {
