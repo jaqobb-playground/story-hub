@@ -23,8 +23,10 @@ struct WWWeebApp: App {
             .modifier(LibraryEnvironmentModifier(library: library))
             .onChange(of: scenePhase) { _, newScenePhase in
                 if newScenePhase == .background {
-                    Settings.save(settings)
-                    Library.save(library)
+                    Task {
+                        Settings.save(settings)
+                        Library.save(library)
+                    }
                 }
             }
         }

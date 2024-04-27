@@ -11,7 +11,7 @@ struct BrowseView: View {
 
     @State
     var settingsSheetVisible = false
-    
+
     @State
     var searchInProgress = false
     @State
@@ -95,7 +95,7 @@ struct BrowseView: View {
 
         searchInProgress = true
 
-        Task.init {
+        Task {
             for novelProvider in settings.novelProviders {
                 do {
                     novelPreviews.append(contentsOf: try await novelProvider.implementation.fetchNovels(searchTerm: searchText))

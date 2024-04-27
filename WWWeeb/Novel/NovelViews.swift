@@ -52,7 +52,7 @@ struct NovelView: View {
     }
 
     private func fetchNovel() {
-        Task.init {
+        Task {
             do {
                 novel = try await novelPreview!.provider.implementation.parseNovel(path: novelPreview!.path)
             } catch {
@@ -387,7 +387,7 @@ struct NovelPreviewCell: View {
                     }
                 } else {
                     Button {
-                        Task.init {
+                        Task {
                             do {
                                 library.novels.insert(try await novelPreview.provider.implementation.parseNovel(path: novelPreview.path))
                             } catch {
@@ -522,7 +522,7 @@ struct NovelCell: View {
                     }
 
                     Button {
-                        Task.init {
+                        Task {
                             await novel.update()
                         }
                     } label: {
@@ -675,7 +675,7 @@ struct NovelChapterView: View {
     }
 
     private func fetchNovelChapterContent() {
-        Task.init {
+        Task {
             do {
                 novelChapterContent = try await novel.provider.implementation.parseNovelChapter(path: novelChapter.path)
             } catch {
