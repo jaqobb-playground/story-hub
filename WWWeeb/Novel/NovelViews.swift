@@ -37,17 +37,13 @@ struct NovelView: View {
                 .value
             }
         } else {
-            ZStack {
-                Spacer()
-                    .containerRelativeFrame([.horizontal, .vertical])
-
-                ProgressView()
-                    .scaleEffect(2)
-            }
-            .modifier(NovelViewModifier(settingsSheetVisible: $settingsSheetVisible, title: novelPreview!.title))
-            .onAppear {
-                fetchNovel()
-            }
+            ProgressView()
+                .containerRelativeFrame([.horizontal, .vertical])
+                .scaleEffect(2)
+                .modifier(NovelViewModifier(settingsSheetVisible: $settingsSheetVisible, title: novelPreview!.title))
+                .onAppear {
+                    fetchNovel()
+                }
         }
     }
 
@@ -600,13 +596,9 @@ struct NovelChapterView: View {
                             }
                     }
                 } else {
-                    ZStack {
-                        Spacer()
-                            .containerRelativeFrame([.horizontal, .vertical])
-
-                        ProgressView()
-                            .scaleEffect(2)
-                    }
+                    ProgressView()
+                        .containerRelativeFrame([.horizontal, .vertical])
+                        .scaleEffect(2)
                 }
             }
             .navigationTitle(novelChapter.title)
@@ -621,23 +613,20 @@ struct NovelChapterView: View {
                 }
 
                 ToolbarItem(id: "Previous Chapter", placement: .bottomBar) {
-                    if novelChapter.number > novelFirstChapterNumber {
-                        Button {
-                            reader.scrollTo(0, anchor: .top)
+                    Button {
+                        reader.scrollTo(0, anchor: .top)
 
-                            if settings.markNovelChapterAsReadWhenSwitching {
-                                novel.chaptersRead.insert(novelChapter.path)
-                            }
-                            novelChapterContent = nil
-                            novelChapter = novel.chapters[novelChapterIndex - 1]
-
-                            fetchNovelChapterContent()
-                        } label: {
-                            Label("Previous Chapter", systemImage: "chevron.backward")
+                        if settings.markNovelChapterAsReadWhenSwitching {
+                            novel.chaptersRead.insert(novelChapter.path)
                         }
-                    } else {
-                        Spacer()
+                        novelChapterContent = nil
+                        novelChapter = novel.chapters[novelChapterIndex - 1]
+
+                        fetchNovelChapterContent()
+                    } label: {
+                        Label("Previous", systemImage: "chevron.backward")
                     }
+                    .disabled(novelChapter.number <= novelFirstChapterNumber)
                 }
 
                 // Any better way to do this?
@@ -646,23 +635,20 @@ struct NovelChapterView: View {
                 }
 
                 ToolbarItem(id: "Next Chapter", placement: .bottomBar) {
-                    if novelChapter.number < novelLastChapterNumber {
-                        Button {
-                            reader.scrollTo(0, anchor: .top)
+                    Button {
+                        reader.scrollTo(0, anchor: .top)
 
-                            if settings.markNovelChapterAsReadWhenSwitching {
-                                novel.chaptersRead.insert(novelChapter.path)
-                            }
-                            novelChapterContent = nil
-                            novelChapter = novel.chapters[novelChapterIndex + 1]
-
-                            fetchNovelChapterContent()
-                        } label: {
-                            Label("Next Chapter", systemImage: "chevron.forward")
+                        if settings.markNovelChapterAsReadWhenSwitching {
+                            novel.chaptersRead.insert(novelChapter.path)
                         }
-                    } else {
-                        Spacer()
+                        novelChapterContent = nil
+                        novelChapter = novel.chapters[novelChapterIndex + 1]
+
+                        fetchNovelChapterContent()
+                    } label: {
+                        Label("Next", systemImage: "chevron.forward")
                     }
+                    .disabled(novelChapter.number >= novelLastChapterNumber)
                 }
             }
             .sheet(isPresented: $settingsSheetVisible) {

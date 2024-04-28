@@ -52,8 +52,6 @@ struct LibraryView: View {
                             if missingNovels > 0 {
                                 ForEach(0 ..< missingNovels, id: \.self) { _ in
                                     Spacer()
-                                        .scaledToFit()
-                                        .cornerRadius(10)
                                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                                 }
                             }
@@ -93,12 +91,9 @@ struct LibraryView: View {
             LibrarySettingsSheet(settingsSheetVisible: $settingsSheetVisible)
         }
         .refreshable {
-            await Task {
-                for novel in library.novels.filter({ $0.category != .completed }) {
-                    await novel.update()
-                }
+            for novel in library.novels.filter({ $0.category != .completed }) {
+                await novel.update()
             }
-            .value
         }
     }
 }

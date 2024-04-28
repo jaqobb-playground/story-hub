@@ -24,13 +24,9 @@ struct BrowseView: View {
     var body: some View {
         ScrollView(.vertical) {
             if searchInProgress {
-                ZStack {
-                    Spacer()
-                        .containerRelativeFrame([.horizontal, .vertical])
-
-                    ProgressView()
-                        .scaleEffect(2)
-                }
+                ProgressView()
+                    .containerRelativeFrame([.horizontal, .vertical])
+                    .scaleEffect(2)
             } else if !novelPreviews.isEmpty {
                 let novelPreviewChunks = novelPreviews.chunked(into: horizontalSizeClass == .compact ? 2 : 4)
                 ForEach(novelPreviewChunks, id: \.self) { novelPreviews in
@@ -44,8 +40,6 @@ struct BrowseView: View {
                             if missingNovelPreviews > 0 {
                                 ForEach(0 ..< missingNovelPreviews, id: \.self) { _ in
                                     Spacer()
-                                        .scaledToFit()
-                                        .cornerRadius(10)
                                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                                 }
                             }
@@ -102,6 +96,10 @@ struct BrowseView: View {
                 } catch {
                     AlertUtils.presentAlert(title: "Failed to Fetch Novel Previews from '\(novelProvider.implementation.details.name)'", message: error.localizedDescription)
                 }
+            }
+
+            novelPreviews.sort { a, b in
+                a.title.lowercased().contains(searchText.lowercased()) && !b.title.lowercased().contains(searchText.lowercased())
             }
 
             searchInProgress = false

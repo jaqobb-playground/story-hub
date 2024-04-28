@@ -96,6 +96,7 @@ class Novel: Codable, Hashable {
         return lastChapterReadNumber
     }
 
+    @MainActor
     func update() async {
         updating = true
 
@@ -117,10 +118,8 @@ class Novel: Codable, Hashable {
                 dateUpdated = Date.now
             }
         } catch {
-            AlertUtils.presentAlert(title: "Failed to Update Novel: \(title)", message: error.localizedDescription)
+            AlertUtils.presentAlert(title: "Failed to Update Novel '\(title)'", message: error.localizedDescription)
         }
-
-        try? await Task.sleep(nanoseconds: 500_000_000)
 
         updating = false
     }
@@ -175,8 +174,8 @@ extension Novel {
     enum Filter: String, Identifiable, Codable, CaseIterable {
         case reading
         case completed
-        case unread_chapters
-        case not_started
+        case unreadChapters
+        case notStarted
 
         var id: String {
             rawValue
@@ -188,9 +187,9 @@ extension Novel {
                     return "Reading"
                 case .completed:
                     return "Completed"
-                case .unread_chapters:
+                case .unreadChapters:
                     return "Unread Chapter(s)"
-                case .not_started:
+                case .notStarted:
                     return "Not Started"
             }
         }
@@ -201,9 +200,9 @@ extension Novel {
                     return novel.category == .reading
                 case .completed:
                     return novel.category == .completed
-                case .unread_chapters:
+                case .unreadChapters:
                     return novel.chapters.count > novel.chaptersRead.count
-                case .not_started:
+                case .notStarted:
                     return novel.chaptersRead.isEmpty
             }
         }
