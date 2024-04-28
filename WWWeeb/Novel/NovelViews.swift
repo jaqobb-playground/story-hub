@@ -56,7 +56,7 @@ struct NovelView: View {
             do {
                 novel = try await novelPreview!.provider.implementation.parseNovel(path: novelPreview!.path)
             } catch {
-                AlertUtils.showAlert(title: "Failed to Fetch Novel '\(novelPreview!.title)'", message: error.localizedDescription) { _ in
+                AlertUtils.presentAlert(title: "Failed to Fetch Novel '\(novelPreview!.title)'", message: error.localizedDescription) { _ in
                     presentationMode.wrappedValue.dismiss()
                 }
             }
@@ -391,7 +391,7 @@ struct NovelPreviewCell: View {
                             do {
                                 library.novels.insert(try await novelPreview.provider.implementation.parseNovel(path: novelPreview.path))
                             } catch {
-                                AlertUtils.showAlert(title: "Failed to Fetch Novel '\(novelPreview.title)'", message: error.localizedDescription)
+                                AlertUtils.presentAlert(title: "Failed to Fetch Novel '\(novelPreview.title)'", message: error.localizedDescription)
                             }
                         }
                     } label: {
@@ -679,7 +679,7 @@ struct NovelChapterView: View {
             do {
                 novelChapterContent = try await novel.provider.implementation.parseNovelChapter(path: novelChapter.path)
             } catch {
-                AlertUtils.showAlert(title: "Failed to Fetch Novel Chapter '\(novelChapter.title)' Content", message: error.localizedDescription) { _ in
+                AlertUtils.presentAlert(title: "Failed to Fetch Novel Chapter '\(novelChapter.title)' Content", message: error.localizedDescription) { _ in
                     presentationMode.wrappedValue.dismiss()
                 }
             }

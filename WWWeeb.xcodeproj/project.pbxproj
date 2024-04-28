@@ -26,7 +26,7 @@
 		5CBA31942BD7C8C40012CE3B /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 5CBA31932BD7C8C40012CE3B /* README.md */; };
 		5CBA31962BD7C8DE0012CE3B /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = 5CBA31952BD7C8DE0012CE3B /* .gitignore */; };
 		5CEE7A4D2BDAE3D5008EAD87 /* ScribbleHubNovelProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CEE7A4C2BDAE3D5008EAD87 /* ScribbleHubNovelProvider.swift */; };
-		5CEE7A542BDB138B008EAD87 /* URLUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CEE7A532BDB138B008EAD87 /* URLUtils.swift */; };
+		5CEE7A542BDB138B008EAD87 /* NetworkUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CEE7A532BDB138B008EAD87 /* NetworkUtils.swift */; };
 		5CF895BF2BD6A177001CBBED /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CF895BE2BD6A177001CBBED /* Settings.swift */; };
 /* End PBXBuildFile section */
 
@@ -49,7 +49,7 @@
 		5CBA31932BD7C8C40012CE3B /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		5CBA31952BD7C8DE0012CE3B /* .gitignore */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 		5CEE7A4C2BDAE3D5008EAD87 /* ScribbleHubNovelProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScribbleHubNovelProvider.swift; sourceTree = "<group>"; };
-		5CEE7A532BDB138B008EAD87 /* URLUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLUtils.swift; sourceTree = "<group>"; };
+		5CEE7A532BDB138B008EAD87 /* NetworkUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkUtils.swift; sourceTree = "<group>"; };
 		5CF895BE2BD6A177001CBBED /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -122,7 +122,7 @@
 			isa = PBXGroup;
 			children = (
 				5C0559B92BCFCDF10093A355 /* AlertUtils.swift */,
-				5CEE7A532BDB138B008EAD87 /* URLUtils.swift */,
+				5CEE7A532BDB138B008EAD87 /* NetworkUtils.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -259,7 +259,7 @@
 				5CEE7A4D2BDAE3D5008EAD87 /* ScribbleHubNovelProvider.swift in Sources */,
 				5C706A682BD8499A00651FBB /* SettingsViews.swift in Sources */,
 				5C0559BA2BCFCDF10093A355 /* AlertUtils.swift in Sources */,
-				5CEE7A542BDB138B008EAD87 /* URLUtils.swift in Sources */,
+				5CEE7A542BDB138B008EAD87 /* NetworkUtils.swift in Sources */,
 				5C11E76D2BCE816300307AC6 /* Library.swift in Sources */,
 				5C45A95C2BC9895600299492 /* NovelViews.swift in Sources */,
 				5C4FBAA22BCDBDF300AA786C /* FreeWebNovelNovelProvider.swift in Sources */,
@@ -398,7 +398,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 29;
+				CURRENT_PROJECT_VERSION = 30;
 				DEVELOPMENT_ASSET_PATHS = "\"WWWeeb/Preview Content\"";
 				DEVELOPMENT_TEAM = 55HSKS6J8J;
 				ENABLE_PREVIEWS = YES;
@@ -428,7 +428,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 29;
+				CURRENT_PROJECT_VERSION = 30;
 				DEVELOPMENT_ASSET_PATHS = "\"WWWeeb/Preview Content\"";
 				DEVELOPMENT_TEAM = 55HSKS6J8J;
 				ENABLE_PREVIEWS = YES;

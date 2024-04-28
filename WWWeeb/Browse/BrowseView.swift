@@ -100,7 +100,7 @@ struct BrowseView: View {
                 do {
                     novelPreviews.append(contentsOf: try await novelProvider.implementation.fetchNovels(searchTerm: searchText))
                 } catch {
-                    AlertUtils.showAlert(title: "Failed to Fetch Novel Previews from '\(novelProvider.implementation.details.name)'", message: error.localizedDescription)
+                    AlertUtils.presentAlert(title: "Failed to Fetch Novel Previews from '\(novelProvider.implementation.details.name)'", message: error.localizedDescription)
                 }
             }
 

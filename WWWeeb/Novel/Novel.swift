@@ -117,7 +117,7 @@ class Novel: Codable, Hashable {
                 dateUpdated = Date.now
             }
         } catch {
-            AlertUtils.showAlert(title: "Failed to Update Novel '\(title)'", message: error.localizedDescription)
+            AlertUtils.presentAlert(title: "Failed to Update Novel: \(title)", message: error.localizedDescription)
         }
 
         try? await Task.sleep(nanoseconds: 500_000_000)
@@ -213,8 +213,8 @@ extension Novel {
 extension Novel {
     enum SortingMode: String, Identifiable, Codable, CaseIterable {
         case title
-        case date_added
-        case date_updated
+        case dateAdded
+        case dateUpdated
 
         var id: String {
             rawValue
@@ -224,9 +224,9 @@ extension Novel {
             switch self {
                 case .title:
                     return "Title"
-                case .date_added:
+                case .dateAdded:
                     return "Date added"
-                case .date_updated:
+                case .dateUpdated:
                     return "Date updated"
             }
         }
@@ -235,9 +235,9 @@ extension Novel {
             switch self {
                 case .title:
                     return { $0.title < $1.title }
-                case .date_added:
+                case .dateAdded:
                     return { $0.dateAdded > $1.dateAdded }
-                case .date_updated:
+                case .dateUpdated:
                     return { $0.dateUpdated > $1.dateUpdated }
             }
         }
@@ -322,9 +322,4 @@ struct NovelPreview: Hashable {
     static func == (lhs: NovelPreview, rhs: NovelPreview) -> Bool {
         return lhs.path == rhs.path
     }
-}
-
-enum NovelError: Error {
-    case parse(description: String)
-    case fetch(description: String)
 }
