@@ -633,7 +633,7 @@ struct NovelChapterView: View {
 
                             fetchNovelChapterContent()
                         } label: {
-                            Label("Previous Chapter", systemImage: "arrow.backward")
+                            Label("Previous Chapter", systemImage: "chevron.backward")
                         }
                     } else {
                         Spacer()
@@ -658,7 +658,7 @@ struct NovelChapterView: View {
 
                             fetchNovelChapterContent()
                         } label: {
-                            Label("Next Chapter", systemImage: "arrow.forward")
+                            Label("Next Chapter", systemImage: "chevron.forward")
                         }
                     } else {
                         Spacer()
