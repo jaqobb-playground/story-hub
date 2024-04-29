@@ -193,6 +193,7 @@ private struct AboutSection: View {
         if let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String {
             return version
         }
+        
         return "Unknown"
     }
 
@@ -200,6 +201,7 @@ private struct AboutSection: View {
         if let build = Bundle.main.infoDictionary?["CFBundleVersion"] as? String {
             return build
         }
+        
         return "Unknown"
     }
 
