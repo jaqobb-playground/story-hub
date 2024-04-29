@@ -12,9 +12,6 @@ struct LibraryView: View {
     private var library
 
     @State
-    var taskId: UUID? = nil
-    
-    @State
     var settingsSheetVisible = false
 
     @State
@@ -94,16 +91,12 @@ struct LibraryView: View {
             LibrarySettingsSheet(settingsSheetVisible: $settingsSheetVisible)
         }
         .refreshable {
-            taskId = .init()
-        }
-        .task(id: taskId) {
-            if taskId == nil {
-                return
+            await Task {
+                for novel in library.novels.filter({ $0.category != .completed }) {
+                    await novel.update()
+                }
             }
-            
-            for novel in library.novels.filter({ $0.category != .completed }) {
-                await novel.update()
-            }
+            .value
         }
     }
 }
