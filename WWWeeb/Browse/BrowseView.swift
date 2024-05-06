@@ -97,9 +97,10 @@ struct BrowseView: View {
                     AlertUtils.presentAlert(title: "Failed to Fetch Novel Previews from '\(novelProvider.implementation.details.name)'", message: error.localizedDescription)
                 }
             }
-
+            
+            novelPreviews.removeAll(where: { !$0.title.lowercased().contains(searchText.lowercased()) })
             novelPreviews.sort { a, b in
-                a.title.lowercased().contains(searchText.lowercased()) && !b.title.lowercased().contains(searchText.lowercased())
+                a.title < b.title
             }
 
             searchInProgress = false
