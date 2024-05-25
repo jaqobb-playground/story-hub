@@ -12,14 +12,11 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
-
-      - name: Set up Xcode
-        run: ls /Applications
+        uses: actions/checkout@v4
 
       - name: Build Archive
         run: |
-          xcodebuild -workspace WWWeeb.xcworkspace -scheme Release -sdk iphoneos -configuration Release archive -archivePath $PWD/build/Release.xcarchive
+          xcodebuild -project WWWeeb.xcodeproj -scheme Release -sdk iphoneos -configuration Release archive -archivePath $PWD/build/Release.xcarchive
 
       - name: Create IPA
         run: |
