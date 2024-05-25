@@ -19,11 +19,11 @@ jobs:
 
       - name: Build Archive
         run: |
-          xcodebuild -project WWWeeb.xcodeproj -scheme Release -sdk iphoneos -configuration Release archive -archivePath $PWD/build/Release.xcarchive
+          xcodebuild -project WWWeeb.xcodeproj -scheme WWWeeb -sdk iphoneos -configuration Release archive -archivePath $PWD/build/WWWeeb.xcarchive
 
       - name: Create IPA
         run: |
-          xcodebuild -exportArchive -archivePath $PWD/build/Release.xcarchive -exportPath $PWD/build -exportOptionsPlist exportOptions.plist
+          xcodebuild -exportArchive -archivePath $PWD/build/WWWeeb.xcarchive -exportPath $PWD/build -exportOptionsPlist exportOptions.plist
           cd build
           zip -r WWWeeb.ipa Payload
           mv build/WWWeeb.ipa.zip build/WWWeeb.ipa
