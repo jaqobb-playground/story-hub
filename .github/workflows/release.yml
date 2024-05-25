@@ -1,0 +1,36 @@
+name: Build and Archive iOS Project
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Xcode
+        run: sudo xcode-select -s /Applications/Xcode_12.5.app
+
+      - name: Build Archive
+        run: |
+          xcodebuild -workspace WWWeeb.xcworkspace -scheme Release -sdk iphoneos -configuration Release archive -archivePath $PWD/build/Release.xcarchive
+
+      - name: Create IPA
+        run: |
+          xcodebuild -exportArchive -archivePath $PWD/build/Release.xcarchive -exportPath $PWD/build -exportOptionsPlist exportOptions.plist
+          cd build
+          zip -r WWWeeb.ipa Payload
+          mv build/WWWeeb.ipa.zip build/WWWeeb.ipa
+
+      - name: Upload IPA to GitHub Releases
+        uses: softprops/action-gh-release@v1
+        with:
+          files: build/YOUR_SCHEME.ipa
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
