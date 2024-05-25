@@ -14,6 +14,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Set up Xcode
+        run: sudo xcode-select -s /Applications/Xcode_15.4.app
+
       - name: Build Archive
         run: |
           xcodebuild -project WWWeeb.xcodeproj -scheme Release -sdk iphoneos -configuration Release archive -archivePath $PWD/build/Release.xcarchive
