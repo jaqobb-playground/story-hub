@@ -2,9 +2,8 @@ name: Build and Archive iOS Project
 
 on:
   push:
-    branches:
-      - main
-  workflow_dispatch:
+    tags:
+      - "*.*.*.*"
 
 jobs:
   build:
@@ -23,14 +22,13 @@ jobs:
 
       - name: Create IPA
         run: |
-          xcodebuild -exportArchive -archivePath $PWD/build/WWWeeb.xcarchive -exportPath $PWD/build -exportOptionsPlist exportOptions.plist CODE_SIGNING_ALLOWED=NO
-          cd build
+          mkdir Payload
+          mv ./build/WWWeeb.xcarchive/Products/Applications/ ./Payload
           zip -r WWWeeb.ipa Payload
-          mv build/WWWeeb.ipa.zip build/WWWeeb.ipa
 
       - name: Upload IPA to GitHub Releases
         uses: softprops/action-gh-release@v1
         with:
-          files: build/YOUR_SCHEME.ipa
+          files: build/WWWeeb.ipa
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
