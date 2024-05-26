@@ -24,11 +24,11 @@ jobs:
         run: |
           mkdir Payload
           mv ./build/WWWeeb.xcarchive/Products/Applications/ ./Payload
-          zip -r WWWeeb.ipa Payload
+          zip -r WWWeeb-v${TAG_NAME}.ipa Payload
 
       - name: Upload IPA to GitHub Releases
         uses: softprops/action-gh-release@v1
         with:
-          files: build/WWWeeb.ipa
+          files: ./WWWeeb-v${TAG_NAME}.ipa
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
