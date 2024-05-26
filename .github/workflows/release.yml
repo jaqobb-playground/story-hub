@@ -23,7 +23,7 @@ jobs:
 
       - name: Create IPA
         run: |
-          xcodebuild -exportArchive -archivePath $PWD/build/WWWeeb.xcarchive -exportPath $PWD/build -exportOptionsPlist exportOptions.plist
+          xcodebuild -exportArchive -archivePath $PWD/build/WWWeeb.xcarchive -exportPath $PWD/build -exportOptionsPlist exportOptions.plist CODE_SIGNING_ALLOWED=NO
           cd build
           zip -r WWWeeb.ipa Payload
           mv build/WWWeeb.ipa.zip build/WWWeeb.ipa
