@@ -24,9 +24,9 @@ jobs:
         run: |
           TAG_NAME=$(echo $GITHUB_REF | sed 's/refs\/tags\///')
           mkdir Payload
-          mv ./build/WWWeeb.xcarchive/Products/Applications/ ./Payload
-          zip -r WWWeeb-${TAG_NAME}.ipa Payload
-          echo "IPA_NAME=WWWeeb-${TAG_NAME}.ipa" >> $GITHUB_ENV
+          mv ./build/WWWeeb.xcarchive/Products/Applications/WWWeeb.app ./Payload
+          zip -r WWWeeb-v${TAG_NAME}.ipa Payload
+          echo "IPA_NAME=WWWeeb-v${TAG_NAME}.ipa" >> $GITHUB_ENV
 
       - name: Upload IPA to GitHub Releases
         uses: softprops/action-gh-release@v1
