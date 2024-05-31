@@ -10,6 +10,7 @@
 		5C0559BA2BCFCDF10093A355 /* AlertUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C0559B92BCFCDF10093A355 /* AlertUtils.swift */; };
 		5C11E76D2BCE816300307AC6 /* Library.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C11E76C2BCE816300307AC6 /* Library.swift */; };
 		5C11E7722BCEC2DB00307AC6 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 5C11E7712BCEC2DB00307AC6 /* Kingfisher */; };
+		5C2C217B2C0A7B3A00E4FDE2 /* release.yml in Resources */ = {isa = PBXBuildFile; fileRef = 5C2C21782C0A7B3A00E4FDE2 /* release.yml */; };
 		5C45A9192BC9257F00299492 /* WWWeebApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C45A9182BC9257F00299492 /* WWWeebApp.swift */; };
 		5C45A91D2BC9258000299492 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5C45A91C2BC9258000299492 /* Assets.xcassets */; };
 		5C45A9202BC9258000299492 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5C45A91F2BC9258000299492 /* Preview Assets.xcassets */; };
@@ -33,6 +34,7 @@
 /* Begin PBXFileReference section */
 		5C0559B92BCFCDF10093A355 /* AlertUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertUtils.swift; sourceTree = "<group>"; };
 		5C11E76C2BCE816300307AC6 /* Library.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Library.swift; sourceTree = "<group>"; };
+		5C2C21782C0A7B3A00E4FDE2 /* release.yml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.yaml; path = release.yml; sourceTree = "<group>"; };
 		5C45A9152BC9257F00299492 /* WWWeeb.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WWWeeb.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5C45A9182BC9257F00299492 /* WWWeebApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WWWeebApp.swift; sourceTree = "<group>"; };
 		5C45A91C2BC9258000299492 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -77,11 +79,28 @@
 			path = Providers;
 			sourceTree = "<group>";
 		};
+		5C2C21792C0A7B3A00E4FDE2 /* workflows */ = {
+			isa = PBXGroup;
+			children = (
+				5C2C21782C0A7B3A00E4FDE2 /* release.yml */,
+			);
+			path = workflows;
+			sourceTree = "<group>";
+		};
+		5C2C217A2C0A7B3A00E4FDE2 /* .github */ = {
+			isa = PBXGroup;
+			children = (
+				5C2C21792C0A7B3A00E4FDE2 /* workflows */,
+			);
+			path = .github;
+			sourceTree = "<group>";
+		};
 		5C45A90C2BC9257F00299492 = {
 			isa = PBXGroup;
 			children = (
 				5CBA31952BD7C8DE0012CE3B /* .gitignore */,
 				5CBA31932BD7C8C40012CE3B /* README.md */,
+				5C2C217A2C0A7B3A00E4FDE2 /* .github */,
 				5C45A9172BC9257F00299492 /* WWWeeb */,
 				5C45A9162BC9257F00299492 /* Products */,
 			);
@@ -244,6 +263,7 @@
 				5CBA31942BD7C8C40012CE3B /* README.md in Resources */,
 				5C45A9202BC9258000299492 /* Preview Assets.xcassets in Resources */,
 				5C45A91D2BC9258000299492 /* Assets.xcassets in Resources */,
+				5C2C217B2C0A7B3A00E4FDE2 /* release.yml in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
