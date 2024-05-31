@@ -1,0 +1,36 @@
+name: Build and Archive iOS Project
+
+on:
+  push:
+    tags:
+      - "*.*.*.*"
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Xcode
+        run: sudo xcode-select -s /Applications/Xcode_15.4.app
+
+      - name: Build Archive
+        run: |
+          xcodebuild -project WWWeeb.xcodeproj -scheme WWWeeb -sdk iphoneos -configuration Release archive -archivePath $PWD/build/WWWeeb.xcarchive CODE_SIGNING_ALLOWED=NO
+
+      - name: Create IPA
+        run: |
+          TAG_NAME=$(echo $GITHUB_REF | sed 's/refs\/tags\///')
+          mkdir Payload
+          mv ./build/WWWeeb.xcarchive/Products/Applications/WWWeeb.app ./Payload
+          zip -r WWWeeb-v${TAG_NAME}.ipa Payload
+          echo "IPA_NAME=WWWeeb-v${TAG_NAME}.ipa" >> $GITHUB_ENV
+
+      - name: Upload IPA to GitHub Releases
+        uses: softprops/action-gh-release@v1
+        with:
+          files: ${{ env.IPA_NAME }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
