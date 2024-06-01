@@ -2,7 +2,7 @@ import SwiftData
 import SwiftUI
 
 @main
-struct WWWeebApp: App {
+struct StoryHubApp: App {
     @Environment(\.scenePhase)
     private var scenePhase
 

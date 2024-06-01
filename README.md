@@ -1,18 +1,18 @@
-# WWWeeb
+# StoryHub
 
-WWWeeb is a novel and comic reader app for iOS.
+StoryHub is a novel and comic reader app for iOS.
 
 ## Introduction
 
-WWWeeb was made for a very simple reason - to make reading novels and comics easier and more comfortable, especially for people using multiple sources.
+StoryHub was made to make reading novels and comics easier and more comfortable, especially for people using multiple sources. It came to be as I could not find another alternative for iOS.
 
-That being said, WWWeeb is only meant to be a simple and easy to use reader, and as such supports browsing providers by titles only. For more detailed browsing, it is recommended to use the provider's native browsing feature and once a suitable entry is found: look it up in WWWeeb, add it to the library, and start reading.
+StoryHub currently only supports browsing providers by titles only. For the time being it is recommended to use the provider's native browsing feature for more detailed browsing, and once a suitable entry is found: look it up in StoryHub, add it to the library, and start reading.
 
-WWWeeb works by scraping only the most necessary data from the providers, making the reading experience free of ads and other stuff that could worsen the reading experience.
+StoryHub works by scraping only the most necessary data from the providers, making the reading experience free of ads and other stuff that could worsen the reading experience.
 
 ## Novel providers
 
-Currently, WWWeeb supports the following novel providers:
+Currently, StoryHub supports the following novel providers:
 
 * Free Web Novel (<https://freewebnovel.com>) - since 0.9.50.23
 * Scribble Hub (<https://scribblehub.com>) - since 0.9.50.26
@@ -20,8 +20,8 @@ Currently, WWWeeb supports the following novel providers:
 
 ## Comic providers
 
-Currently, WWWeeb does not yet support comic reading.
+Currently, StoryHub does not yet support comic reading.
 
 ## Installation
 
-I have no idea how to install it... YET! I only started learning Swift and SwiftUI a couple days ago (~2024-04-10) and I am still in the process of testing it in the simulator. Once I deploy it to my actual device and use it for a while, I will make a detailed installation guide.
+Work in progress...

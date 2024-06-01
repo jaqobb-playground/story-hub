@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1530"
+   LastUpgradeVersion = "1540"
    version = "1.7">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -16,9 +16,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "5C45A9142BC9257F00299492"
-               BuildableName = "WWWeeb.app"
-               BlueprintName = "WWWeeb"
-               ReferencedContainer = "container:WWWeeb.xcodeproj">
+               BuildableName = "StoryHub.app"
+               BlueprintName = "StoryHub"
+               ReferencedContainer = "container:StoryHub.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -45,18 +45,11 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "5C45A9142BC9257F00299492"
-            BuildableName = "WWWeeb.app"
-            BlueprintName = "WWWeeb"
-            ReferencedContainer = "container:WWWeeb.xcodeproj">
+            BuildableName = "StoryHub.app"
+            BlueprintName = "StoryHub"
+            ReferencedContainer = "container:StoryHub.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
-      <EnvironmentVariables>
-         <EnvironmentVariable
-            key = "IDEPreferLogStreaming"
-            value = "YES"
-            isEnabled = "YES">
-         </EnvironmentVariable>
-      </EnvironmentVariables>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"
@@ -69,9 +62,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "5C45A9142BC9257F00299492"
-            BuildableName = "WWWeeb.app"
-            BlueprintName = "WWWeeb"
-            ReferencedContainer = "container:WWWeeb.xcodeproj">
+            BuildableName = "StoryHub.app"
+            BlueprintName = "StoryHub"
+            ReferencedContainer = "container:StoryHub.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

@@ -7,53 +7,50 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		5C0559BA2BCFCDF10093A355 /* AlertUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C0559B92BCFCDF10093A355 /* AlertUtils.swift */; };
-		5C11E76D2BCE816300307AC6 /* Library.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C11E76C2BCE816300307AC6 /* Library.swift */; };
 		5C11E7722BCEC2DB00307AC6 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 5C11E7712BCEC2DB00307AC6 /* Kingfisher */; };
-		5C2C217B2C0A7B3A00E4FDE2 /* release.yml in Resources */ = {isa = PBXBuildFile; fileRef = 5C2C21782C0A7B3A00E4FDE2 /* release.yml */; };
-		5C45A9192BC9257F00299492 /* WWWeebApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C45A9182BC9257F00299492 /* WWWeebApp.swift */; };
-		5C45A91D2BC9258000299492 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5C45A91C2BC9258000299492 /* Assets.xcassets */; };
-		5C45A9202BC9258000299492 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5C45A91F2BC9258000299492 /* Preview Assets.xcassets */; };
-		5C45A9282BC925C600299492 /* BrowseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C45A9272BC925C600299492 /* BrowseView.swift */; };
-		5C45A92A2BC925DA00299492 /* LibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C45A9292BC925DA00299492 /* LibraryView.swift */; };
-		5C45A9342BC9262E00299492 /* Novel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C45A9332BC9262E00299492 /* Novel.swift */; };
-		5C45A9392BC9266900299492 /* NovelProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C45A9382BC9266900299492 /* NovelProvider.swift */; };
 		5C45A93E2BC9268800299492 /* SwiftSoup in Frameworks */ = {isa = PBXBuildFile; productRef = 5C45A93D2BC9268800299492 /* SwiftSoup */; };
-		5C45A95C2BC9895600299492 /* NovelViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C45A95B2BC9895600299492 /* NovelViews.swift */; };
-		5C4FBAA22BCDBDF300AA786C /* FreeWebNovelNovelProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C4FBAA12BCDBDF300AA786C /* FreeWebNovelNovelProvider.swift */; };
-		5C706A682BD8499A00651FBB /* SettingsViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C706A672BD8499A00651FBB /* SettingsViews.swift */; };
-		5CA024B32BD9139A0084B229 /* ArrayExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CA024B22BD9139A0084B229 /* ArrayExtensions.swift */; };
-		5CADB2B62BDCF86300A0CAB2 /* MTLNovelNovelProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CADB2B52BDCF86300A0CAB2 /* MTLNovelNovelProvider.swift */; };
-		5CBA31942BD7C8C40012CE3B /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 5CBA31932BD7C8C40012CE3B /* README.md */; };
-		5CBA31962BD7C8DE0012CE3B /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = 5CBA31952BD7C8DE0012CE3B /* .gitignore */; };
-		5CEE7A4D2BDAE3D5008EAD87 /* ScribbleHubNovelProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CEE7A4C2BDAE3D5008EAD87 /* ScribbleHubNovelProvider.swift */; };
-		5CEE7A542BDB138B008EAD87 /* NetworkUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CEE7A532BDB138B008EAD87 /* NetworkUtils.swift */; };
-		5CF895BF2BD6A177001CBBED /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CF895BE2BD6A177001CBBED /* Settings.swift */; };
+		5C588B982C0B17C8005FD721 /* BrowseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C588B7D2C0B17C8005FD721 /* BrowseView.swift */; };
+		5C588B992C0B17C8005FD721 /* ArrayExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C588B7F2C0B17C8005FD721 /* ArrayExtensions.swift */; };
+		5C588B9A2C0B17C8005FD721 /* Library.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C588B812C0B17C8005FD721 /* Library.swift */; };
+		5C588B9B2C0B17C8005FD721 /* LibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C588B822C0B17C8005FD721 /* LibraryView.swift */; };
+		5C588B9C2C0B17C8005FD721 /* FreeWebNovelNovelProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C588B842C0B17C8005FD721 /* FreeWebNovelNovelProvider.swift */; };
+		5C588B9D2C0B17C8005FD721 /* MTLNovelNovelProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C588B852C0B17C8005FD721 /* MTLNovelNovelProvider.swift */; };
+		5C588B9E2C0B17C8005FD721 /* ScribbleHubNovelProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C588B862C0B17C8005FD721 /* ScribbleHubNovelProvider.swift */; };
+		5C588B9F2C0B17C8005FD721 /* Novel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C588B882C0B17C8005FD721 /* Novel.swift */; };
+		5C588BA02C0B17C8005FD721 /* NovelProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C588B892C0B17C8005FD721 /* NovelProvider.swift */; };
+		5C588BA12C0B17C8005FD721 /* NovelViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C588B8A2C0B17C8005FD721 /* NovelViews.swift */; };
+		5C588BA22C0B17C8005FD721 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5C588B8C2C0B17C8005FD721 /* Preview Assets.xcassets */; };
+		5C588BA32C0B17C8005FD721 /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C588B8E2C0B17C8005FD721 /* Settings.swift */; };
+		5C588BA42C0B17C8005FD721 /* SettingsViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C588B8F2C0B17C8005FD721 /* SettingsViews.swift */; };
+		5C588BA52C0B17C8005FD721 /* AlertUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C588B912C0B17C8005FD721 /* AlertUtils.swift */; };
+		5C588BA62C0B17C8005FD721 /* NetworkUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C588B922C0B17C8005FD721 /* NetworkUtils.swift */; };
+		5C588BA72C0B17C8005FD721 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5C588B942C0B17C8005FD721 /* Assets.xcassets */; };
+		5C588BA92C0B17C8005FD721 /* StoryHubApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C588B962C0B17C8005FD721 /* StoryHubApp.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		5C0559B92BCFCDF10093A355 /* AlertUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertUtils.swift; sourceTree = "<group>"; };
-		5C11E76C2BCE816300307AC6 /* Library.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Library.swift; sourceTree = "<group>"; };
 		5C2C21782C0A7B3A00E4FDE2 /* release.yml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.yaml; path = release.yml; sourceTree = "<group>"; };
-		5C45A9152BC9257F00299492 /* WWWeeb.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WWWeeb.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		5C45A9182BC9257F00299492 /* WWWeebApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WWWeebApp.swift; sourceTree = "<group>"; };
-		5C45A91C2BC9258000299492 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		5C45A91F2BC9258000299492 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
-		5C45A9272BC925C600299492 /* BrowseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowseView.swift; sourceTree = "<group>"; };
-		5C45A9292BC925DA00299492 /* LibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryView.swift; sourceTree = "<group>"; };
-		5C45A9332BC9262E00299492 /* Novel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Novel.swift; sourceTree = "<group>"; };
-		5C45A9382BC9266900299492 /* NovelProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NovelProvider.swift; sourceTree = "<group>"; };
-		5C45A95B2BC9895600299492 /* NovelViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NovelViews.swift; sourceTree = "<group>"; };
-		5C4FBAA12BCDBDF300AA786C /* FreeWebNovelNovelProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FreeWebNovelNovelProvider.swift; sourceTree = "<group>"; };
-		5C706A672BD8499A00651FBB /* SettingsViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViews.swift; sourceTree = "<group>"; };
-		5CA024B22BD9139A0084B229 /* ArrayExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArrayExtensions.swift; sourceTree = "<group>"; };
-		5CADB2B52BDCF86300A0CAB2 /* MTLNovelNovelProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MTLNovelNovelProvider.swift; sourceTree = "<group>"; };
-		5CAFFD312BDE7669007A0549 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		5C45A9152BC9257F00299492 /* StoryHub.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StoryHub.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		5C588B7D2C0B17C8005FD721 /* BrowseView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BrowseView.swift; sourceTree = "<group>"; };
+		5C588B7F2C0B17C8005FD721 /* ArrayExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ArrayExtensions.swift; sourceTree = "<group>"; };
+		5C588B812C0B17C8005FD721 /* Library.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Library.swift; sourceTree = "<group>"; };
+		5C588B822C0B17C8005FD721 /* LibraryView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LibraryView.swift; sourceTree = "<group>"; };
+		5C588B842C0B17C8005FD721 /* FreeWebNovelNovelProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FreeWebNovelNovelProvider.swift; sourceTree = "<group>"; };
+		5C588B852C0B17C8005FD721 /* MTLNovelNovelProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MTLNovelNovelProvider.swift; sourceTree = "<group>"; };
+		5C588B862C0B17C8005FD721 /* ScribbleHubNovelProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScribbleHubNovelProvider.swift; sourceTree = "<group>"; };
+		5C588B882C0B17C8005FD721 /* Novel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Novel.swift; sourceTree = "<group>"; };
+		5C588B892C0B17C8005FD721 /* NovelProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NovelProvider.swift; sourceTree = "<group>"; };
+		5C588B8A2C0B17C8005FD721 /* NovelViews.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NovelViews.swift; sourceTree = "<group>"; };
+		5C588B8C2C0B17C8005FD721 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		5C588B8E2C0B17C8005FD721 /* Settings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
+		5C588B8F2C0B17C8005FD721 /* SettingsViews.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsViews.swift; sourceTree = "<group>"; };
+		5C588B912C0B17C8005FD721 /* AlertUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AlertUtils.swift; sourceTree = "<group>"; };
+		5C588B922C0B17C8005FD721 /* NetworkUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkUtils.swift; sourceTree = "<group>"; };
+		5C588B942C0B17C8005FD721 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		5C588B952C0B17C8005FD721 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		5C588B962C0B17C8005FD721 /* StoryHubApp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StoryHubApp.swift; sourceTree = "<group>"; };
 		5CBA31932BD7C8C40012CE3B /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		5CBA31952BD7C8DE0012CE3B /* .gitignore */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
-		5CEE7A4C2BDAE3D5008EAD87 /* ScribbleHubNovelProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScribbleHubNovelProvider.swift; sourceTree = "<group>"; };
-		5CEE7A532BDB138B008EAD87 /* NetworkUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkUtils.swift; sourceTree = "<group>"; };
-		5CF895BE2BD6A177001CBBED /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -69,16 +66,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		5C0851E42BD4354500E86111 /* Providers */ = {
-			isa = PBXGroup;
-			children = (
-				5C4FBAA12BCDBDF300AA786C /* FreeWebNovelNovelProvider.swift */,
-				5CEE7A4C2BDAE3D5008EAD87 /* ScribbleHubNovelProvider.swift */,
-				5CADB2B52BDCF86300A0CAB2 /* MTLNovelNovelProvider.swift */,
-			);
-			path = Providers;
-			sourceTree = "<group>";
-		};
 		5C2C21792C0A7B3A00E4FDE2 /* workflows */ = {
 			isa = PBXGroup;
 			children = (
@@ -101,7 +88,7 @@
 				5CBA31952BD7C8DE0012CE3B /* .gitignore */,
 				5CBA31932BD7C8C40012CE3B /* README.md */,
 				5C2C217A2C0A7B3A00E4FDE2 /* .github */,
-				5C45A9172BC9257F00299492 /* WWWeeb */,
+				5C588B972C0B17C8005FD721 /* StoryHub */,
 				5C45A9162BC9257F00299492 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -109,96 +96,106 @@
 		5C45A9162BC9257F00299492 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				5C45A9152BC9257F00299492 /* WWWeeb.app */,
+				5C45A9152BC9257F00299492 /* StoryHub.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		5C45A9172BC9257F00299492 /* WWWeeb */ = {
+		5C588B7E2C0B17C8005FD721 /* Browse */ = {
 			isa = PBXGroup;
 			children = (
-				5CAFFD312BDE7669007A0549 /* Info.plist */,
-				5CA024B12BD9138C0084B229 /* Extensions */,
-				5C45A92F2BC9260C00299492 /* Utils */,
-				5C45A9322BC9262100299492 /* Novel */,
-				5C45A9432BC926C400299492 /* Browse */,
-				5C45A9462BC926E600299492 /* Library */,
-				5C45A94C2BC9272500299492 /* Settings */,
-				5C45A9182BC9257F00299492 /* WWWeebApp.swift */,
-				5C45A91C2BC9258000299492 /* Assets.xcassets */,
-				5C45A91E2BC9258000299492 /* Preview Content */,
-			);
-			path = WWWeeb;
-			sourceTree = "<group>";
-		};
-		5C45A91E2BC9258000299492 /* Preview Content */ = {
-			isa = PBXGroup;
-			children = (
-				5C45A91F2BC9258000299492 /* Preview Assets.xcassets */,
-			);
-			path = "Preview Content";
-			sourceTree = "<group>";
-		};
-		5C45A92F2BC9260C00299492 /* Utils */ = {
-			isa = PBXGroup;
-			children = (
-				5C0559B92BCFCDF10093A355 /* AlertUtils.swift */,
-				5CEE7A532BDB138B008EAD87 /* NetworkUtils.swift */,
-			);
-			path = Utils;
-			sourceTree = "<group>";
-		};
-		5C45A9322BC9262100299492 /* Novel */ = {
-			isa = PBXGroup;
-			children = (
-				5C0851E42BD4354500E86111 /* Providers */,
-				5C45A9382BC9266900299492 /* NovelProvider.swift */,
-				5C45A9332BC9262E00299492 /* Novel.swift */,
-				5C45A95B2BC9895600299492 /* NovelViews.swift */,
-			);
-			path = Novel;
-			sourceTree = "<group>";
-		};
-		5C45A9432BC926C400299492 /* Browse */ = {
-			isa = PBXGroup;
-			children = (
-				5C45A9272BC925C600299492 /* BrowseView.swift */,
+				5C588B7D2C0B17C8005FD721 /* BrowseView.swift */,
 			);
 			path = Browse;
 			sourceTree = "<group>";
 		};
-		5C45A9462BC926E600299492 /* Library */ = {
+		5C588B802C0B17C8005FD721 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
-				5C11E76C2BCE816300307AC6 /* Library.swift */,
-				5C45A9292BC925DA00299492 /* LibraryView.swift */,
+				5C588B7F2C0B17C8005FD721 /* ArrayExtensions.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+		5C588B832C0B17C8005FD721 /* Library */ = {
+			isa = PBXGroup;
+			children = (
+				5C588B812C0B17C8005FD721 /* Library.swift */,
+				5C588B822C0B17C8005FD721 /* LibraryView.swift */,
 			);
 			path = Library;
 			sourceTree = "<group>";
 		};
-		5C45A94C2BC9272500299492 /* Settings */ = {
+		5C588B872C0B17C8005FD721 /* Providers */ = {
 			isa = PBXGroup;
 			children = (
-				5CF895BE2BD6A177001CBBED /* Settings.swift */,
-				5C706A672BD8499A00651FBB /* SettingsViews.swift */,
+				5C588B842C0B17C8005FD721 /* FreeWebNovelNovelProvider.swift */,
+				5C588B852C0B17C8005FD721 /* MTLNovelNovelProvider.swift */,
+				5C588B862C0B17C8005FD721 /* ScribbleHubNovelProvider.swift */,
+			);
+			path = Providers;
+			sourceTree = "<group>";
+		};
+		5C588B8B2C0B17C8005FD721 /* Novel */ = {
+			isa = PBXGroup;
+			children = (
+				5C588B872C0B17C8005FD721 /* Providers */,
+				5C588B882C0B17C8005FD721 /* Novel.swift */,
+				5C588B892C0B17C8005FD721 /* NovelProvider.swift */,
+				5C588B8A2C0B17C8005FD721 /* NovelViews.swift */,
+			);
+			path = Novel;
+			sourceTree = "<group>";
+		};
+		5C588B8D2C0B17C8005FD721 /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				5C588B8C2C0B17C8005FD721 /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		5C588B902C0B17C8005FD721 /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				5C588B8E2C0B17C8005FD721 /* Settings.swift */,
+				5C588B8F2C0B17C8005FD721 /* SettingsViews.swift */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
 		};
-		5CA024B12BD9138C0084B229 /* Extensions */ = {
+		5C588B932C0B17C8005FD721 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
-				5CA024B22BD9139A0084B229 /* ArrayExtensions.swift */,
+				5C588B912C0B17C8005FD721 /* AlertUtils.swift */,
+				5C588B922C0B17C8005FD721 /* NetworkUtils.swift */,
 			);
-			path = Extensions;
+			path = Utils;
+			sourceTree = "<group>";
+		};
+		5C588B972C0B17C8005FD721 /* StoryHub */ = {
+			isa = PBXGroup;
+			children = (
+				5C588B7E2C0B17C8005FD721 /* Browse */,
+				5C588B802C0B17C8005FD721 /* Extensions */,
+				5C588B832C0B17C8005FD721 /* Library */,
+				5C588B8B2C0B17C8005FD721 /* Novel */,
+				5C588B8D2C0B17C8005FD721 /* Preview Content */,
+				5C588B902C0B17C8005FD721 /* Settings */,
+				5C588B932C0B17C8005FD721 /* Utils */,
+				5C588B942C0B17C8005FD721 /* Assets.xcassets */,
+				5C588B952C0B17C8005FD721 /* Info.plist */,
+				5C588B962C0B17C8005FD721 /* StoryHubApp.swift */,
+			);
+			path = StoryHub;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		5C45A9142BC9257F00299492 /* WWWeeb */ = {
+		5C45A9142BC9257F00299492 /* StoryHub */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 5C45A9232BC9258000299492 /* Build configuration list for PBXNativeTarget "WWWeeb" */;
+			buildConfigurationList = 5C45A9232BC9258000299492 /* Build configuration list for PBXNativeTarget "StoryHub" */;
 			buildPhases = (
 				5C45A9112BC9257F00299492 /* Sources */,
 				5C45A9122BC9257F00299492 /* Frameworks */,
@@ -208,13 +205,13 @@
 			);
 			dependencies = (
 			);
-			name = WWWeeb;
+			name = StoryHub;
 			packageProductDependencies = (
 				5C45A93D2BC9268800299492 /* SwiftSoup */,
 				5C11E7712BCEC2DB00307AC6 /* Kingfisher */,
 			);
 			productName = WWWeeb;
-			productReference = 5C45A9152BC9257F00299492 /* WWWeeb.app */;
+			productReference = 5C45A9152BC9257F00299492 /* StoryHub.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -232,7 +229,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 5C45A9102BC9257F00299492 /* Build configuration list for PBXProject "WWWeeb" */;
+			buildConfigurationList = 5C45A9102BC9257F00299492 /* Build configuration list for PBXProject "StoryHub" */;
 			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -249,7 +246,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				5C45A9142BC9257F00299492 /* WWWeeb */,
+				5C45A9142BC9257F00299492 /* StoryHub */,
 			);
 		};
 /* End PBXProject section */
@@ -259,11 +256,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5CBA31962BD7C8DE0012CE3B /* .gitignore in Resources */,
-				5CBA31942BD7C8C40012CE3B /* README.md in Resources */,
-				5C45A9202BC9258000299492 /* Preview Assets.xcassets in Resources */,
-				5C45A91D2BC9258000299492 /* Assets.xcassets in Resources */,
-				5C2C217B2C0A7B3A00E4FDE2 /* release.yml in Resources */,
+				5C588BA72C0B17C8005FD721 /* Assets.xcassets in Resources */,
+				5C588BA22C0B17C8005FD721 /* Preview Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -274,21 +268,21 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5CA024B32BD9139A0084B229 /* ArrayExtensions.swift in Sources */,
-				5C45A9282BC925C600299492 /* BrowseView.swift in Sources */,
-				5CF895BF2BD6A177001CBBED /* Settings.swift in Sources */,
-				5C45A9392BC9266900299492 /* NovelProvider.swift in Sources */,
-				5CEE7A4D2BDAE3D5008EAD87 /* ScribbleHubNovelProvider.swift in Sources */,
-				5C706A682BD8499A00651FBB /* SettingsViews.swift in Sources */,
-				5C0559BA2BCFCDF10093A355 /* AlertUtils.swift in Sources */,
-				5CEE7A542BDB138B008EAD87 /* NetworkUtils.swift in Sources */,
-				5C11E76D2BCE816300307AC6 /* Library.swift in Sources */,
-				5C45A95C2BC9895600299492 /* NovelViews.swift in Sources */,
-				5C4FBAA22BCDBDF300AA786C /* FreeWebNovelNovelProvider.swift in Sources */,
-				5C45A92A2BC925DA00299492 /* LibraryView.swift in Sources */,
-				5CADB2B62BDCF86300A0CAB2 /* MTLNovelNovelProvider.swift in Sources */,
-				5C45A9192BC9257F00299492 /* WWWeebApp.swift in Sources */,
-				5C45A9342BC9262E00299492 /* Novel.swift in Sources */,
+				5C588BA32C0B17C8005FD721 /* Settings.swift in Sources */,
+				5C588BA52C0B17C8005FD721 /* AlertUtils.swift in Sources */,
+				5C588B9E2C0B17C8005FD721 /* ScribbleHubNovelProvider.swift in Sources */,
+				5C588BA12C0B17C8005FD721 /* NovelViews.swift in Sources */,
+				5C588B9D2C0B17C8005FD721 /* MTLNovelNovelProvider.swift in Sources */,
+				5C588BA02C0B17C8005FD721 /* NovelProvider.swift in Sources */,
+				5C588BA62C0B17C8005FD721 /* NetworkUtils.swift in Sources */,
+				5C588B982C0B17C8005FD721 /* BrowseView.swift in Sources */,
+				5C588B992C0B17C8005FD721 /* ArrayExtensions.swift in Sources */,
+				5C588B9B2C0B17C8005FD721 /* LibraryView.swift in Sources */,
+				5C588BA42C0B17C8005FD721 /* SettingsViews.swift in Sources */,
+				5C588B9C2C0B17C8005FD721 /* FreeWebNovelNovelProvider.swift in Sources */,
+				5C588BA92C0B17C8005FD721 /* StoryHubApp.swift in Sources */,
+				5C588B9A2C0B17C8005FD721 /* Library.swift in Sources */,
+				5C588B9F2C0B17C8005FD721 /* Novel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -330,6 +324,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 55HSKS6J8J;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -393,6 +388,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 55HSKS6J8J;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -421,12 +417,12 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 35;
-				DEVELOPMENT_ASSET_PATHS = "\"WWWeeb/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"StoryHub/Preview Content\"";
 				DEVELOPMENT_TEAM = 55HSKS6J8J;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = WWWeeb/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = WWWeeb;
+				INFOPLIST_FILE = StoryHub/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = StoryHub;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.entertainment";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -439,7 +435,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 0.9.50;
-				PRODUCT_BUNDLE_IDENTIFIER = dev.jaqobb.WWWeeb;
+				PRODUCT_BUNDLE_IDENTIFIER = dev.jaqobb.StoryHub;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -454,12 +450,12 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 35;
-				DEVELOPMENT_ASSET_PATHS = "\"WWWeeb/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"StoryHub/Preview Content\"";
 				DEVELOPMENT_TEAM = 55HSKS6J8J;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = WWWeeb/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = WWWeeb;
+				INFOPLIST_FILE = StoryHub/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = StoryHub;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.entertainment";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -472,7 +468,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 0.9.50;
-				PRODUCT_BUNDLE_IDENTIFIER = dev.jaqobb.WWWeeb;
+				PRODUCT_BUNDLE_IDENTIFIER = dev.jaqobb.StoryHub;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -483,7 +479,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		5C45A9102BC9257F00299492 /* Build configuration list for PBXProject "WWWeeb" */ = {
+		5C45A9102BC9257F00299492 /* Build configuration list for PBXProject "StoryHub" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5C45A9212BC9258000299492 /* Debug */,
@@ -492,7 +488,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		5C45A9232BC9258000299492 /* Build configuration list for PBXNativeTarget "WWWeeb" */ = {
+		5C45A9232BC9258000299492 /* Build configuration list for PBXNativeTarget "StoryHub" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5C45A9242BC9258000299492 /* Debug */,
