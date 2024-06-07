@@ -1,3 +1,4 @@
+import Alamofire
 import Foundation
 import SwiftSoup
 
@@ -8,26 +9,37 @@ extension NovelProvider.Implementation {
         fileprivate init() {
             super.init(
                 provider: .scribbleHub,
-                details: NovelProvider.Details(name: "Scribble Hub", site: "https://www.scribblehub.com")
+                details: NovelProvider.Details(
+                    name: "Scribble Hub",
+                    site: "https://www.scribblehub.com"
+                )
             )
         }
 
         override func fetchNovels(searchTerm: String) async throws -> [NovelPreview] {
-            let html = try await NetworkUtils.fetchContent(
-                from: details.site + "/?s=" + searchTerm + "&post_type=fictionposts",
-                method: "POST"
+            let response = await AF.request(
+                "\(details.site)/?s=\(searchTerm)&post_type=fictionposts",
+                method: .post
             )
-            let htmlAsDocument = try SwiftSoup.parse(html)
+            .serializingString()
+            .response
 
-            return try htmlAsDocument.select(".search_main_box")
+            if let error = response.error {
+                throw error
+            }
+
+            let document = try SwiftSoup.parse(response.value!)
+
+            return try document.select(".search_main_box")
                 .array()
                 .map { element -> NovelPreview in
-                    let path = try element.select(".search_title > a").attr("href")
+                    let path = (try element.select(".search_title > a").attr("href"))
+                        .replacingOccurrences(of: details.site, with: "")
                     let title = try element.select(".search_title > a").text()
                     let coverURL = try element.select(".search_img > img").attr("src")
 
                     return NovelPreview(
-                        path: path.replacingOccurrences(of: details.site, with: ""),
+                        path: path,
                         title: title,
                         coverURL: coverURL,
                         provider: provider
@@ -37,19 +49,26 @@ extension NovelProvider.Implementation {
         }
 
         override func parseNovel(path: String) async throws -> Novel {
-            let html = try await NetworkUtils.fetchContent(from: details.site + path + "?toc=-1#content1")
-            let htmlAsDocument = try SwiftSoup.parse(html)
+            let response = await AF.request("\(details.site)\(path)?toc=-1#content1")
+                .serializingString()
+                .response
 
-            let title = try htmlAsDocument.select(".fic_title").attr("title")
-            let coverURL = try htmlAsDocument.select(".fic_image > img").attr("src")
-            let summary = try htmlAsDocument.select(".wi_fic_desc > p").eachText()
-            let genres = try htmlAsDocument.select(".fic_genre")
+            if let error = response.error {
+                throw error
+            }
+
+            let document = try SwiftSoup.parse(response.value!)
+
+            let title = try document.select(".fic_title").attr("title")
+            let coverURL = try document.select(".fic_image > img").attr("src")
+            let summary = try document.select(".wi_fic_desc > p").eachText()
+            let genres = try document.select(".fic_genre")
                 .enumerated()
                 .map { _, genreElement in
                     try genreElement.text()
                 }
-            let authors = [try htmlAsDocument.select(".auth_name_fic").text()]
-            var status = try htmlAsDocument.select(".rnd_stats").last()?.nextElementSibling()?.text()
+            let authors = [try document.select(".auth_name_fic").text()]
+            var status = try document.select(".rnd_stats").last()?.nextElementSibling()?.text()
             if let unwrappedStatus = status {
                 if unwrappedStatus.contains("Hiatus") {
                     status = "Hiatus"
@@ -64,7 +83,7 @@ extension NovelProvider.Implementation {
                 status = "Unknown"
             }
 
-            let chapterElements = try htmlAsDocument.select(".wi_fic_table > .toc_ol > .toc_w").enumerated().reversed()
+            let chapterElements = try document.select(".wi_fic_table > .toc_ol > .toc_w").enumerated().reversed()
             let chapters = try chapterElements.map { chapterIndex, chapterElement in
                 let chapterTitle = try chapterElement.select(".toc_a").text()
                 let chapterPath = try chapterElement.select(".toc_a").attr("href").replacingOccurrences(of: details.site, with: "")
@@ -96,10 +115,17 @@ extension NovelProvider.Implementation {
         }
 
         override func parseNovelChapter(path: String) async throws -> [String] {
-            let html = try await NetworkUtils.fetchContent(from: details.site + path)
-            let htmlAsDocument = try SwiftSoup.parse(html)
+            let response = await AF.request("\(details.site)\(path)")
+                .serializingString()
+                .response
 
-            let txt = try htmlAsDocument.select("div.chp_raw")
+            if let error = response.error {
+                throw error
+            }
+
+            let document = try SwiftSoup.parse(response.value!)
+
+            let txt = try document.select("div.chp_raw")
             let content = try txt.select("p").eachText()
 
             return content

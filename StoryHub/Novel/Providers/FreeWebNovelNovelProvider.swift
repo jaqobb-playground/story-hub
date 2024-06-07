@@ -1,3 +1,4 @@
+import Alamofire
 import Foundation
 import SwiftSoup
 
@@ -8,23 +9,33 @@ extension NovelProvider.Implementation {
         fileprivate init() {
             super.init(
                 provider: .freeWebNovel,
-                details: NovelProvider.Details(name: "Free Web Novel", site: "https://freewebnovel.com")
+                details: NovelProvider.Details(
+                    name: "Free Web Novel",
+                    site: "https://freewebnovel.com"
+                )
             )
         }
 
         override func fetchNovels(searchTerm: String) async throws -> [NovelPreview] {
-            let html = try await NetworkUtils.fetchContent(
-                from: details.site + "/search/?searchkey=" + searchTerm,
-                method: "POST",
+            let response = await AF.request(
+                "\(details.site)/search/?searchkey=\(searchTerm)",
+                method: .post,
                 headers: [
                     "Content-Type": "application/x-www-form-urlencoded",
                     "Referer": details.site,
                     "Origin": details.site,
                 ]
             )
-            let htmlAsDocument = try SwiftSoup.parse(html)
+            .serializingString()
+            .response
 
-            return try htmlAsDocument.select(".li-row > .li > .con")
+            if let error = response.error {
+                throw error
+            }
+
+            let document = try SwiftSoup.parse(response.value!)
+
+            return try document.select(".li-row > .li > .con")
                 .array()
                 .map { element -> NovelPreview in
                     let path = try element.select("h3 > a").attr("href")
@@ -42,30 +53,37 @@ extension NovelProvider.Implementation {
         }
 
         override func parseNovel(path: String) async throws -> Novel {
-            let html = try await NetworkUtils.fetchContent(from: details.site + path)
-            let htmlAsDocument = try SwiftSoup.parse(html)
+            let response = await AF.request("\(details.site)\(path)")
+                .serializingString()
+                .response
 
-            let title = try htmlAsDocument.select("h1.tit").text()
-            let coverURL = try htmlAsDocument.select(".pic > img").attr("src")
-            let summary = try htmlAsDocument.select(".inner > p").eachText()
-            let genres = try htmlAsDocument.select("[title=Genre]")
+            if let error = response.error {
+                throw error
+            }
+
+            let document = try SwiftSoup.parse(response.value!)
+
+            let title = try document.select("h1.tit").text()
+            let coverURL = try document.select(".pic > img").attr("src")
+            let summary = try document.select(".inner > p").eachText()
+            let genres = try document.select("[title=Genre]")
                 .first()!
                 .nextElementSibling()!
                 .text()
                 .replacingOccurrences(of: "[\\t\\n]", with: "", options: .regularExpression)
                 .components(separatedBy: ", ")
-            let authors = try htmlAsDocument.select("[title=Author]")
+            let authors = try document.select("[title=Author]")
                 .first()!
                 .nextElementSibling()!
                 .text()
                 .replacingOccurrences(of: "[\\t\\n]", with: "", options: .regularExpression)
                 .components(separatedBy: ", ")
-            let status = try htmlAsDocument.select("[title=Status]")
+            let status = try document.select("[title=Status]")
                 .first()!
                 .nextElementSibling()!
                 .text()
                 .replacingOccurrences(of: "[\\t\\n]", with: "", options: .regularExpression)
-            let chapters: [NovelChapter] = try htmlAsDocument.select("#idData > li > a")
+            let chapters: [NovelChapter] = try document.select("#idData > li > a")
                 .enumerated()
                 .map { chapterIndex, chapterElement in
                     let chapterTitle = try chapterElement.attr("title")
@@ -97,10 +115,17 @@ extension NovelProvider.Implementation {
         }
 
         override func parseNovelChapter(path: String) async throws -> [String] {
-            let html = try await NetworkUtils.fetchContent(from: details.site + path)
-            let htmlAsDocument = try SwiftSoup.parse(html)
+            let response = await AF.request("\(details.site)\(path)")
+                .serializingString()
+                .response
 
-            let txt = try SwiftSoup.parse(try htmlAsDocument.select("div.txt").html())
+            if let error = response.error {
+                throw error
+            }
+
+            let document = try SwiftSoup.parse(response.value!)
+
+            let txt = try SwiftSoup.parse(try document.select("div.txt").html())
             let content = try txt.select("p").eachText()
 
             return content
