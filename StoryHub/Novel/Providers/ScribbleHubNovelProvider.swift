@@ -85,8 +85,8 @@ extension NovelProvider.Implementation {
 
             let chapterElements = try document.select(".wi_fic_table > .toc_ol > .toc_w").enumerated().reversed()
             let chapters = try chapterElements.map { chapterIndex, chapterElement in
-                let chapterTitle = try chapterElement.select(".toc_a").text()
                 let chapterPath = try chapterElement.select(".toc_a").attr("href").replacingOccurrences(of: details.site, with: "")
+                let chapterTitle = try chapterElement.select(".toc_a").text()
                 let chapterNumber = chapterElements.count - chapterIndex
 
                 return NovelChapter(

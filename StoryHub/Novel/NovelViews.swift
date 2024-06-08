@@ -129,24 +129,28 @@ struct NovelInformation: View {
                 Label("Provider", systemImage: "books.vertical")
             }
 
-            NavigationLink {
-                List(novel.authors, id: \.self) { author in
-                    Text(author)
+            if novel.authors.count > 0 {
+                NavigationLink {
+                    List(novel.authors, id: \.self) { author in
+                        Text(author)
+                    }
+                    .navigationTitle("Authors")
+                    .navigationBarTitleDisplayMode(.inline)
+                } label: {
+                    Label("Authors", systemImage: "person")
                 }
-                .navigationTitle("Authors")
-                .navigationBarTitleDisplayMode(.inline)
-            } label: {
-                Label("Authors", systemImage: "person")
             }
 
-            NavigationLink {
-                List(novel.genres, id: \.self) { genre in
-                    Text(genre)
+            if novel.genres.count > 0 {
+                NavigationLink {
+                    List(novel.genres, id: \.self) { genre in
+                        Text(genre)
+                    }
+                    .navigationTitle("Genres")
+                    .navigationBarTitleDisplayMode(.inline)
+                } label: {
+                    Label("Genres", systemImage: "list.bullet")
                 }
-                .navigationTitle("Genres")
-                .navigationBarTitleDisplayMode(.inline)
-            } label: {
-                Label("Genres", systemImage: "list.bullet")
             }
 
             NavigationLink {
