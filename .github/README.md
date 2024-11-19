@@ -1,6 +1,6 @@
-# StoryHub
+# Story Hub
 
-StoryHub is a novel and comic reader app for iOS.
+Novel and comic reader for iOS.
 
 ## Introduction
 
